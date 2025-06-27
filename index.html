@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Resource hints for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://yrppmcoycmydrujbesnd.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://uploads-ssl.webflow.com" crossorigin>
+    
+    <!-- DNS prefetch for third-party domains -->
+    <link rel="dns-prefetch" href="//cdn.signalzen.com">
+    <link rel="dns-prefetch" href="//connect.facebook.net">
+    <link rel="dns-prefetch" href="//reviewsonmywebsite.com">
+    <link rel="dns-prefetch" href="//cdn.mouseflow.com">
+    <link rel="dns-prefetch" href="//www.clarity.ms">
+    
+    <!-- Optimized favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/trebound-favicon-32px.jpg" />
+    
+    <!-- Critical CSS will be inlined by Vite -->
+    <title>Trebound - Corporate Team Building Activities & Outings</title>
+    
+    <!-- Meta tags for SEO -->
+    <meta name="description" content="Best corporate team building activities, outings, and offsite programs. Engaging team building games for companies in Bangalore, Mumbai, Hyderabad & more." />
+    <meta name="keywords" content="team building, corporate outings, team activities, offsite programs, corporate events" />
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Trebound - Corporate Team Building Activities & Outings" />
+    <meta property="og:description" content="Best corporate team building activities, outings, and offsite programs." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://trebound.com" />
+    <meta property="og:image" content="https://trebound.com/hero.webp" />
+    
+    <!-- Optimized font loading with font-display -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"></noscript>
+    
+    <!-- Preload critical hero image for better LCP -->
+    <link rel="preload" href="/hero.webp" as="image" type="image/webp" />
+    
+    <!-- Inline critical CSS for above-the-fold content -->
+    <style>
+      /* Critical CSS - Basic reset and layout */
+      *,*::before,*::after{box-sizing:border-box}
+      *{margin:0}
+      body{line-height:1.5;-webkit-font-smoothing:antialiased;font-family:Inter,system-ui,-apple-system,sans-serif}
+      img,picture,video,canvas,svg{display:block;max-width:100%}
+      input,button,textarea,select{font:inherit}
+      p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}
+      #root{isolation:isolate;min-height:100vh}
+      
+      /* Loading spinner */
+      .loading-spinner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border:4px solid #f3f3f3;border-top:4px solid #3498db;border-radius:50%;animation:spin 1s linear infinite}
+      @keyframes spin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+      
+      /* Hide loading spinner when app loads */
+      .app-loaded .loading-spinner{display:none}
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Loading spinner for better UX -->
+      <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Optimize third-party scripts -->
+    <script>
+      // Mark app as loaded when React renders
+      window.addEventListener('load', function() {
+        document.body.classList.add('app-loaded');
+        
+        // Defer third-party scripts after critical resources load
+        setTimeout(() => {
+          loadDeferredScripts();
+        }, 3000); // Load after 3 seconds or when user interacts
+      });
+      
+      // Load deferred scripts on user interaction
+      ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+        window.addEventListener(event, function() {
+          loadDeferredScripts();
+        }, { once: true, passive: true });
+      });
+      
+      let scriptsLoaded = false;
+      
+      function loadDeferredScripts() {
+        if (scriptsLoaded) return;
+        scriptsLoaded = true;
+        
+        // Skip analytics in development mode
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.log('Development mode: Analytics scripts disabled');
+          return;
+        }
+        
+        // Load Google Analytics (only in production)
+        const gtagScript = document.createElement('script');
+        gtagScript.async = true;
+        gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID';
+        document.head.appendChild(gtagScript);
+        
+        // Initialize analytics
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+        
+        // Load other tracking scripts with low priority (only in production)
+        loadScript('https://cdn.signalzen.com/signalzen.js', { defer: true });
+        loadScript('https://connect.facebook.net/en_US/fbevents.js', { defer: true });
+        loadScript('https://www.clarity.ms/tag/YOUR_CLARITY_ID', { defer: true });
+      }
+      
+      function loadScript(src, options = {}) {
+        const script = document.createElement('script');
+        script.src = src;
+        if (options.defer) script.defer = true;
+        if (options.async) script.async = true;
+        document.head.appendChild(script);
+      }
+      
+      // Preload critical resources for fast connections
+      if ('connection' in navigator && navigator.connection.effectiveType !== 'slow-2g') {
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'prefetch';
+        preloadLink.href = '/assets/main.js';
+        document.head.appendChild(preloadLink);
+      }
+      
+      // Optimize image loading
+      document.addEventListener('DOMContentLoaded', function() {
+        if ('IntersectionObserver' in window) {
+          const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                img.classList.add('loaded');
+                observer.unobserve(img);
+              }
+            });
+          });
+          
+          document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+          });
+        }
+      });
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
