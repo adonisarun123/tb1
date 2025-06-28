@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -40,7 +38,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <Link href="/" className="flex items-center space-x-3 group">
+              <Link to="/" className="flex items-center space-x-3 group">
                 <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <span className="text-white font-black text-2xl">T</span>
                 </div>
@@ -106,7 +104,7 @@ const Footer = () => {
               {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link 
-                    href={link.path} 
+                    to={link.path} 
                     className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group"
                   >
                     <span className="w-2 h-2 bg-blue-500 rounded-full mr-3 group-hover:bg-blue-400 transition-colors"></span>
@@ -127,7 +125,7 @@ const Footer = () => {
               {destinations.map((destination) => (
                 <li key={destination.path}>
                   <Link 
-                    href={destination.path} 
+                    to={destination.path} 
                     className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group"
                   >
                     <span className="w-2 h-2 bg-emerald-500 rounded-full mr-3 group-hover:bg-emerald-400 transition-colors"></span>
@@ -148,7 +146,7 @@ const Footer = () => {
               {company.map((item) => (
                 <li key={item.path}>
                   <Link 
-                    href={item.path} 
+                    to={item.path} 
                     className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group"
                   >
                     <span className="w-2 h-2 bg-purple-500 rounded-full mr-3 group-hover:bg-purple-400 transition-colors"></span>
@@ -165,7 +163,7 @@ const Footer = () => {
                 {legal.map((item) => (
                   <li key={item.path}>
                     <Link 
-                      href={item.path} 
+                      to={item.path} 
                       className="text-gray-400 hover:text-white transition-colors duration-300 text-sm flex items-center group"
                     >
                       <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mr-3 group-hover:bg-gray-300 transition-colors"></span>

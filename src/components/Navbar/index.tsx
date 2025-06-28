@@ -1,14 +1,12 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, useLocation } from 'react-router-dom';
 
 // Force update - navbar should be visible with professional styling
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +49,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-16 lg:h-18">
             {/* Logo Section - Professional */}
             <Link 
-              href="/" 
+              to="/" 
               className="flex items-center space-x-3 group"
               onClick={closeMenu}
             >
@@ -81,7 +79,7 @@ const Navbar = () => {
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
-                  href={link.path}
+                  to={link.path}
                   className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 relative ${
                     isActive(link.path)
                       ? scrolled
@@ -159,7 +157,7 @@ const Navbar = () => {
                 {navLinks.map((link) => (
                   <Link
                     key={link.path}
-                    href={link.path}
+                    to={link.path}
                     onClick={closeMenu}
                     className={`flex items-center px-4 py-3 rounded-lg font-medium text-base transition-all duration-300 ${
                       isActive(link.path)
