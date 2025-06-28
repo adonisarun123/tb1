@@ -3,6 +3,13 @@ import { motion } from 'framer-motion';
 import { useActivities, useStays, useCustomizedTrainings } from '../../lib/hooks/useSupabaseData';
 import { FiArrowRight, FiTarget, FiHome, FiAward, FiMapPin, FiClock, FiUsers, FiStar } from 'react-icons/fi';
 
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 type TabId = 'stays' | 'activities' | 'trainings';
 
 interface TabInfo {
@@ -115,7 +122,7 @@ const ServicesSection: React.FC = () => {
           .map((stay): StayCardContent => ({
             type: 'stay',
             title: stay.name || stay.title || 'Default Title',
-            description: stay.tagline || stay.description || '',
+            description: extractTextFromHtml(stay.tagline || stay.description || ''),
             image: stay.stay_image || stay.image_url || '/placeholder-image.jpg',
             slug: `stays/${stay.slug}`,
             location: String(stay.destination) || 'Destination Not Set',

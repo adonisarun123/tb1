@@ -6,6 +6,13 @@ import { Helmet } from 'react-helmet-async';
 import { useSupabaseStays } from '../../hooks/useSupabaseStays';
 import { useNavigate } from 'react-router-dom';
 
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 
 
 // Removed unused components - functionality moved to main component
@@ -234,7 +241,7 @@ const StaysPage: React.FC = () => {
                           )}
 
                           <p className="text-gray-600 mb-4 line-clamp-3">
-                            {stay.stay_description || stay.tagline || 'A perfect destination for your team outing experience.'}
+                            {extractTextFromHtml(stay.stay_description || '') || extractTextFromHtml(stay.tagline || '') || 'A perfect destination for your team outing experience.'}
                           </p>
 
                           <div className="flex items-center justify-between">

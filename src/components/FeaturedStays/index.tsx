@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseStays } from '../../hooks/useSupabaseStays';
 
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 const FeaturedStays: React.FC = () => {
   const navigate = useNavigate();
   const { stays, loading, error } = useSupabaseStays();
@@ -220,7 +227,7 @@ const FeaturedStays: React.FC = () => {
                 </div>
 
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {stay.description || stay.tagline || 'Perfect venue for corporate retreats and team building events with world-class amenities.'}
+                  {extractTextFromHtml(stay.description || '') || extractTextFromHtml(stay.tagline || '') || 'Perfect venue for corporate retreats and team building events with world-class amenities.'}
                 </p>
 
                 {/* Features */}
