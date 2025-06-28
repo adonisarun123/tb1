@@ -11,8 +11,8 @@ interface ActivityCardProps {
 }
 
 export const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => (
-  <div className="p-5 bg-[#f6f6f6] rounded-[16px]">
-    <div className="relative aspect-[386/304] rounded-[16px] overflow-hidden mb-4">
+  <div className="p-5 bg-[#f6f6f6] rounded-[16px] h-[420px] flex flex-col">
+    <div className="relative aspect-[386/304] rounded-[16px] overflow-hidden mb-4 flex-shrink-0">
       <img 
         src={activity.main_image} 
         alt={activity.name} 
@@ -25,11 +25,21 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => (
         <span className="text-sm font-medium">{activity.rating}</span>
       </div>
     </div>
-    <div className="space-y-2 flex-1">
-      <h3 className="text-lg font-semibold font-['DM Sans'] text-[#313131]">{activity.name}</h3>
-      <p className="text-base font-normal font-['DM Sans'] text-[#636363] line-clamp-2">{activity.tagline}</p>
+    
+    <div className="flex flex-col flex-grow">
+      {/* Title Section - Fixed Height */}
+      <div className="h-12 mb-2">
+        <h3 className="text-lg font-semibold font-['DM Sans'] text-[#313131] line-clamp-2">{activity.name}</h3>
+      </div>
+      
+      {/* Description Section - Fixed Height */}
+      <div className="h-12 mb-4 flex-grow">
+        <p className="text-base font-normal font-['DM Sans'] text-[#636363] line-clamp-2">{activity.tagline}</p>
+      </div>
     </div>
-    <div className="mt-4">
+    
+    {/* Button Section - Fixed at Bottom */}
+    <div className="mt-auto">
       <Link 
         to={`/team-building-activity/${activity.slug}`}
         className="relative w-full h-[45px] group block"

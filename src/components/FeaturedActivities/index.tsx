@@ -128,7 +128,7 @@ const FeaturedActivities: React.FC = () => {
             <div 
               key={activity.id} 
               onClick={() => handleActivityClick(activity)}
-              className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] overflow-hidden cursor-pointer border border-gray-100 hover:border-orange-200"
+              className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] overflow-hidden cursor-pointer border border-gray-100 hover:border-orange-200 h-[580px] flex flex-col"
             >
               {/* Ranking Badge - Enhanced */}
               <div className="absolute top-3 left-3 z-20">
@@ -168,7 +168,7 @@ const FeaturedActivities: React.FC = () => {
               )}
 
               {/* Activity Image - Enhanced */}
-              <div className="relative h-56 overflow-hidden rounded-t-3xl">
+              <div className="relative h-56 overflow-hidden rounded-t-3xl flex-shrink-0">
                 <img
                   src={getActivityImage(activity, index)}
                   alt={activity.name}
@@ -198,24 +198,29 @@ const FeaturedActivities: React.FC = () => {
                 </div>
               </div>
 
-              {/* Activity Content - Enhanced */}
-              <div className="p-6 space-y-4">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#FF4C39] transition-colors leading-tight">
+              {/* Activity Content - Enhanced with Fixed Heights */}
+              <div className="p-6 flex flex-col flex-grow">
+                {/* Title Section - Fixed Height */}
+                <div className="h-16 mb-3">
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#FF4C39] transition-colors leading-tight line-clamp-2">
                     {activity.name}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                </div>
+
+                {/* Description Section - Fixed Height */}
+                <div className="h-12 mb-4">
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
                     {activity.tagline || activity.description || 'An engaging team building experience designed to bring your team together and create lasting memories.'}
                   </p>
                 </div>
 
-                {/* Enhanced Rating & Reviews */}
-                <div className="flex items-center justify-between">
+                {/* Enhanced Rating & Reviews - Fixed Height */}
+                <div className="h-8 flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
-                    <div className="flex text-yellow-400 text-lg">
+                    <div className="flex text-yellow-400 text-base">
                       {'★'.repeat(5)}
                     </div>
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-base font-bold text-gray-900">
                       {(4.9 + Math.random() * 0.1).toFixed(1)}
                     </span>
                   </div>
@@ -224,37 +229,39 @@ const FeaturedActivities: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Location Info */}
-                <div className="flex items-center justify-center py-2">
+                {/* Location Info - Fixed Height */}
+                <div className="h-8 flex items-center justify-center mb-4">
                   <div className="text-sm text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full">
                     Multiple Locations
                   </div>
                 </div>
 
-                {/* Smaller Action Button */}
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleActivityClick(activity);
-                  }}
-                  className="w-full bg-gradient-to-r from-[#FF4C39] to-[#FFB573] text-white py-2 px-4 rounded-xl font-semibold text-sm hover:from-[#FF5722] hover:to-[#FF8A65] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                >
-                  View Details
-                </button>
+                {/* Action Button - Fixed Height */}
+                <div className="h-10 mb-4">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleActivityClick(activity);
+                    }}
+                    className="w-full h-full bg-gradient-to-r from-[#FF4C39] to-[#FFB573] text-white rounded-xl font-semibold text-sm hover:from-[#FF5722] hover:to-[#FF8A65] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                  >
+                    View Details
+                  </button>
+                </div>
 
-                {/* Enhanced Quick Info Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <span className="bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 px-4 py-2 rounded-full text-xs font-bold border border-orange-200">
+                {/* Enhanced Quick Info Tags - Fixed Height */}
+                <div className="h-16 flex flex-wrap gap-2 pt-2 items-start">
+                  <span className="bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">
                     {activity.activity_type || 'Team Building'}
                   </span>
                   {activity.activity_type?.toLowerCase().includes('indoor') && (
-                    <span className="bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 px-4 py-2 rounded-full text-xs font-bold border border-green-200 flex items-center">
+                    <span className="bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 flex items-center">
                       <span className="mr-1">🏢</span>
                       Indoor
                     </span>
                   )}
                   {activity.activity_type?.toLowerCase().includes('outdoor') && (
-                    <span className="bg-gradient-to-r from-blue-50 to-sky-50 text-[#FF4C39] px-4 py-2 rounded-full text-xs font-bold border border-blue-200 flex items-center">
+                    <span className="bg-gradient-to-r from-blue-50 to-sky-50 text-[#FF4C39] px-3 py-1 rounded-full text-xs font-bold border border-blue-200 flex items-center">
                       <span className="mr-1">🌳</span>
                       Outdoor
                     </span>

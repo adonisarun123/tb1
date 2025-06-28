@@ -277,10 +277,10 @@ const ServicesSection: React.FC = () => {
                       }
                     }
                   }}
-                  className="bg-[#eeeeee] rounded-[16px] overflow-hidden"
+                  className="bg-[#eeeeee] rounded-[16px] overflow-hidden h-[450px] flex flex-col"
                 >
-                  <div className="p-5">
-                    <div className="relative aspect-[386/304] rounded-[16px] overflow-hidden mb-4">
+                  <div className="p-5 flex flex-col h-full">
+                    <div className="relative aspect-[386/304] rounded-[16px] overflow-hidden mb-4 flex-shrink-0">
                       <img
                         src={card.image}
                         alt={card.title}
@@ -290,30 +290,43 @@ const ServicesSection: React.FC = () => {
                         <RatingBadge />
                       </div>
                     </div>
-                    <h3 className="text-xl font-medium font-inter text-[#373737] mb-2">
-                      {card.title}
-                    </h3>
-                    <p className="text-base text-[#979797] font-['DM Sans'] mb-4">
-                      {card.description}
-                    </p>
                     
-                    {/* Stats Section */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {'location' in card ? (
-                        <StatBadge type="location">{card.location}</StatBadge>
-                      ) : (
-                        <>
-                          <StatBadge type="participants">{card.participants}</StatBadge>
-                          <StatBadge type="outbound">{card.duration}</StatBadge>
-                          <StatBadge type="time">{card.time}</StatBadge>
-                        </>
-                      )}
+                    <div className="flex flex-col flex-grow">
+                      {/* Title Section - Fixed Height */}
+                      <div className="h-14 mb-2">
+                        <h3 className="text-lg font-medium font-inter text-[#373737] line-clamp-2">
+                          {card.title}
+                        </h3>
+                      </div>
+                      
+                      {/* Description Section - Fixed Height */}
+                      <div className="h-12 mb-4">
+                        <p className="text-sm text-[#979797] font-['DM Sans'] line-clamp-2">
+                          {card.description}
+                        </p>
+                      </div>
+                      
+                      {/* Stats Section - Fixed Height */}
+                      <div className="h-8 flex flex-wrap gap-2 mb-4">
+                        {'location' in card ? (
+                          <StatBadge type="location">{card.location}</StatBadge>
+                        ) : (
+                          <>
+                            <StatBadge type="participants">{card.participants}</StatBadge>
+                            <StatBadge type="outbound">{card.duration}</StatBadge>
+                            <StatBadge type="time">{card.time}</StatBadge>
+                          </>
+                        )}
+                      </div>
                     </div>
 
-                    <ExploreButton 
-                      slug={card.slug} 
-                      text={activeTab === 'stays' ? 'Book Now' : 'Learn More'} 
-                    />
+                    {/* Button Section - Fixed at Bottom */}
+                    <div className="mt-auto">
+                      <ExploreButton 
+                        slug={card.slug} 
+                        text={activeTab === 'stays' ? 'Book Now' : 'Learn More'} 
+                      />
+                    </div>
                   </div>
                 </motion.div>
               ))}
