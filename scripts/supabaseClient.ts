@@ -9,9 +9,14 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local'), override: true 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Environment variables not found. Make sure you have a .env or .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-  throw new Error('Missing Supabase environment variables');
-}
+// Create supabase client only if environment variables are available
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey); 
+// Export a flag to check if Supabase is available
+export const isSupabaseAvailable = !!(supabaseUrl && supabaseAnonKey);
+
+if (!isSupabaseAvailable) {
+  console.warn('⚠️  Supabase environment variables not found. Sitemap will only include static routes.');
+} 
