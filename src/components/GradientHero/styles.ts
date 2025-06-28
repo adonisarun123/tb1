@@ -13,7 +13,12 @@ export const HeroContainer = styled.div`
   padding: 80px 20px 120px;
   
   @media (max-width: 768px) {
-    padding: 60px 20px 160px;
+    padding: 40px 16px 140px;
+    min-height: 100vh;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 12px 120px;
   }
 `;
 
@@ -40,15 +45,19 @@ export const StatsContainer = styled(motion.div)`
   max-width: 1200px;
   
   @media (max-width: 768px) {
-    transform: translate(-50%, 25%);
-    gap: 12px;
-    flex-direction: column;
+    transform: translate(-50%, 15%);
+    gap: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    padding: 0 16px;
   }
 
   @media (max-width: 480px) {
-    transform: translate(-50%, 20%);
-    gap: 8px;
+    transform: translate(-50%, 10%);
+    gap: 6px;
+    padding: 0 12px;
+    flex-direction: column;
   }
 `;
 
@@ -62,13 +71,15 @@ export const StatCard = styled(motion.div)`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    padding: 20px;
-    max-width: 320px;
+    padding: 16px 20px;
+    max-width: 280px;
+    border-radius: 12px;
   }
 
   @media (max-width: 480px) {
-    padding: 16px;
-    max-width: 280px;
+    padding: 12px 16px;
+    max-width: 250px;
+    border-radius: 10px;
   }
 `;
 
@@ -110,6 +121,15 @@ export const ContentContainer = styled(motion.div)`
   z-index: 2;
   max-width: 800px;
   width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: 0 16px;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 12px;
+  }
 `;
 
 export const Title = styled(motion.h1)`

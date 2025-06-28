@@ -81,13 +81,13 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
             transition={{ duration: 0.8 }}
             className="text-center mb-8"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
               Find Your Perfect
               <span className="block bg-gradient-to-r from-[#FF4C39] to-[#FFB573] bg-clip-text text-transparent">
                 Team Experience
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
               Discover 350+ team building activities, premium venues, and amazing destinations with our AI-powered search. 
               Get instant recommendations tailored to your team's needs.
             </p>
@@ -108,22 +108,22 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-4 mb-12"
+            className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4"
           >
-            <button className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20">
-              <FiTrendingUp className="mr-2" />
+            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
+              <FiTrendingUp className="mr-2 text-sm" />
               Popular Activities
-              <FiArrowRight className="ml-2" />
+              <FiArrowRight className="ml-2 text-sm" />
             </button>
-            <button className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20">
-              <FiUsers className="mr-2" />
+            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
+              <FiUsers className="mr-2 text-sm" />
               Premium Venues
-              <FiArrowRight className="ml-2" />
+              <FiArrowRight className="ml-2 text-sm" />
             </button>
-            <button className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20">
-              <FiStar className="mr-2" />
+            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
+              <FiStar className="mr-2 text-sm" />
               Top Destinations
-              <FiArrowRight className="ml-2" />
+              <FiArrowRight className="ml-2 text-sm" />
             </button>
           </motion.div>
 
@@ -132,9 +132,9 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center text-white/80"
+            className="text-center text-white/80 px-4"
           >
-            <div className="flex items-center justify-center space-x-8 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm">
               <div className="flex items-center">
                 <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
                 <span>Instant Recommendations</span>

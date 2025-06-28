@@ -179,7 +179,7 @@ const AISearchWidget: React.FC = () => {
   }, [isExpanded]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-0">
       {/* Search Input */}
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -190,60 +190,66 @@ const AISearchWidget: React.FC = () => {
         <div className="relative group">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
           <div className="relative bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
-            <div className="flex items-center p-4">
-              <div className="flex-shrink-0 mr-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center">
-                  <FiSearch className="text-white text-xl" />
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  onFocus={() => setIsExpanded(true)}
-                  placeholder="Ask me about activities, venues, destinations, blogs & more..."
-                  className="w-full text-lg text-gray-800 placeholder-gray-500 bg-transparent border-none outline-none"
-                />
-                <div className="flex items-center justify-between text-sm text-gray-500 mt-1">
-                  <div className="flex items-center">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 font-medium mr-3">
-                      <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                      AI-Enhanced
-                    </span>
-                    <span>Intelligent search across all content</span>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center p-3 sm:p-4 gap-3 sm:gap-0">
+              <div className="flex items-center flex-1">
+                <div className="flex-shrink-0 mr-3 sm:mr-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center">
+                    <FiSearch className="text-white text-lg sm:text-xl" />
                   </div>
-                  
-                  {/* New Tab Toggle */}
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={openInNewTab}
-                      onChange={(e) => setOpenInNewTab(e.target.checked)}
-                      className="sr-only"
-                    />
-                    <div className={`relative inline-flex items-center h-5 rounded-full w-9 transition-colors ${openInNewTab ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                      <span className={`inline-block w-3 h-3 transform bg-white rounded-full transition-transform ${openInNewTab ? 'translate-x-5' : 'translate-x-1'}`} />
-                    </div>
-                    <span className="ml-2 text-xs">Open in new tab</span>
-                  </label>
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    onFocus={() => setIsExpanded(true)}
+                    placeholder="Ask me about activities, venues..."
+                    className="w-full text-base sm:text-lg text-gray-800 placeholder-gray-500 bg-transparent border-none outline-none"
+                  />
                 </div>
               </div>
               
               <button
                 onClick={handleSearch}
                 disabled={!query.trim() || isSearching}
-                className="flex-shrink-0 ml-4 w-12 h-12 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 sm:ml-4 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSearching ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  <FiSend className="text-lg" />
+                  <FiSend className="text-base sm:text-lg" />
                 )}
               </button>
+            </div>
+            
+            {/* Mobile-optimized secondary info */}
+            <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-500 gap-2 sm:gap-0">
+                <div className="flex items-center flex-wrap gap-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 font-medium text-xs">
+                    <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                    AI-Enhanced
+                  </span>
+                  <span className="hidden sm:inline">Intelligent search across all content</span>
+                </div>
+                
+                {/* New Tab Toggle */}
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={openInNewTab}
+                    onChange={(e) => setOpenInNewTab(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`relative inline-flex items-center h-4 sm:h-5 rounded-full w-7 sm:w-9 transition-colors ${openInNewTab ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                    <span className={`inline-block w-2.5 h-2.5 sm:w-3 sm:h-3 transform bg-white rounded-full transition-transform ${openInNewTab ? 'translate-x-3.5 sm:translate-x-5' : 'translate-x-0.5 sm:translate-x-1'}`} />
+                  </div>
+                  <span className="ml-2 text-xs">New tab</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -264,15 +270,15 @@ const AISearchWidget: React.FC = () => {
                 <FiTrendingUp className="text-blue-500 mr-2" />
                 <h3 className="text-sm font-semibold text-gray-700">Popular Searches</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {popularQueries.map((suggestion, index) => (
+              <div className="grid grid-cols-1 gap-2">
+                {popularQueries.slice(0, 4).map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="text-left p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 text-gray-700 hover:text-blue-600 flex items-center group"
+                    className="text-left p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 text-gray-700 hover:text-blue-600 flex items-start group"
                   >
-                    <FiArrowRight className="mr-3 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0" />
-                    <span className="text-sm">{suggestion}</span>
+                    <FiArrowRight className="mr-3 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0 mt-0.5" />
+                    <span className="text-sm leading-relaxed">{suggestion}</span>
                   </button>
                 ))}
               </div>
@@ -410,7 +416,7 @@ const AISearchWidget: React.FC = () => {
                 {/* Enhanced Results Grid */}
                 {getDisplayItems().length > 0 && (
                   <div className="mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {getDisplayItems().slice(0, 9).map((item, index) => (
                         <motion.div
                           key={`${item.type}-${item.id}`}
