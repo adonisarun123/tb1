@@ -152,28 +152,55 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
         </ContentContainer>
 
         {/* Enhanced Stats Section */}
-        <StatsContainer 
-          variants={staggerChildren} 
-          initial="hidden" 
-          animate={inView ? "visible" : "hidden"}
+        <div className="hidden lg:block">
+          <StatsContainer 
+            variants={staggerChildren} 
+            initial="hidden" 
+            animate={inView ? "visible" : "hidden"}
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.9 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
+                <StatNumber className="text-white">{stat.number}</StatNumber>
+                <StatLabel className="text-white/80">{stat.label}</StatLabel>
+              </motion.div>
+            ))}
+          </StatsContainer>
+        </div>
+        
+        {/* Mobile/Tablet Stats Section - Normal Flow */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="block lg:hidden mt-8 sm:mt-12 px-4 space-y-3 sm:space-y-4"
         >
           {stats.map((stat, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.9 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 + (index * 0.1) }}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 text-center max-w-sm mx-auto"
             >
-              <StatNumber className="text-white">{stat.number}</StatNumber>
-              <StatLabel className="text-white/80">{stat.label}</StatLabel>
+              <div className="text-2xl sm:text-3xl font-bold text-white mb-2 font-outfit">
+                {stat.number}
+              </div>
+              <div className="text-sm sm:text-base text-white/80 font-outfit font-medium leading-tight">
+                {stat.label}
+              </div>
             </motion.div>
           ))}
-        </StatsContainer>
+        </motion.div>
       </HeroContainer>
       
       {/* Smooth transition to next section */}
-      <div className="h-[120px] bg-gradient-to-b from-transparent to-white" />
+      <div className="h-[120px] sm:h-[120px] bg-gradient-to-b from-transparent to-white" />
     </div>
   );
 };

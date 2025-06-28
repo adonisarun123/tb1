@@ -12,13 +12,16 @@ export const HeroContainer = styled.div`
   overflow: visible;
   padding: 80px 20px 120px;
   
-  @media (max-width: 768px) {
-    padding: 40px 16px 140px;
-    min-height: 100vh;
+  @media (max-width: 1023px) {
+    padding: 40px 16px 40px;
+    min-height: auto;
+    justify-content: flex-start;
+    padding-top: 60px;
   }
   
   @media (max-width: 480px) {
-    padding: 20px 12px 120px;
+    padding: 20px 12px 40px;
+    padding-top: 40px;
   }
 `;
 
@@ -44,20 +47,8 @@ export const StatsContainer = styled(motion.div)`
   padding: 0 20px;
   max-width: 1200px;
   
-  @media (max-width: 768px) {
-    transform: translate(-50%, 15%);
-    gap: 8px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 0 16px;
-  }
-
-  @media (max-width: 480px) {
-    transform: translate(-50%, 10%);
-    gap: 6px;
-    padding: 0 12px;
-    flex-direction: column;
+  @media (max-width: 1023px) {
+    display: none;
   }
 `;
 
