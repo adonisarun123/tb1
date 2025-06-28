@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --port 5173",
-    "build": "tsc && vite build && npm run generate-sitemap && npm run analyze-bundle",
+    "build": "tsc && vite build && npm run generate-sitemap",
     "build-only": "tsc && vite build",
     "build-prod": "NODE_ENV=production tsc && vite build --mode production && npm run generate-sitemap",
+    "build-with-analysis": "tsc && vite build && npm run generate-sitemap && npm run analyze-bundle",
     "generate-sitemap": "tsx scripts/generateSitemap.ts",
     "embed-activities": "tsx scripts/embedActivities.ts",
     "create-pinecone-index": "tsx scripts/createPineconeIndex.ts",
