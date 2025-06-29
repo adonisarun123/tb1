@@ -11,7 +11,6 @@ const ActivitiesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedGroupSize, setSelectedGroupSize] = useState('');
-  const [viewMode, setViewMode] = useState<'categories' | 'grid'>('categories');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   // Define size ranges for better UX
@@ -231,8 +230,13 @@ const ActivitiesPage: React.FC = () => {
 
 
 
-  // Get unique activity types for filter
-  const activityTypes = [...new Set(activities.map(a => a.activity_type).filter(Boolean))];
+  // Simplified activity types for filter
+  const activityTypes = [
+    'Virtual',
+    'Indoor / Outdoor Activities', 
+    'Outbound',
+    'Team Building'
+  ];
 
   const handleActivityClick = (activity: any) => {
     if (activity.slug) {
@@ -370,53 +374,7 @@ const ActivitiesPage: React.FC = () => {
     </div>
   );
 
-  const renderGridActivityCard = (activity: any, _index: number) => (
-    <div 
-      key={activity.id} 
-      onClick={() => handleActivityClick(activity)}
-      className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-gray-100"
-    >
-      {/* Image */}
-      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-        <img 
-          src={getActivityImage(activity)}
-          alt={getImageAltText(activity)}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          loading="lazy"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
-        <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800">
-            <span className="mr-1 text-sm">{getActivityIcon(activity.activity_type)}</span>
-            {activity.activity_type || 'Activity'}
-          </span>
-        </div>
-      </div>
 
-      {/* Content */}
-      <div className="p-5 space-y-3">
-        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
-          {activity.name}
-        </h3>
-        <p className="text-gray-600 line-clamp-2 text-sm">
-          {activity.tagline || activity.description}
-        </p>
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-          <span className="text-sm font-medium text-gray-700">
-            👥 {activity.group_size || 'Any Size'}
-          </span>
-          <span className="text-emerald-600 group-hover:translate-x-1 transition-transform duration-300">
-            →
-          </span>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <>
@@ -444,16 +402,31 @@ const ActivitiesPage: React.FC = () => {
               </p>
 
               {/* Search and Filters */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                  <div className="md:col-span-2">
-                    <input
-                      type="text"
-                      placeholder="Search activities..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+              <div className="bg-white rounded-2xl shadow-lg p-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="md:col-span-2 relative">
+                    <div className="flex">
+                      <input
+                        type="text"
+                        placeholder="Search activities..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="flex-1 p-3 border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            // Search functionality is handled by the onChange above
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          // Search functionality is handled by the state
+                        }}
+                        className="bg-gradient-to-r from-[#FF4C39] to-[#FFB573] text-white px-6 py-3 rounded-r-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      >
+                        🔍
+                      </button>
+                    </div>
                   </div>
                   
                   <div>
@@ -479,17 +452,6 @@ const ActivitiesPage: React.FC = () => {
                       {sizeRanges.map(range => (
                         <option key={range.value} value={range.value}>{range.label}</option>
                       ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <select
-                      value={viewMode}
-                      onChange={(e) => setViewMode(e.target.value as 'categories' | 'grid')}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="categories">By Categories</option>
-                      <option value="grid">All Activities</option>
                     </select>
                   </div>
                 </div>
@@ -527,32 +489,10 @@ const ActivitiesPage: React.FC = () => {
             ) : (
               <>
                 {/* Results count */}
-                <div className="mb-8 flex justify-between items-center">
+                <div className="mb-8">
                   <p className="text-gray-600">
                     Showing {filteredActivities.length} of {activities.length} activities
                   </p>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setViewMode('categories')}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        viewMode === 'categories' 
-                          ? 'bg-[#FF4C39] text-white' 
-                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      📂 Categories
-                    </button>
-                    <button 
-                      onClick={() => setViewMode('grid')}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        viewMode === 'grid' 
-                          ? 'bg-[#FF4C39] text-white' 
-                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      ⊞ All Activities
-                    </button>
-                  </div>
                 </div>
 
                 {filteredActivities.length === 0 ? (
@@ -573,7 +513,7 @@ const ActivitiesPage: React.FC = () => {
                       Clear all filters
                     </button>
                   </div>
-                ) : viewMode === 'categories' ? (
+                ) : (
                   // Accordion Categories View
                   <div className="space-y-6">
                     {Object.entries(categorizedActivities).map(([category, categoryActivities], categoryIndex) => (
@@ -626,13 +566,6 @@ const ActivitiesPage: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
-                ) : (
-                  // Grid View
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredActivities.map((activity, index) => 
-                      renderGridActivityCard(activity, index)
-                    )}
                   </div>
                 )}
               </>
