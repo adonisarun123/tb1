@@ -3,7 +3,13 @@
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string
   readonly VITE_SUPABASE_ANON_KEY: string
+  readonly VITE_N8N_WEBHOOK_URL: string
   readonly VITE_OPENAI_API_KEY: string
+  readonly VITE_PINECONE_API_KEY: string
+  readonly VITE_PINECONE_ENVIRONMENT: string
+  readonly VITE_PINECONE_INDEX_NAME: string
+  readonly PIPEDRIVE_API_TOKEN: string
+  readonly PIPEDRIVE_COMPANY_DOMAIN: string
 }
 
 interface ImportMeta {

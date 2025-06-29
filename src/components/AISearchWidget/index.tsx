@@ -4,7 +4,11 @@ import { FiSearch, FiSend, FiX, FiArrowRight, FiStar, FiUsers, FiMapPin, FiHome,
 import { searchAll, SearchResult, SearchResultItem } from '../../api/search';
 import { useNavigate } from 'react-router-dom';
 
-const AISearchWidget: React.FC = () => {
+interface AISearchWidgetProps {
+  onSearchQueryChange?: (query: string) => void;
+}
+
+const AISearchWidget: React.FC<AISearchWidgetProps> = ({ onSearchQueryChange }) => {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -62,6 +66,8 @@ const AISearchWidget: React.FC = () => {
         if (finalTranscript.trim()) {
           setQuery(finalTranscript.trim());
           setIsExpanded(true);
+          // Call the onSearchQueryChange callback
+          onSearchQueryChange?.(finalTranscript.trim());
         }
       };
 
@@ -82,7 +88,7 @@ const AISearchWidget: React.FC = () => {
 
       recognitionRef.current = recognition;
     }
-  }, [query]);
+  }, [query, onSearchQueryChange]);
 
   const startVoiceSearch = () => {
     if (!isVoiceSupported || !recognitionRef.current) {
@@ -113,6 +119,9 @@ const AISearchWidget: React.FC = () => {
       const searchResults = await searchAll(query);
       setResults(searchResults);
       setActiveTab('all'); // Reset to show all results
+      
+      // Call the onSearchQueryChange callback when search is performed
+      onSearchQueryChange?.(query);
     } catch (error) {
       console.error('Search failed:', error);
       setResults({
@@ -128,6 +137,15 @@ const AISearchWidget: React.FC = () => {
       });
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  // Update search query when input changes
+  const handleQueryChange = (newQuery: string) => {
+    setQuery(newQuery);
+    // Debounce the callback to avoid too frequent updates
+    if (newQuery.trim().length > 3) {
+      onSearchQueryChange?.(newQuery.trim());
     }
   };
 
@@ -165,6 +183,7 @@ const AISearchWidget: React.FC = () => {
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion);
     setIsExpanded(true);
+    onSearchQueryChange?.(suggestion);
     setTimeout(() => {
       handleSearch();
     }, 100);
@@ -279,7 +298,7 @@ const AISearchWidget: React.FC = () => {
                     ref={inputRef}
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => handleQueryChange(e.target.value)}
                     onKeyPress={handleKeyPress}
                     onFocus={() => setIsExpanded(true)}
                     placeholder="Ask me about activities, venues... or click the mic to speak"
@@ -596,9 +615,92 @@ const AISearchWidget: React.FC = () => {
                       <FiSearch className="w-8 h-8 text-gray-400" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
-                    <p className="text-gray-600">Try adjusting your search terms or browse our popular categories above.</p>
+                    <p className="text-gray-600 mb-6">Try adjusting your search terms or browse our popular categories above.</p>
+                    
+                    {/* Enhanced CTA for No Results */}
+                    <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-100 max-w-lg mx-auto">
+                      <div className="flex justify-center mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                          <FiBriefcase className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Let us help you find the perfect activity!</h4>
+                      <p className="text-sm text-gray-600 mb-4">Our experts can recommend activities based on your specific requirements.</p>
+                      <button
+                        onClick={() => {
+                          const contactSection = document.getElementById('contact-section');
+                          if (contactSection) {
+                            contactSection.scrollIntoView({ behavior: 'smooth' });
+                          } else {
+                            navigate('/contact');
+                          }
+                        }}
+                        className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg font-medium text-sm hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                      >
+                        <span>Get Personalized Help</span>
+                        <FiArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 )}
+
+                {/* Smart Consultation CTA */}
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                  <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-blue-50 rounded-2xl p-6 border border-blue-100">
+                    <div className="text-center max-w-2xl mx-auto">
+                      <div className="flex justify-center mb-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                          <FiBriefcase className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        Need Personalized Recommendations?
+                      </h3>
+                      
+                      <p className="text-gray-600 mb-4 leading-relaxed">
+                        Can't find exactly what you're looking for? Our team building experts will create a custom experience tailored to your team's needs, budget, and goals.
+                      </p>
+                      
+                      <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Free Consultation</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Custom Solutions</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Expert Guidance</span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => {
+                          // Navigate to consultation form or scroll to contact section
+                          const contactSection = document.getElementById('contact-section');
+                          if (contactSection) {
+                            contactSection.scrollIntoView({ behavior: 'smooth' });
+                          } else {
+                            // If no contact section, navigate to contact page
+                            navigate('/contact');
+                          }
+                        }}
+                        className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-base hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        <FiBriefcase className="w-5 h-5" />
+                        <span>Get Smart Consultation</span>
+                        <FiArrowRight className="w-5 h-5" />
+                      </button>
+                      
+                      <p className="text-xs text-gray-500 mt-3">
+                        🚀 Usually responds within 2 hours • 350+ successful team experiences
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

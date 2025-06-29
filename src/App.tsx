@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { useState } from 'react';
 import Navbar from './components/Navbar';
 import GradientHero from './components/GradientHero';
 import FeaturedActivities from './components/FeaturedActivities';
@@ -12,6 +13,9 @@ import AIRecommendations from './components/AIRecommendations';
 import SmartForm from './components/SmartForm';
 
 function App() {
+  // State to manage search query for AI recommendations
+  const [currentSearchQuery, setCurrentSearchQuery] = useState<string>('');
+
   return (
     <>
       <Helmet>
@@ -30,7 +34,7 @@ function App() {
         
         {/* Voice Search Integration - Removed floating component, now integrated in search widget */}
         
-        <GradientHero />
+        <GradientHero onSearchQueryChange={setCurrentSearchQuery} />
         
         {/* AI Recommendations Section */}
         <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -46,7 +50,7 @@ function App() {
                 Our AI analyzes your team's preferences and needs to suggest the perfect activities
               </p>
             </div>
-            <AIRecommendations />
+            <AIRecommendations searchQuery={currentSearchQuery} />
           </div>
         </section>
         

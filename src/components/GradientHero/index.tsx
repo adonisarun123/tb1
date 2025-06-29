@@ -14,12 +14,13 @@ import { staggerChildren } from './animations';
 
 interface GradientHeroProps {
   className?: string;
+  onSearchQueryChange?: (query: string) => void;
 }
 
 // Hero image - custom image from public folder
 const heroImageUrl = "/hero.webp";
 
-const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
+const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryChange }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [ref, inView] = useInView({
     threshold: 0.15,
@@ -100,7 +101,7 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className }) => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-12"
           >
-            <AISearchWidget />
+            <AISearchWidget onSearchQueryChange={onSearchQueryChange} />
           </motion.div>
 
           {/* Quick Action CTAs */}

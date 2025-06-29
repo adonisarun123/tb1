@@ -1,6 +1,4 @@
-// Temporarily commented out to fix compilation
-// import OpenAI from 'openai';
-// import { openai } from './openaiClient';
+import { generateAIResponse, generateRecommendations, generateCompanyInfo, isOpenAIConfigured } from './openaiClient';
 
 // Types for AI services
 export interface UserProfile {
@@ -50,28 +48,27 @@ export interface SEOOptimization {
 export class AIChatbotService {
   private conversationHistory: ChatMessage[] = [];
 
-  async processMessage(message: string, _userProfile?: UserProfile): Promise<ChatMessage> {
+  async processMessage(message: string, userProfile?: UserProfile): Promise<ChatMessage> {
     try {
-      // const _systemPrompt = this.buildSystemPrompt(userProfile);
-      // const _contextMessages = this.getRecentContext();
-
-      // Temporarily mock OpenAI response to fix compilation
-      const response = {
-        choices: [{
-          message: {
-            content: `Thank you for your message: "${message}". I'm here to help you find the perfect team building activities! I can assist with recommendations, pricing, and booking questions.`
-          }
-        }]
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        content: message,
+        timestamp: new Date()
       };
+      this.conversationHistory.push(userMessage);
+
+      const context = this.buildContext(userProfile);
+      const aiResponseContent = await generateAIResponse(message, context);
 
       const aiMessage: ChatMessage = {
-        id: Date.now().toString(),
+        id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: response.choices[0].message.content || 'I apologize, but I encountered an issue. Please try again.',
+        content: aiResponseContent,
         timestamp: new Date(),
         metadata: {
           intent: this.extractIntent(message),
-          confidence: 0.8
+          confidence: isOpenAIConfigured ? 0.9 : 0.6
         }
       };
 
@@ -88,15 +85,28 @@ export class AIChatbotService {
     }
   }
 
-  // private buildSystemPrompt(userProfile?: UserProfile): string {
-  //   // Implementation for future use
-  //   return 'System prompt placeholder';
-  // }
+  private buildContext(userProfile?: UserProfile): string {
+    let context = 'Trebound offers 350+ unique team building activities including virtual experiences, outdoor adventures, and corporate training programs.';
+    
+    if (userProfile) {
+      context += ` User context: Company size: ${userProfile.companySize}, Industry: ${userProfile.industry}, Location: ${userProfile.location}`;
+      
+      if (userProfile.preferences.length > 0) {
+        context += `, Preferences: ${userProfile.preferences.join(', ')}`;
+      }
+    }
 
-  // private getRecentContext(): any[] {
-  //   // Implementation for future use
-  //   return [];
-  // }
+    // Add recent conversation context
+    const recentMessages = this.conversationHistory.slice(-6); // Last 3 exchanges
+    if (recentMessages.length > 0) {
+      context += ' Recent conversation: ';
+      recentMessages.forEach(msg => {
+        context += `${msg.type}: ${msg.content.substring(0, 100)}... `;
+      });
+    }
+
+    return context;
+  }
 
   private extractIntent(message: string): string {
     const intents = {
@@ -122,38 +132,64 @@ export class AIChatbotService {
 // AI Recommendation Engine
 export class AIRecommendationEngine {
   async getPersonalizedRecommendations(
-    _userProfile: UserProfile,
-    _limit: number = 10
+    userProfile: UserProfile,
+    limit: number = 10,
+    activities: any[] = []
   ): Promise<AIRecommendation[]> {
     try {
-      // Commented out unused prompt variable
-      // const _prompt = `Based on the user profile, recommend team building activities...`;
-
-      // Mock response for recommendations
-      const response = {
-        choices: [{
-          message: {
-            content: 'Mock recommendation data'
-          }
-        }]
-      };
-
-      return this.parseRecommendations(response.choices[0].message.content || '');
+      if (isOpenAIConfigured && activities.length > 0) {
+        // Use real OpenAI recommendations
+        const recommendations = await generateRecommendations(userProfile, activities);
+        return recommendations.slice(0, limit);
+      } else {
+        // Fallback to rule-based recommendations
+        return this.getFallbackRecommendations(userProfile, limit);
+      }
     } catch (error) {
       console.error('Recommendation error:', error);
-      return [];
+      return this.getFallbackRecommendations(userProfile, limit);
     }
   }
 
-  private parseRecommendations(_aiResponse: string): AIRecommendation[] {
-    return [
+  private getFallbackRecommendations(userProfile: UserProfile, limit: number): AIRecommendation[] {
+    // Rule-based fallback recommendations
+    const fallbackRecommendations: AIRecommendation[] = [
       {
         activityId: 'virtual-escape-room',
-        confidence: 0.95,
+        confidence: 0.85,
         reason: 'Perfect for remote teams and matches your preference for problem-solving activities',
         personalizationFactors: ['company_size', 'remote_preference', 'engagement_level']
+      },
+      {
+        activityId: 'outdoor-treasure-hunt',
+        confidence: 0.78,
+        reason: 'Great for building teamwork and communication skills',
+        personalizationFactors: ['company_size', 'outdoor_preference']
+      },
+      {
+        activityId: 'cooking-challenge',
+        confidence: 0.72,
+        reason: 'Ideal for creative collaboration and team bonding',
+        personalizationFactors: ['team_bonding', 'creativity']
+      },
+      {
+        activityId: 'innovation-workshop',
+        confidence: 0.68,
+        reason: 'Perfect for tech companies focusing on innovation',
+        personalizationFactors: ['industry', 'company_size']
       }
     ];
+
+    // Filter based on user profile
+    let filteredRecommendations = fallbackRecommendations;
+    
+    if (userProfile.industry === 'technology') {
+      filteredRecommendations = fallbackRecommendations.filter(rec => 
+        rec.activityId === 'virtual-escape-room' || rec.activityId === 'innovation-workshop'
+      );
+    }
+
+    return filteredRecommendations.slice(0, limit);
   }
 }
 
@@ -414,33 +450,29 @@ export class CustomerJourneyService {
 
 // Smart Form Service
 export class SmartFormService {
-  async autoCompleteCompanyData(_companyName: string): Promise<any> {
+  async autoCompleteCompanyData(companyName: string): Promise<any> {
     try {
-      // Commented out unused prompt variable
-      // const _prompt = `Provide company information for: ${companyName}...`;
-
-      // Mock response for smart form
-      const response = {
-        choices: [{
-          message: {
-            content: 'Mock company data'
-          }
-        }]
-      };
-
-      return this.parseCompanyData(response.choices[0].message.content || '');
+      if (isOpenAIConfigured && companyName.trim().length > 2) {
+        // Use real OpenAI for company data
+        const companyInfo = await generateCompanyInfo(companyName);
+        return companyInfo;
+      } else {
+        // Fallback to basic company data
+        return this.getFallbackCompanyData(companyName);
+      }
     } catch (error) {
       console.error('Company data error:', error);
-      return null;
+      return this.getFallbackCompanyData(companyName);
     }
   }
 
-  private parseCompanyData(_aiResponse: string): any {
+  private getFallbackCompanyData(companyName: string): any {
     return {
       industry: 'Technology',
-      estimatedSize: '50-200',
-      preferences: ['tech-focused', 'innovative'],
-      culture: 'modern'
+      size: 'medium',
+      location: 'Bangalore, India',
+      website: `${companyName.toLowerCase().replace(/\s+/g, '')}.com`,
+      description: `A company providing professional services`
     };
   }
 
