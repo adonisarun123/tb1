@@ -179,16 +179,7 @@ const ActivitiesPage: React.FC = () => {
     return colorMap[category] || 'from-gray-50 to-gray-100 border-gray-200';
   };
 
-  const getCategoryAccentColor = (category: string) => {
-    const colorMap: { [key: string]: string } = {
-      'Virtual': 'text-blue-600',
-      'Indoor / Outdoor Activities': 'text-emerald-600',
-      'Outbound': 'text-orange-600',
-      'Team Building': 'text-pink-600',
-      'Other': 'text-gray-600'
-    };
-    return colorMap[category] || 'text-gray-600';
-  };
+
 
   // Get unique activity types for filter
   const activityTypes = [...new Set(activities.map(a => a.activity_type).filter(Boolean))];
@@ -248,7 +239,7 @@ const ActivitiesPage: React.FC = () => {
     return `${activity.name} - Team Building Activity`;
   };
 
-  const renderMaterialActivityCard = (activity: any, index: number, categoryIndex: number) => (
+  const renderMaterialActivityCard = (activity: any, index: number, _categoryIndex: number) => (
     <div 
       key={activity.id} 
       onClick={() => handleActivityClick(activity)}
@@ -339,7 +330,7 @@ const ActivitiesPage: React.FC = () => {
     </div>
   );
 
-  const renderGridActivityCard = (activity: any, index: number) => (
+  const renderGridActivityCard = (activity: any, _index: number) => (
     <div 
       key={activity.id} 
       onClick={() => handleActivityClick(activity)}
