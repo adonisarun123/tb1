@@ -396,58 +396,188 @@ const TeamBuildingGames = () => {
         </div>
       </section>
 
-      {/* New Section: Activity Types */}
-      <section className="py-24 bg-white">
+      {/* Enhanced Material Design Section: Activity Types */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-[#313131] mb-4">Types of Team Building Activities</h2>
-            <p className="text-lg text-[#636363] max-w-3xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-6">
+              🎯 Activity Categories
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Types of Team Building Activities
+            </h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               We offer a diverse range of activities to suit different team sizes, objectives, and preferences.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
-              <h3 className="text-2xl font-semibold text-[#313131] mb-4">Indoor Activities</h3>
-              <p className="text-[#636363] mb-4">
-                Perfect for any weather condition, our indoor activities focus on problem-solving, creativity, and team coordination. These activities can be conducted within your office or at our partner venues.
-              </p>
-              <ul className="text-[#636363] list-disc list-inside">
-                <li>Strategy Games</li>
-                <li>Team Challenges</li>
-                <li>Creative Workshops</li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Indoor Activities Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2"
+            >
+              {/* Material Design Elevation Indicator */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
 
-            <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
-              <h3 className="text-2xl font-semibold text-[#313131] mb-4">Outdoor Adventures</h3>
-              <p className="text-[#636363] mb-4">
-                Take your team outside for exciting adventures that combine physical activity with team building. These activities are designed to push boundaries and build trust.
-              </p>
-              <ul className="text-[#636363] list-disc list-inside">
-                <li>Adventure Sports</li>
-                <li>Nature Challenges</li>
-                <li>Team Olympics</li>
-              </ul>
-            </div>
+              <div className="mt-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-indigo-600 transition-colors duration-300">
+                  Indoor Activities
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Perfect for any weather condition, our indoor activities focus on problem-solving, creativity, and team coordination. These activities can be conducted within your office or at our partner venues.
+                </p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Strategy Games</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Team Challenges</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Creative Workshops</span>
+                  </div>
+                </div>
 
-            <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
-              <h3 className="text-2xl font-semibold text-[#313131] mb-4">Virtual Team Building</h3>
-              <p className="text-[#636363] mb-4">
-                Perfect for remote teams or hybrid workplaces, our virtual activities maintain team spirit across distances.
-              </p>
-              <ul className="text-[#636363] list-disc list-inside">
-                <li>Online Escape Rooms</li>
-                <li>Virtual Team Challenges</li>
-                <li>Digital Collaboration Games</li>
-              </ul>
-            </div>
+                <div className="inline-flex items-center text-indigo-600 font-semibold group-hover:text-indigo-700 transition-colors duration-300">
+                  Learn More
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Outdoor Adventures Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2"
+            >
+              {/* Material Design Elevation Indicator */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+
+              <div className="mt-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors duration-300">
+                  Outdoor Adventures
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Take your team outside for exciting adventures that combine physical activity with team building. These activities are designed to push boundaries and build trust.
+                </p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Adventure Sports</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Nature Challenges</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Team Olympics</span>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors duration-300">
+                  Learn More
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Virtual Team Building Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:-translate-y-2 md:col-span-2 lg:col-span-1"
+            >
+              {/* Material Design Elevation Indicator */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+
+              <div className="mt-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+                  Virtual Team Building
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Perfect for remote teams or hybrid workplaces, our virtual activities maintain team spirit across distances.
+                </p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Online Escape Rooms</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Virtual Team Challenges</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Digital Collaboration Games</span>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center text-blue-600 font-semibold group-hover:text-blue-700 transition-colors duration-300">
+                  Learn More
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
           </div>
+
+          {/* Enhanced Call-to-Action */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-center mt-16"
+          >
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Not sure which type suits your team?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Our experts will help you choose the perfect activities based on your team's unique needs and objectives.
+              </p>
+              <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                Get Expert Consultation
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
