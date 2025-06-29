@@ -240,7 +240,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
 
       // If AI failed or returned insufficient results, use top items from actual data
       if (processedRecommendations.length < 4) {
-        const fallbackRecommendations = generateFallbackFromRealData(searchQuery, userProfile);
+        const fallbackRecommendations = generateFallbackFromRealData(searchQuery);
         setRecommendations([...processedRecommendations, ...fallbackRecommendations].slice(0, limit));
       } else {
         setRecommendations(processedRecommendations.slice(0, limit));
@@ -249,14 +249,14 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
     } catch (error) {
       console.error('Error generating AI recommendations:', error);
       // Use fallback recommendations from real data
-      const fallbackRecommendations = generateFallbackFromRealData(searchQuery, userProfile);
+      const fallbackRecommendations = generateFallbackFromRealData(searchQuery);
       setRecommendations(fallbackRecommendations);
     }
     
     setLoading(false);
   };
 
-  const generateFallbackFromRealData = (query?: string, profile?: UserProfile): AIRecommendation[] => {
+  const generateFallbackFromRealData = (query?: string): AIRecommendation[] => {
     const queryLower = query?.toLowerCase() || '';
     let selectedItems: AIRecommendation[] = [];
 
