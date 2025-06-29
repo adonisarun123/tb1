@@ -22,11 +22,53 @@ const ActivitiesPage: React.FC = () => {
     { label: 'Extra Large (50+)', value: 'xlarge', min: 51, max: 1000 }
   ];
 
-  // Helper function to extract number from group size string
-  const extractGroupSizeNumber = (groupSize: string): number => {
-    if (!groupSize) return 0;
-    const match = groupSize.match(/\d+/);
-    return match ? parseInt(match[0]) : 0;
+  // Enhanced function to extract group size info from various string formats
+  const parseGroupSize = (groupSize: string): { min: number; max: number } => {
+    if (!groupSize) return { min: 0, max: 0 };
+    
+    const sizeStr = groupSize.toLowerCase().trim();
+    
+    // Handle specific text-based sizes
+    if (sizeStr.includes('small') || sizeStr.includes('3-8') || sizeStr.includes('4-8')) {
+      return { min: 3, max: 8 };
+    }
+    if (sizeStr.includes('medium') || sizeStr.includes('8-15')) {
+      return { min: 8, max: 15 };
+    }
+    if (sizeStr.includes('large') || sizeStr.includes('15-30')) {
+      return { min: 15, max: 30 };
+    }
+    if (sizeStr.includes('any size') || sizeStr.includes('unlimited') || sizeStr.includes('flexible')) {
+      return { min: 1, max: 1000 };
+    }
+    
+    // Extract numbers from the string
+    const numbers = sizeStr.match(/\d+/g);
+    if (!numbers) return { min: 0, max: 0 };
+    
+    const nums = numbers.map(n => parseInt(n));
+    
+    // Handle range formats like "10-20", "5 to 15", etc.
+    if (nums.length >= 2) {
+      return { min: Math.min(...nums), max: Math.max(...nums) };
+    }
+    
+    // Handle single number formats
+    if (nums.length === 1) {
+      const num = nums[0];
+      // If it says "up to X" or similar, treat as 1 to X
+      if (sizeStr.includes('up to') || sizeStr.includes('maximum') || sizeStr.includes('max')) {
+        return { min: 1, max: num };
+      }
+      // If it says "minimum" or "at least", treat as X to unlimited
+      if (sizeStr.includes('minimum') || sizeStr.includes('min') || sizeStr.includes('at least')) {
+        return { min: num, max: 1000 };
+      }
+      // For exact numbers, give some flexibility (±2)
+      return { min: Math.max(1, num - 2), max: num + 10 };
+    }
+    
+    return { min: 0, max: 0 };
   };
 
   // Helper function to check if activity matches selected size range
@@ -36,10 +78,18 @@ const ActivitiesPage: React.FC = () => {
     const sizeRange = sizeRanges.find(range => range.value === selectedSize);
     if (!sizeRange) return true;
     
-    const activitySize = extractGroupSizeNumber(activity.group_size);
-    if (activitySize === 0) return true; // Include activities without size info
+    const activitySizeRange = parseGroupSize(activity.group_size);
     
-    return activitySize >= sizeRange.min && activitySize <= sizeRange.max;
+    // If we couldn't parse the activity size, include it in all ranges
+    if (activitySizeRange.min === 0 && activitySizeRange.max === 0) return true;
+    
+    // Check if there's any overlap between the activity size range and selected range
+    const hasOverlap = (
+      activitySizeRange.min <= sizeRange.max && 
+      activitySizeRange.max >= sizeRange.min
+    );
+    
+    return hasOverlap;
   };
 
   // Filter activities based on search and filters
@@ -194,16 +244,6 @@ const ActivitiesPage: React.FC = () => {
 
   // Get activity image with fallback
   const getActivityImage = (activity: any) => {
-    // Debug: Log activity image data (remove this in production)
-    if (activity.id === activities[0]?.id) {
-      console.log('Activity image data:', {
-        name: activity.name,
-        main_image: activity.main_image,
-        featured_image: activity.featured_image,
-        image_url: activity.image_url,
-        images: activity.images
-      });
-    }
 
     // Priority order for image sources from database
     if (activity.main_image && activity.main_image.trim()) {
