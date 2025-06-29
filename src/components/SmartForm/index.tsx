@@ -1,21 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiHome, 
   FiUsers, 
-  FiMapPin, 
-  FiCalendar, 
-  FiClock,
-  FiDollarSign,
   FiZap,
   FiCheck,
   FiAlertCircle,
   FiLoader,
   FiSend,
-  FiPhone,
-  FiMail,
-  FiUser,
-  FiTarget,
   FiTrendingUp
 } from 'react-icons/fi';
 
@@ -80,7 +72,7 @@ const SmartForm: React.FC = () => {
     suggestions: []
   });
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const industries = [

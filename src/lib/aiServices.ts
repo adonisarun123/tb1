@@ -50,10 +50,10 @@ export interface SEOOptimization {
 export class AIChatbotService {
   private conversationHistory: ChatMessage[] = [];
 
-  async processMessage(message: string, userProfile?: UserProfile): Promise<ChatMessage> {
+  async processMessage(message: string, _userProfile?: UserProfile): Promise<ChatMessage> {
     try {
-      const systemPrompt = this.buildSystemPrompt(userProfile);
-      const contextMessages = this.getRecentContext();
+      // const _systemPrompt = this.buildSystemPrompt(userProfile);
+      // const _contextMessages = this.getRecentContext();
 
       // Temporarily mock OpenAI response to fix compilation
       const response = {
@@ -88,47 +88,15 @@ export class AIChatbotService {
     }
   }
 
-  private buildSystemPrompt(userProfile?: UserProfile): string {
-    const basePrompt = `You are Trebound's AI assistant, helping users find perfect team building experiences. You're knowledgeable, friendly, and solution-oriented.
+  // private buildSystemPrompt(userProfile?: UserProfile): string {
+  //   // Implementation for future use
+  //   return 'System prompt placeholder';
+  // }
 
-Key capabilities:
-- Recommend activities from 350+ unique experiences
-- Help with booking inquiries and availability
-- Provide venue and destination information
-- Assist with pricing and group planning
-- Handle company-specific requirements
-
-Guidelines:
-- Be conversational and enthusiastic about team building
-- Ask clarifying questions when needed
-- Provide specific recommendations with reasons
-- Mention relevant details (group size, location, budget)
-- Escalate complex bookings to human agents
-- Keep responses concise but informative`;
-
-    if (userProfile) {
-      return `${basePrompt}
-
-User Context:
-- Company Size: ${userProfile.companySize}
-- Industry: ${userProfile.industry}
-- Location: ${userProfile.location}
-- Previous Interests: ${userProfile.preferences.join(', ')}
-
-Personalize your responses based on this context.`;
-    }
-
-    return basePrompt;
-  }
-
-  private getRecentContext(): any[] {
-    return this.conversationHistory
-      .slice(-6)
-      .map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      }));
-  }
+  // private getRecentContext(): any[] {
+  //   // Implementation for future use
+  //   return [];
+  // }
 
   private extractIntent(message: string): string {
     const intents = {
@@ -154,19 +122,12 @@ Personalize your responses based on this context.`;
 // AI Recommendation Engine
 export class AIRecommendationEngine {
   async getPersonalizedRecommendations(
-    userProfile: UserProfile,
-    limit: number = 10
+    _userProfile: UserProfile,
+    _limit: number = 10
   ): Promise<AIRecommendation[]> {
     try {
-      const prompt = `Based on the user profile, recommend team building activities:
-      
-Company Size: ${userProfile.companySize}
-Industry: ${userProfile.industry}
-Location: ${userProfile.location}
-Preferences: ${userProfile.preferences.join(', ')}
-Browsing History: ${userProfile.browsingHistory.slice(-5).join(', ')}
-
-Provide ${limit} personalized recommendations with confidence scores and reasoning.`;
+      // Commented out unused prompt variable
+      // const _prompt = `Based on the user profile, recommend team building activities...`;
 
       // Mock response for recommendations
       const response = {
@@ -184,7 +145,7 @@ Provide ${limit} personalized recommendations with confidence scores and reasoni
     }
   }
 
-  private parseRecommendations(aiResponse: string): AIRecommendation[] {
+  private parseRecommendations(_aiResponse: string): AIRecommendation[] {
     return [
       {
         activityId: 'virtual-escape-room',
@@ -198,16 +159,10 @@ Provide ${limit} personalized recommendations with confidence scores and reasoni
 
 // AI Personalization Service
 export class AIPersonalizationService {
-  async getPersonalizedContent(userProfile: UserProfile, pageType: string): Promise<any> {
+  async getPersonalizedContent(_userProfile: UserProfile, _pageType: string): Promise<any> {
     try {
-      const prompt = `Generate personalized content for a ${pageType} page based on user profile:
-      
-Company Size: ${userProfile.companySize}
-Industry: ${userProfile.industry}
-Location: ${userProfile.location}
-Preferences: ${userProfile.preferences.join(', ')}
-
-Provide personalized hero text, activity highlights, and CTAs.`;
+      // Commented out unused prompt variable
+      // const _prompt = `Generate personalized content for a ${pageType} page...`;
 
       // Mock response for personalization
       const response = {
@@ -225,7 +180,7 @@ Provide personalized hero text, activity highlights, and CTAs.`;
     }
   }
 
-  private parsePersonalizedContent(aiResponse: string): any {
+  private parsePersonalizedContent(_aiResponse: string): any {
     return {
       heroText: "Discover team building experiences tailored for your industry",
       highlights: [],
@@ -235,7 +190,7 @@ Provide personalized hero text, activity highlights, and CTAs.`;
   }
 
   async generateDynamicPricing(
-    activityId: string,
+    _activityId: string,
     groupSize: number,
     date: Date,
     demand: number
@@ -258,21 +213,13 @@ Provide personalized hero text, activity highlights, and CTAs.`;
 // AI SEO Optimization Service
 export class AISEOService {
   async generateSEOContent(
-    pageType: string,
-    content: string,
-    keywords: string[]
+    _pageType: string,
+    _content: string,
+    _keywords: string[]
   ): Promise<SEOOptimization> {
     try {
-      const prompt = `Generate SEO-optimized content for a ${pageType} page:
-
-Content: ${content.substring(0, 500)}...
-Target Keywords: ${keywords.join(', ')}
-
-Provide:
-1. SEO-optimized title (max 60 chars)
-2. Meta description (max 160 chars)
-3. Additional keywords
-4. Schema markup structure`;
+      // Commented out unused prompt variable
+      // const _prompt = `Generate SEO-optimized content for a ${pageType} page...`;
 
       // Mock response for SEO
       const response = {
@@ -295,7 +242,7 @@ Provide:
     }
   }
 
-  private parseSEOContent(aiResponse: string): SEOOptimization {
+  private parseSEOContent(_aiResponse: string): SEOOptimization {
     return {
       title: 'AI-Generated SEO Title',
       metaDescription: 'AI-generated meta description optimized for search engines.',
@@ -307,7 +254,7 @@ Provide:
     };
   }
 
-  async generateImageAltText(imageUrl: string, context: string): Promise<string> {
+  async generateImageAltText(_imageUrl: string, context: string): Promise<string> {
     return `Team building activity - ${context}`;
   }
 }
@@ -440,11 +387,11 @@ export class CustomerJourneyService {
     return nextActionMap[lastAction] || 'engage';
   }
 
-  private identifyBottlenecks(journey: any[]): string[] {
+  private identifyBottlenecks(_journey: any[]): string[] {
     return ['form_complexity', 'pricing_clarity', 'contact_friction'];
   }
 
-  private generateJourneyRecommendations(journey: any[]): string[] {
+  private generateJourneyRecommendations(_journey: any[]): string[] {
     return [
       'Show relevant testimonials',
       'Offer live chat support',
@@ -467,15 +414,10 @@ export class CustomerJourneyService {
 
 // Smart Form Service
 export class SmartFormService {
-  async autoCompleteCompanyData(companyName: string): Promise<any> {
+  async autoCompleteCompanyData(_companyName: string): Promise<any> {
     try {
-      const prompt = `Provide company information for: ${companyName}
-      
-Include:
-1. Industry
-2. Estimated employee count
-3. Likely team building preferences
-4. Corporate culture type`;
+      // Commented out unused prompt variable
+      // const _prompt = `Provide company information for: ${companyName}...`;
 
       // Mock response for smart form
       const response = {
@@ -493,7 +435,7 @@ Include:
     }
   }
 
-  private parseCompanyData(aiResponse: string): any {
+  private parseCompanyData(_aiResponse: string): any {
     return {
       industry: 'Technology',
       estimatedSize: '50-200',
@@ -502,7 +444,7 @@ Include:
     };
   }
 
-  async predictFormCompletion(formData: any): Promise<any> {
+  async predictFormCompletion(_formData: any): Promise<any> {
     return {
       completionProbability: 0.8,
       suggestions: ['Reduce form fields', 'Add progress indicator'],

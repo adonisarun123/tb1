@@ -2,12 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiStar, 
-  FiUsers, 
-  FiMapPin, 
-  FiClock, 
   FiTrendingUp, 
   FiHeart,
-  FiExternalLink,
   FiRefreshCw,
   FiTarget,
   FiLayers,
@@ -50,7 +46,7 @@ const AIRecommendations: React.FC<AIRecommendationsProps> = ({
   userProfile,
   currentActivityId,
   limit = 8,
-  showPersonalizationReasons = true
+  showPersonalizationReasons: _showPersonalizationReasons = true
 }) => {
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [loading, setLoading] = useState(true);

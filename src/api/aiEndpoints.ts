@@ -3,7 +3,7 @@
 
 export const aiAPI = {
   chat: {
-    sendMessage: async (data: any) => ({ success: true, data: { response: "AI service temporarily offline" } }),
+    sendMessage: async (_data: any) => ({ success: true, data: { response: "AI service temporarily offline" } }),
     getChatHistory: async () => ({ success: true, data: [] }),
     clearSession: async () => ({ success: true })
   },

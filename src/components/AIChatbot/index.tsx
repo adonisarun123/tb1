@@ -26,7 +26,7 @@ interface AIChatbotProps {
   onEscalateToHuman?: () => void;
 }
 
-const AIChatbot: React.FC<AIChatbotProps> = ({ userProfile, onEscalateToHuman }) => {
+const AIChatbot: React.FC<AIChatbotProps> = ({ userProfile: _userProfile, onEscalateToHuman }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);

@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FiTrendingUp, 
   FiUsers, 
-  FiActivity, 
-  FiMapPin, 
-  FiCalendar,
+  FiMapPin,
   FiDollarSign,
   FiTarget,
   FiZap,
-  FiEye,
   FiMousePointer,
   FiClock,
   FiBarChart,
-  FiPieChart,
   FiRefreshCw,
-  FiDownload,
-  FiFilter,
   FiChevronUp,
   FiChevronDown
 } from 'react-icons/fi';

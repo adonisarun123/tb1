@@ -8,7 +8,7 @@ import ContactSection from '../../components/ContactSection';
 import { bangaloreResorts } from '../../data/bangaloreResorts';
 import { webhookService } from '../../lib/webhookService';
 import PageWrapper from '../../components/PageWrapper';
-import { FiCheck, FiStar, FiMapPin, FiUsers, FiActivity, FiTrendingUp, FiAward, FiHeart } from 'react-icons/fi';
+// import { FiCheck, FiStar, FiMapPin, FiUsers, FiActivity, FiTrendingUp, FiAward, FiHeart } from 'react-icons/fi';
 
 interface FormData {
   name: string;

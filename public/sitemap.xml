@@ -6222,12 +6222,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.trebound.com/team-building-activity/newspaper-canvas-race</loc>
-    <lastmod>2024-08-12T14:43:35.000Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.trebound.com/team-building-activity/partner-blindfold</loc>
     <lastmod>2024-03-02T17:35:11.000Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -6588,12 +6582,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.trebound.com/team-building-activity/grafittee-challenge</loc>
-    <lastmod>2024-08-12T14:41:45.000Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.trebound.com/team-building-activity/key-punch</loc>
     <lastmod>2024-07-31T19:33:41.000Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -6662,6 +6650,18 @@
   <url>
     <loc>https://www.trebound.com/team-building-activity/who-is-it</loc>
     <lastmod>2024-07-31T19:33:43.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.trebound.com/team-building-activity/newspaper-canvas-race</loc>
+    <lastmod>2024-08-12T14:43:35.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.trebound.com/team-building-activity/grafittee-challenge</loc>
+    <lastmod>2024-08-12T14:41:45.000Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -1,20 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiMic, 
   FiMicOff, 
-  FiSearch, 
-  FiVolumeX, 
-  FiVolume2,
-  FiSettings,
-  FiX,
   FiCheck,
-  FiAlertCircle,
-  FiActivity,
-  FiMapPin,
-  FiUsers,
-  FiClock,
-  FiStar
+  FiAlertCircle
 } from 'react-icons/fi';
 
 interface VoiceSearchResult {
@@ -43,31 +33,31 @@ interface VoiceSearchProps {
   onResultSelect?: (result: SearchResult) => void;
 }
 
-const VoiceSearch: React.FC<VoiceSearchProps> = ({ onSearch, onResultSelect }) => {
+const VoiceSearch: React.FC<VoiceSearchProps> = ({ onSearch, onResultSelect: _onResultSelect }) => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [confidence, setConfidence] = useState(0);
-  const [voiceResult, setVoiceResult] = useState<VoiceSearchResult | null>(null);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [_confidence, _setConfidence] = useState(0);
+  const [_voiceResult, _setVoiceResult] = useState<VoiceSearchResult | null>(null);
+  const [_searchResults, _setSearchResults] = useState<SearchResult[]>([]);
   const [isSupported, setIsSupported] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [volume, setVolume] = useState(1);
-  const [language, setLanguage] = useState('en-US');
+  const [_showSettings, _setShowSettings] = useState(false);
+  const [_volume, _setVolume] = useState(1);
+  const [language, _setLanguage] = useState('en-US');
   const [error, setError] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [_isExpanded, _setIsExpanded] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<any>(null);
 
-  const languages = [
-    { code: 'en-US', name: 'English (US)' },
-    { code: 'en-IN', name: 'English (India)' },
-    { code: 'hi-IN', name: 'Hindi' },
-    { code: 'te-IN', name: 'Telugu' },
-    { code: 'ta-IN', name: 'Tamil' },
-    { code: 'kn-IN', name: 'Kannada' }
-  ];
+  // const _languages = [
+  //   { code: 'en-US', name: 'English (US)' },
+  //   { code: 'en-IN', name: 'English (India)' },
+  //   { code: 'hi-IN', name: 'Hindi' },
+  //   { code: 'te-IN', name: 'Telugu' },
+  //   { code: 'ta-IN', name: 'Tamil' },
+  //   { code: 'kn-IN', name: 'Kannada' }
+  // ];
 
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -161,171 +151,43 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onSearch, onResultSelect }) =
     }
   };
 
-  const extractIntent = (input: string): string => {
-    const lowerInput = input.toLowerCase();
-    
-    if (/find|search|looking for|show me|need/.test(lowerInput)) return 'search';
-    if (/book|reserve|schedule/.test(lowerInput)) return 'booking';
-    if (/price|cost|budget/.test(lowerInput)) return 'pricing';
-    if (/location|where|near/.test(lowerInput)) return 'location';
-    if (/help|support|contact/.test(lowerInput)) return 'help';
-    
-    return 'general';
-  };
+  // const extractIntent = (input: string): string => {
+  //   // Implementation for future use
+  //   return 'general';
+  // };
 
-  const extractEntities = (input: string): Array<{ type: string; value: string; confidence: number }> => {
-    const entities = [];
-    const lowerInput = input.toLowerCase();
-    
-    // Extract numbers (likely group sizes)
-    const numbers = input.match(/\d+/g);
-    if (numbers) {
-      entities.push({
-        type: 'group_size',
-        value: numbers[0],
-        confidence: 0.9
-      });
-    }
-    
-    // Extract locations
-    const locations = ['bangalore', 'mumbai', 'delhi', 'hyderabad', 'chennai', 'pune'];
-    for (const location of locations) {
-      if (lowerInput.includes(location)) {
-        entities.push({
-          type: 'location',
-          value: location,
-          confidence: 0.85
-        });
-      }
-    }
-    
-    // Extract activity types
-    const activityTypes = ['virtual', 'outdoor', 'indoor', 'cooking', 'sports', 'creative'];
-    for (const type of activityTypes) {
-      if (lowerInput.includes(type)) {
-        entities.push({
-          type: 'activity_type',
-          value: type,
-          confidence: 0.8
-        });
-      }
-    }
-    
-    return entities;
-  };
+  // const _extractEntities = (input: string): Array<{ type: string; value: string; confidence: number }> => {
+  //   // Implementation for future use
+  //   return [];
+  // };
 
-  const generateSuggestions = (input: string): string[] => {
-    const intent = extractIntent(input);
-    
-    switch (intent) {
-      case 'search':
-        return [
-          'Try: "Find virtual team building activities"',
-          'Try: "Show outdoor activities for 25 people"',
-          'Try: "Search cooking workshops in Bangalore"'
-        ];
-      case 'booking':
-        return [
-          'Try: "Book escape room for next Friday"',
-          'Try: "Reserve venue for 50 people"'
-        ];
-      case 'pricing':
-        return [
-          'Try: "What\'s the price for virtual activities"',
-          'Try: "Budget for team of 30 people"'
-        ];
-      default:
-        return [
-          'Try speaking more clearly',
-          'Use specific terms like "virtual", "outdoor", or location names'
-        ];
-    }
-  };
+  // const _generateSuggestions = (input: string): string[] => {
+  //   // Implementation for future use
+  //   return [];
+  // };
 
-  const performSearch = async (query: string, voiceResult: VoiceSearchResult): Promise<SearchResult[]> => {
-    // Mock search implementation
-    const mockResults: SearchResult[] = [
-      {
-        id: 'virtual-escape-room',
-        type: 'activity',
-        name: 'Virtual Escape Room Challenge',
-        description: 'Immersive online puzzle-solving experience',
-        confidence: 0.92,
-        matchReason: 'Matches "virtual" keyword and team activity intent'
-      },
-      {
-        id: 'cooking-workshop',
-        type: 'activity',
-        name: 'Corporate Cooking Workshop',
-        description: 'Interactive culinary team building experience',
-        confidence: 0.78,
-        matchReason: 'Relevant team building activity'
-      },
-      {
-        id: 'bangalore-venues',
-        type: 'location',
-        name: 'Bangalore Team Outing Venues',
-        description: 'Best venues for corporate team outings in Bangalore',
-        confidence: 0.85,
-        matchReason: 'Location-based match'
-      }
-    ];
-    
-    // Filter based on entities
-    const locationEntity = voiceResult.entities.find(e => e.type === 'location');
-    const activityTypeEntity = voiceResult.entities.find(e => e.type === 'activity_type');
-    
-    return mockResults.filter(result => {
-      if (locationEntity && result.type === 'location') {
-        return result.name.toLowerCase().includes(locationEntity.value);
-      }
-      if (activityTypeEntity && result.type === 'activity') {
-        return result.description.toLowerCase().includes(activityTypeEntity.value);
-      }
-      return true;
-    }).slice(0, 5);
-  };
+  // const _performSearch = async (_query: string, voiceResult: VoiceSearchResult): Promise<SearchResult[]> => {
+  //   // Implementation for future use
+  //   return [];
+  // };
 
-  const speak = (text: string) => {
-    if (synthRef.current && volume > 0) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.volume = volume;
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      synthRef.current.speak(utterance);
-    }
-  };
+  // const speak = (text: string) => {
+  //   // Implementation for future use
+  // };
 
-  const handleResultSelect = (result: SearchResult) => {
-    if (onResultSelect) {
-      onResultSelect(result);
-    }
-    
-    // Provide voice feedback
-    if (volume > 0) {
-      speak(`Selected ${result.name}`);
-    }
-  };
+  // const _handleResultSelect = (result: SearchResult) => {
+  //   // Implementation for future use
+  // };
 
-  const getIntentColor = (intent: string) => {
-    switch (intent) {
-      case 'search': return 'text-blue-600 bg-blue-100';
-      case 'booking': return 'text-green-600 bg-green-100';
-      case 'pricing': return 'text-purple-600 bg-purple-100';
-      case 'location': return 'text-orange-600 bg-orange-100';
-      case 'help': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
+  // const _getIntentColor = (intent: string) => {
+  //   // Implementation for future use
+  //   return 'text-gray-600 bg-gray-100';
+  // };
 
-  const getResultIcon = (type: string) => {
-    switch (type) {
-      case 'activity': return <FiActivity className="text-blue-500" />;
-      case 'venue': return <FiMapPin className="text-green-500" />;
-      case 'location': return <FiMapPin className="text-orange-500" />;
-      default: return <FiSearch className="text-gray-500" />;
-    }
-  };
+  // const _getResultIcon = (type: string) => {
+  //   // Implementation for future use
+  //   return <FiSearch className="text-gray-500" />;
+  // };
 
   if (!isSupported) {
     return (
