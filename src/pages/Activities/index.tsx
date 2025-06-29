@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import { useSupabaseActivities } from '../../hooks/useSupabaseActivities';
-
 
 const ActivitiesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +11,36 @@ const ActivitiesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedGroupSize, setSelectedGroupSize] = useState('');
+  const [viewMode, setViewMode] = useState<'categories' | 'grid'>('categories');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  // Define size ranges for better UX
+  const sizeRanges = [
+    { label: 'Small Teams (1-10)', value: 'small', min: 1, max: 10 },
+    { label: 'Medium Teams (11-25)', value: 'medium', min: 11, max: 25 },
+    { label: 'Large Teams (26-50)', value: 'large', min: 26, max: 50 },
+    { label: 'Extra Large (50+)', value: 'xlarge', min: 51, max: 1000 }
+  ];
+
+  // Helper function to extract number from group size string
+  const extractGroupSizeNumber = (groupSize: string): number => {
+    if (!groupSize) return 0;
+    const match = groupSize.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  };
+
+  // Helper function to check if activity matches selected size range
+  const matchesSizeRange = (activity: any, selectedSize: string): boolean => {
+    if (!selectedSize) return true;
+    
+    const sizeRange = sizeRanges.find(range => range.value === selectedSize);
+    if (!sizeRange) return true;
+    
+    const activitySize = extractGroupSizeNumber(activity.group_size);
+    if (activitySize === 0) return true; // Include activities without size info
+    
+    return activitySize >= sizeRange.min && activitySize <= sizeRange.max;
+  };
 
   // Filter activities based on search and filters
   const filteredActivities = useMemo(() => {
@@ -21,11 +51,105 @@ const ActivitiesPage: React.FC = () => {
       
       const matchesType = !selectedType || activity.activity_type?.toLowerCase() === selectedType.toLowerCase();
       
-      const matchesGroupSize = !selectedGroupSize || activity.group_size?.toLowerCase().includes(selectedGroupSize.toLowerCase());
+      const matchesGroupSize = matchesSizeRange(activity, selectedGroupSize);
 
       return matchesSearch && matchesType && matchesGroupSize;
     });
   }, [activities, searchTerm, selectedType, selectedGroupSize]);
+
+  // Categorize activities by type
+  const categorizedActivities = useMemo(() => {
+    const categories: { [key: string]: any[] } = {};
+    
+    // Define specific activities for Indoor/Outdoor category
+    const indoorOutdoorActivities = [
+      'Movie Making Team Building',
+      'Grafittee Challenge',
+      'Lost Dutchman\'s Goldmine',
+      'Pandora\'s Box',
+      'Drone Challenge',
+      'Newspaper Canvas Race',
+      'IceWalk',
+      'Ball and Ring',
+      'Rollerboard',
+      'Balloon Over and Under',
+      'The Great Egg Drop Challenge',
+      'Sneak a Peek',
+      'Treasure Hunt',
+      'Water Volleyball',
+      'Remoto Car Challenge',
+      'Multi Ball Ring',
+      'Jumbo Cricket',
+      'Hacker Trackdown',
+      'Fire Walk',
+      'Snake Trust',
+      'Acid Bridge',
+      'Blindfold Tent Pitching',
+      'Tic Tac Toe',
+      'Pyramid Building',
+      'Pipeline',
+      'Kontiki Boat Building Challenge',
+      'Junkyard Sales',
+      'Key Punch',
+      'Glass Walk Challenge',
+      'Gigsaw Challenge',
+      'F1 Challenge',
+      'Double Dragon',
+      'The 20-20 Challenge'
+    ];
+
+    // Define specific activities for Virtual category
+    const virtualActivities = [
+      'Virtual Murder Mystery'
+    ];
+    
+    filteredActivities.forEach(activity => {
+      let type = activity.activity_type || 'Other';
+      
+      // Check if activity should be in Indoor/Outdoor Activities by name
+      if (indoorOutdoorActivities.some(name => 
+        activity.name.toLowerCase().includes(name.toLowerCase()) || 
+        name.toLowerCase().includes(activity.name.toLowerCase())
+      )) {
+        type = 'Indoor / Outdoor Activities';
+      }
+      // Check if activity should be in Virtual Activities by name
+      else if (virtualActivities.some(name => 
+        activity.name.toLowerCase().includes(name.toLowerCase()) || 
+        name.toLowerCase().includes(activity.name.toLowerCase())
+      )) {
+        type = 'Virtual';
+      }
+      // Merge Indoor and Outdoor into a single category (existing logic)
+      else if (type.toLowerCase() === 'indoor' || type.toLowerCase() === 'outdoor') {
+        type = 'Indoor / Outdoor Activities';
+      }
+      
+      if (!categories[type]) {
+        categories[type] = [];
+      }
+      categories[type].push(activity);
+    });
+    
+    return categories;
+  }, [filteredActivities]);
+
+  // Toggle accordion category
+  const toggleCategory = (category: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(category)) {
+      newExpanded.delete(category);
+    } else {
+      newExpanded.add(category);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  // Expand all categories initially
+  React.useEffect(() => {
+    const allCategories = Object.keys(categorizedActivities);
+    setExpandedCategories(new Set(allCategories));
+  }, [categorizedActivities]);
 
   const getActivityIcon = (activityType: string) => {
     switch (activityType?.toLowerCase()) {
@@ -34,9 +158,9 @@ const ActivitiesPage: React.FC = () => {
       case 'outbound':
         return '🏔️';
       case 'indoor':
-        return '🏢';
       case 'outdoor':
-        return '🌳';
+      case 'indoor / outdoor activities':
+        return '🏢🌳';
       case 'team building':
         return '🎯';
       default:
@@ -44,35 +168,194 @@ const ActivitiesPage: React.FC = () => {
     }
   };
 
-  const getActivityColor = (index: number) => {
-    const colors = [
-      'from-blue-50 to-blue-100 border-blue-200',
-      'from-green-50 to-green-100 border-green-200',
-      'from-purple-50 to-purple-100 border-purple-200',
-      'from-orange-50 to-orange-100 border-orange-200',
-      'from-pink-50 to-pink-100 border-pink-200',
-      'from-indigo-50 to-indigo-100 border-orange-200'
-    ];
-    return colors[index % colors.length];
+  const getCategoryColor = (category: string) => {
+    const colorMap: { [key: string]: string } = {
+      'Virtual': 'from-blue-50 to-blue-100 border-blue-200',
+      'Indoor / Outdoor Activities': 'from-emerald-50 to-teal-100 border-emerald-200',
+      'Outbound': 'from-orange-50 to-orange-100 border-orange-200',
+      'Team Building': 'from-pink-50 to-pink-100 border-pink-200',
+      'Other': 'from-gray-50 to-gray-100 border-gray-200'
+    };
+    return colorMap[category] || 'from-gray-50 to-gray-100 border-gray-200';
   };
 
-  const getTextColor = (index: number) => {
-    const colors = ['text-[#FF4C39]', 'text-green-600', 'text-purple-600', 'text-orange-600', 'text-pink-600', 'text-[#FF4C39]'];
-    return colors[index % colors.length];
+  const getCategoryAccentColor = (category: string) => {
+    const colorMap: { [key: string]: string } = {
+      'Virtual': 'text-blue-600',
+      'Indoor / Outdoor Activities': 'text-emerald-600',
+      'Outbound': 'text-orange-600',
+      'Team Building': 'text-pink-600',
+      'Other': 'text-gray-600'
+    };
+    return colorMap[category] || 'text-gray-600';
   };
 
   // Get unique activity types for filter
   const activityTypes = [...new Set(activities.map(a => a.activity_type).filter(Boolean))];
-  const groupSizes = [...new Set(activities.map(a => a.group_size).filter(Boolean))];
 
   const handleActivityClick = (activity: any) => {
     if (activity.slug) {
       navigate(`/team-building-activity/${activity.slug}`);
     } else {
-      // Fallback to generic activity detail page with ID
       navigate(`/activity/${activity.id}`);
     }
   };
+
+  // Get activity image with fallback
+  const getActivityImage = (activity: any) => {
+    // Priority order for image sources
+    if (activity.featured_image) return activity.featured_image;
+    if (activity.image_url) return activity.image_url;
+    if (activity.images && activity.images.length > 0) return activity.images[0];
+    
+    // Fallback to category-based images
+    const categoryImages: { [key: string]: string } = {
+      'Virtual': '/images/virtual-activity.jpg',
+      'Indoor / Outdoor Activities': '/images/indoor-outdoor-activity.jpg',
+      'Outbound': '/images/outbound-activity.jpg',
+      'Team Building': '/images/team-building-activity.jpg',
+      'Other': '/images/general-activity.jpg'
+    };
+    
+    return categoryImages[activity.activity_type] || '/images/default-activity.jpg';
+  };
+
+  const renderMaterialActivityCard = (activity: any, index: number, categoryIndex: number) => (
+    <div 
+      key={activity.id} 
+      onClick={() => handleActivityClick(activity)}
+      className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-gray-100"
+      style={{
+        animationDelay: `${(index % 3) * 0.1}s`
+      }}
+    >
+      {/* Material Design Image Container */}
+      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+        <img 
+          src={getActivityImage(activity)}
+          alt={activity.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/images/default-activity.jpg';
+          }}
+        />
+        
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {/* Activity Type Badge */}
+        <div className="absolute top-4 left-4">
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800 shadow-lg">
+            <span className="mr-1.5 text-sm">{getActivityIcon(activity.activity_type)}</span>
+            {activity.activity_type || 'Activity'}
+          </span>
+        </div>
+
+        {/* Duration Badge */}
+        {activity.duration && (
+          <div className="absolute top-4 right-4">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-sm shadow-lg">
+              ⏰ {activity.duration}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Material Design Content */}
+      <div className="p-6 space-y-4">
+        {/* Title */}
+        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors duration-300">
+          {activity.name}
+        </h3>
+
+        {/* Description */}
+        <p className="text-gray-600 line-clamp-3 leading-relaxed">
+          {activity.tagline || activity.description || 'An engaging team building activity designed to strengthen bonds and improve collaboration.'}
+        </p>
+
+        {/* Metrics Row */}
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center space-x-1">
+            <span className="text-emerald-600 font-semibold text-sm">👥</span>
+            <span className="text-sm font-medium text-gray-700">
+              {activity.group_size || 'Any Size'}
+            </span>
+          </div>
+          
+          {activity.location && (
+            <div className="flex items-center space-x-1">
+              <span className="text-blue-600 text-sm">📍</span>
+              <span className="text-xs text-gray-500 truncate max-w-24">
+                {activity.location}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Action Button */}
+        <div className="pt-4">
+          <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl p-3 group-hover:from-emerald-100 group-hover:to-blue-100 transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-700">
+                Learn More
+              </span>
+              <span className="text-emerald-600 group-hover:translate-x-1 transition-transform duration-300">
+                →
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderGridActivityCard = (activity: any, index: number) => (
+    <div 
+      key={activity.id} 
+      onClick={() => handleActivityClick(activity)}
+      className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-gray-100"
+    >
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+        <img 
+          src={getActivityImage(activity)}
+          alt={activity.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/images/default-activity.jpg';
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        <div className="absolute top-3 left-3">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800">
+            <span className="mr-1 text-sm">{getActivityIcon(activity.activity_type)}</span>
+            {activity.activity_type || 'Activity'}
+          </span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5 space-y-3">
+        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+          {activity.name}
+        </h3>
+        <p className="text-gray-600 line-clamp-2 text-sm">
+          {activity.tagline || activity.description}
+        </p>
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <span className="text-sm font-medium text-gray-700">
+            👥 {activity.group_size || 'Any Size'}
+          </span>
+          <span className="text-emerald-600 group-hover:translate-x-1 transition-transform duration-300">
+            →
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -100,8 +383,8 @@ const ActivitiesPage: React.FC = () => {
               </p>
 
               {/* Search and Filters */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 max-w-4xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                   <div className="md:col-span-2">
                     <input
                       type="text"
@@ -132,9 +415,20 @@ const ActivitiesPage: React.FC = () => {
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="">Any Size</option>
-                      {groupSizes.map(size => (
-                        <option key={size} value={size}>{size}</option>
+                      {sizeRanges.map(range => (
+                        <option key={range.value} value={range.value}>{range.label}</option>
                       ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <select
+                      value={viewMode}
+                      onChange={(e) => setViewMode(e.target.value as 'categories' | 'grid')}
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="categories">By Categories</option>
+                      <option value="grid">All Activities</option>
                     </select>
                   </div>
                 </div>
@@ -143,19 +437,18 @@ const ActivitiesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Activities Grid */}
+        {/* Activities Content */}
         <div className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(9)].map((_, index) => (
-                  <div key={index} className="bg-white rounded-2xl p-8 animate-pulse">
-                    <div className="w-12 h-12 bg-gray-200 rounded mb-4"></div>
-                    <div className="h-6 bg-gray-200 rounded mb-3"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                    <div className="flex justify-between">
-                      <div className="h-4 bg-gray-200 rounded w-20"></div>
-                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-md animate-pulse">
+                    <div className="h-56 bg-gray-200"></div>
+                    <div className="p-6 space-y-4">
+                      <div className="h-6 bg-gray-200 rounded"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                     </div>
                   </div>
                 ))}
@@ -173,10 +466,32 @@ const ActivitiesPage: React.FC = () => {
             ) : (
               <>
                 {/* Results count */}
-                <div className="mb-8">
+                <div className="mb-8 flex justify-between items-center">
                   <p className="text-gray-600">
                     Showing {filteredActivities.length} of {activities.length} activities
                   </p>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setViewMode('categories')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        viewMode === 'categories' 
+                          ? 'bg-[#FF4C39] text-white' 
+                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      📂 Categories
+                    </button>
+                    <button 
+                      onClick={() => setViewMode('grid')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        viewMode === 'grid' 
+                          ? 'bg-[#FF4C39] text-white' 
+                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      ⊞ All Activities
+                    </button>
+                  </div>
                 </div>
 
                 {filteredActivities.length === 0 ? (
@@ -197,45 +512,66 @@ const ActivitiesPage: React.FC = () => {
                       Clear all filters
                     </button>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredActivities.map((activity, index) => (
-                      <div 
-                        key={activity.id} 
-                        onClick={() => handleActivityClick(activity)}
-                        className={`group bg-gradient-to-br ${getActivityColor(index)} rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer border transform hover:scale-105`}
-                      >
-                        <div className="text-4xl mb-4">
-                          {getActivityIcon(activity.activity_type)}
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                          {activity.name}
-                        </h3>
-                        <p className="text-gray-600 mb-4 line-clamp-3">
-                          {activity.tagline || activity.description}
-                        </p>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className={`text-sm font-medium ${getTextColor(index)}`}>
-                            {activity.group_size || 'Any Size'}
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            {activity.duration || 'Flexible'}
-                          </span>
-                        </div>
-                        {activity.location && (
-                          <div className="mb-2">
-                            <span className="text-xs text-gray-500">📍 {activity.location}</span>
+                ) : viewMode === 'categories' ? (
+                  // Accordion Categories View
+                  <div className="space-y-6">
+                    {Object.entries(categorizedActivities).map(([category, categoryActivities], categoryIndex) => (
+                      <div key={category} className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+                        {/* Accordion Header */}
+                        <button
+                          onClick={() => toggleCategory(category)}
+                          className={`w-full p-8 text-left bg-gradient-to-r ${getCategoryColor(category)} hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-6">
+                              <div className="text-6xl">
+                                {getActivityIcon(category)}
+                              </div>
+                              <div>
+                                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                                  {category}
+                                </h2>
+                                <p className="text-gray-600 text-lg">
+                                  {categoryActivities.length} activities available
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                              <div className="text-sm text-gray-500 hidden md:block">
+                                Perfect for {category.toLowerCase().replace(' activities', '')} team experiences
+                              </div>
+                              <div className={`text-2xl transform transition-transform duration-300 ${
+                                expandedCategories.has(category) ? 'rotate-180' : ''
+                              }`}>
+                                ▼
+                              </div>
+                            </div>
                           </div>
-                        )}
-                        {activity.activity_type && (
-                          <div className="mt-3 pt-3 border-t border-gray-200">
-                            <span className="inline-block bg-white/50 px-2 py-1 rounded-full text-xs font-medium text-gray-700">
-                              {activity.activity_type}
-                            </span>
+                        </button>
+
+                        {/* Accordion Content */}
+                        <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                          expandedCategories.has(category) 
+                            ? 'max-h-none opacity-100' 
+                            : 'max-h-0 opacity-0'
+                        }`}>
+                          <div className="p-8 pt-0">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              {categoryActivities.map((activity, index) => 
+                                renderMaterialActivityCard(activity, index, categoryIndex)
+                              )}
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                     ))}
+                  </div>
+                ) : (
+                  // Grid View
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredActivities.map((activity, index) => 
+                      renderGridActivityCard(activity, index)
+                    )}
                   </div>
                 )}
               </>
@@ -263,7 +599,8 @@ const ActivitiesPage: React.FC = () => {
           </div>
         </div>
 
-
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );
