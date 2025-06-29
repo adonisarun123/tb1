@@ -203,21 +203,49 @@ const ActivitiesPage: React.FC = () => {
 
   // Get activity image with fallback
   const getActivityImage = (activity: any) => {
-    // Priority order for image sources
-    if (activity.featured_image) return activity.featured_image;
-    if (activity.image_url) return activity.image_url;
-    if (activity.images && activity.images.length > 0) return activity.images[0];
+    // Debug: Log activity image data (remove this in production)
+    if (activity.id === activities[0]?.id) {
+      console.log('Activity image data:', {
+        name: activity.name,
+        main_image: activity.main_image,
+        featured_image: activity.featured_image,
+        image_url: activity.image_url,
+        images: activity.images
+      });
+    }
+
+    // Priority order for image sources from database
+    if (activity.main_image && activity.main_image.trim()) {
+      return activity.main_image;
+    }
+    if (activity.featured_image && activity.featured_image.trim()) {
+      return activity.featured_image;
+    }
+    if (activity.image_url && activity.image_url.trim()) {
+      return activity.image_url;
+    }
+    if (activity.images && activity.images.length > 0) {
+      return activity.images[0];
+    }
     
-    // Fallback to category-based images
+    // Enhanced fallback system with better default images
     const categoryImages: { [key: string]: string } = {
-      'Virtual': '/images/virtual-activity.jpg',
-      'Indoor / Outdoor Activities': '/images/indoor-outdoor-activity.jpg',
-      'Outbound': '/images/outbound-activity.jpg',
-      'Team Building': '/images/team-building-activity.jpg',
-      'Other': '/images/general-activity.jpg'
+      'Virtual': 'https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'Indoor / Outdoor Activities': 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'Outbound': 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'Team Building': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      'Other': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     };
     
-    return categoryImages[activity.activity_type] || '/images/default-activity.jpg';
+    // Use category-specific fallback based on activity type
+    const fallbackImage = categoryImages[activity.activity_type] || categoryImages['Other'];
+    
+    return fallbackImage;
+  };
+
+  // Helper function to get proper alt text for images
+  const getImageAltText = (activity: any) => {
+    return `${activity.name} - Team Building Activity`;
   };
 
   const renderMaterialActivityCard = (activity: any, index: number, categoryIndex: number) => (
@@ -233,11 +261,12 @@ const ActivitiesPage: React.FC = () => {
       <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         <img 
           src={getActivityImage(activity)}
-          alt={activity.name}
+          alt={getImageAltText(activity)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          loading="lazy"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/images/default-activity.jpg';
+            target.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
           }}
         />
         
@@ -320,11 +349,12 @@ const ActivitiesPage: React.FC = () => {
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         <img 
           src={getActivityImage(activity)}
-          alt={activity.name}
+          alt={getImageAltText(activity)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          loading="lazy"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/images/default-activity.jpg';
+            target.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
