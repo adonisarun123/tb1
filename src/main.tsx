@@ -8,6 +8,7 @@ import { generateSitemap } from './utils/sitemapGenerator'
 import './index.css'
 import App from './App'
 import { CombinedProvider } from './contexts/TeamOutingAdsContext'
+import ScrollToTop from './components/ScrollToTop'
 
 // Simple placeholder components for pages that have complex dependencies
 const SimplePage = ({ title, description }: { title: string; description: string }) => (
@@ -137,6 +138,7 @@ const Root = () => (
       <HelmetProvider>
         <CombinedProvider>
           <Router>
+            <ScrollToTop />
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Main Pages */}
