@@ -194,11 +194,11 @@ const ActivitiesPage: React.FC = () => {
     setExpandedCategories(newExpanded);
   };
 
-  // Expand all categories initially
+  // Keep all categories collapsed initially for better UX
   React.useEffect(() => {
-    const allCategories = Object.keys(categorizedActivities);
-    setExpandedCategories(new Set(allCategories));
-  }, [categorizedActivities]);
+    // Start with all categories collapsed
+    setExpandedCategories(new Set());
+  }, []);
 
   const getActivityIcon = (activityType: string) => {
     switch (activityType?.toLowerCase()) {
@@ -226,6 +226,17 @@ const ActivitiesPage: React.FC = () => {
       'Other': 'from-gray-50 to-gray-100 border-gray-200'
     };
     return colorMap[category] || 'from-gray-50 to-gray-100 border-gray-200';
+  };
+
+  const getCategoryDescription = (category: string) => {
+    const descriptions: { [key: string]: string } = {
+      'Virtual': 'Connect remote teams with interactive online experiences that break down digital barriers and foster genuine connections across distances.',
+      'Indoor / Outdoor Activities': 'Versatile experiences that adapt to any environment, combining the best of indoor creativity with outdoor adventure and exploration.',
+      'Outbound': 'Adventure-based challenges that push boundaries, build resilience, and create unforgettable memories in natural settings.',
+      'Team Building': 'Professionally designed activities focused on enhancing communication, collaboration, and trust among team members.',
+      'Other': 'Unique and specialized experiences tailored to specific team needs and organizational objectives.'
+    };
+    return descriptions[category] || 'Engaging team building experiences designed to strengthen workplace relationships and boost productivity.';
   };
 
 
@@ -379,11 +390,17 @@ const ActivitiesPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Team Building Activities | Trebound</title>
+        <title>Team Building Activities & Corporate Events | Trebound - Boost Team Performance</title>
         <meta 
           name="description" 
-          content="Discover our comprehensive collection of team building activities. From virtual games to outdoor adventures, find the perfect experience for your team."
+          content="Transform your team with 1000+ engaging team building activities. Virtual, outdoor, and indoor experiences designed to enhance collaboration, communication, and productivity. Book your corporate team event today!"
         />
+        <meta name="keywords" content="team building activities, corporate events, team building games, virtual team building, outdoor team activities, indoor team building, employee engagement, corporate training, team bonding, leadership development" />
+        <meta property="og:title" content="Team Building Activities & Corporate Events | Trebound" />
+        <meta property="og:description" content="Transform your team with 1000+ engaging team building activities. Boost collaboration, communication, and productivity with our expertly designed experiences." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:title" content="Team Building Activities & Corporate Events | Trebound" />
+        <meta name="twitter:description" content="Transform your team with 1000+ engaging team building activities. Boost collaboration, communication, and productivity." />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -394,12 +411,33 @@ const ActivitiesPage: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Team Building <span className="text-[#FF4C39]">Activities</span>
+                Transform Your Team with <span className="text-[#FF4C39]">Engaging Activities</span>
               </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-                Discover our comprehensive collection of engaging activities designed to strengthen team bonds, 
-                improve collaboration, and create lasting memories.
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed">
+                Unlock your team's potential with our expertly curated collection of 1000+ team building activities. 
+                From virtual experiences that connect remote teams to thrilling outdoor adventures, we create 
+                meaningful experiences that boost collaboration, enhance communication, and drive results.
               </p>
+              
+              {/* Key Benefits */}
+              <div className="flex flex-wrap justify-center gap-6 mb-12 text-sm">
+                <div className="flex items-center bg-white/80 backdrop-blur rounded-full px-4 py-2 shadow-sm">
+                  <span className="text-emerald-600 mr-2">✓</span>
+                  <span className="font-medium text-gray-700">Boost Team Collaboration</span>
+                </div>
+                <div className="flex items-center bg-white/80 backdrop-blur rounded-full px-4 py-2 shadow-sm">
+                  <span className="text-emerald-600 mr-2">✓</span>
+                  <span className="font-medium text-gray-700">Enhance Communication</span>
+                </div>
+                <div className="flex items-center bg-white/80 backdrop-blur rounded-full px-4 py-2 shadow-sm">
+                  <span className="text-emerald-600 mr-2">✓</span>
+                  <span className="font-medium text-gray-700">Build Trust & Relationships</span>
+                </div>
+                <div className="flex items-center bg-white/80 backdrop-blur rounded-full px-4 py-2 shadow-sm">
+                  <span className="text-emerald-600 mr-2">✓</span>
+                  <span className="font-medium text-gray-700">Increase Productivity</span>
+                </div>
+              </div>
 
               {/* Search and Filters */}
               <div className="bg-white rounded-2xl shadow-lg p-6 max-w-4xl mx-auto">
@@ -460,8 +498,69 @@ const ActivitiesPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Informative Content Section */}
+        <div className="py-12 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Discover Your Perfect Team Building Experience
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Click on any category below to explore curated activities designed by team building experts. 
+                Each activity includes detailed information, group size recommendations, and booking options.
+              </p>
+            </div>
+            
+            {/* Category Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl">
+                <div className="text-4xl mb-3">💻</div>
+                <h3 className="font-bold text-gray-900 mb-2">Virtual Activities</h3>
+                <p className="text-sm text-gray-600">Perfect for remote teams and hybrid workforces</p>
+              </div>
+              <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl">
+                <div className="text-4xl mb-3">🏢</div>
+                <h3 className="font-bold text-gray-900 mb-2">Indoor/Outdoor</h3>
+                <p className="text-sm text-gray-600">Flexible activities for any venue or weather</p>
+              </div>
+              <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl">
+                <div className="text-4xl mb-3">🌲</div>
+                <h3 className="font-bold text-gray-900 mb-2">Outbound Adventures</h3>
+                <p className="text-sm text-gray-600">Thrilling outdoor challenges and adventures</p>
+              </div>
+              <div className="text-center p-6 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl">
+                <div className="text-4xl mb-3">🤝</div>
+                <h3 className="font-bold text-gray-900 mb-2">Team Building Games</h3>
+                <p className="text-sm text-gray-600">Interactive games that build stronger bonds</p>
+              </div>
+            </div>
+            
+            {/* Stats and Social Proof */}
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-3xl p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-[#FF4C39] mb-1">1000+</div>
+                  <div className="text-sm text-gray-600">Activities Available</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[#FF4C39] mb-1">50K+</div>
+                  <div className="text-sm text-gray-600">Teams Engaged</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[#FF4C39] mb-1">98%</div>
+                  <div className="text-sm text-gray-600">Satisfaction Rate</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[#FF4C39] mb-1">24/7</div>
+                  <div className="text-sm text-gray-600">Expert Support</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Activities Content */}
-        <div className="py-16">
+        <div className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -525,27 +624,30 @@ const ActivitiesPage: React.FC = () => {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-6">
-                              <div className="text-6xl">
+                              <div className="text-6xl flex-shrink-0">
                                 {getActivityIcon(category)}
                               </div>
-                              <div>
-                                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                              <div className="flex-1">
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                                   {category}
                                 </h2>
-                                <p className="text-gray-600 text-lg">
+                                <p className="text-gray-600 text-base md:text-lg mb-3">
                                   {categoryActivities.length} activities available
+                                </p>
+                                <p className="text-gray-700 text-sm md:text-base leading-relaxed max-w-2xl">
+                                  {getCategoryDescription(category)}
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-4">
-                              <div className="text-sm text-gray-500 hidden md:block">
-                                Perfect for {category.toLowerCase().replace(' activities', '')} team experiences
-                              </div>
+                            <div className="flex flex-col items-center space-y-2 ml-4">
                               <div className={`text-2xl transform transition-transform duration-300 ${
                                 expandedCategories.has(category) ? 'rotate-180' : ''
                               }`}>
                                 ▼
                               </div>
+                              <span className="text-xs text-gray-500 hidden lg:block">
+                                {expandedCategories.has(category) ? 'Collapse' : 'Explore'}
+                              </span>
                             </div>
                           </div>
                         </button>
