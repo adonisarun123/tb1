@@ -141,108 +141,108 @@ const fetchDynamicRoutes = async (): Promise<SitemapURL[]> => {
   }
 
   try {
-    // Fetch blog posts
-    const { data: blogPosts } = await supabase
-      .from('blog_posts')
-      .select('slug, updated_on, published_on')
-      .not('published_on', 'is', null);
+  // Fetch blog posts
+  const { data: blogPosts } = await supabase
+    .from('blog_posts')
+    .select('slug, updated_on, published_on')
+    .not('published_on', 'is', null);
 
-    blogPosts?.forEach(post => {
-      dynamicRoutes.push({
-        loc: `/blog/${post.slug}`,
-        lastmod: formatDate(new Date(post.updated_on || post.published_on)),
-        changefreq: 'monthly',
-        priority: 0.7
-      });
+  blogPosts?.forEach(post => {
+    dynamicRoutes.push({
+      loc: `/blog/${post.slug}`,
+      lastmod: formatDate(new Date(post.updated_on || post.published_on)),
+      changefreq: 'monthly',
+      priority: 0.7
     });
+  });
 
-    // Fetch stays
-    const { data: stays } = await supabase
-      .from('stays')
-      .select('slug, updated_on, published_on')
-      .not('published_on', 'is', null);
+  // Fetch stays
+  const { data: stays } = await supabase
+    .from('stays')
+    .select('slug, updated_on, published_on')
+    .not('published_on', 'is', null);
 
-    stays?.forEach(stay => {
-      dynamicRoutes.push({
-        loc: `/stays/${stay.slug}`,
-        lastmod: formatDate(new Date(stay.updated_on || stay.published_on)),
-        changefreq: 'weekly',
-        priority: 0.7
-      });
+  stays?.forEach(stay => {
+    dynamicRoutes.push({
+      loc: `/stays/${stay.slug}`,
+      lastmod: formatDate(new Date(stay.updated_on || stay.published_on)),
+      changefreq: 'weekly',
+      priority: 0.7
     });
+  });
 
-    // Fetch activities
-    const { data: activities } = await supabase
-      .from('activities')
-      .select('slug, updated_at, published_at')
-      .not('published_at', 'is', null);
+  // Fetch activities
+  const { data: activities } = await supabase
+    .from('activities')
+    .select('slug, updated_at, published_at')
+    .not('published_at', 'is', null);
 
-    activities?.forEach(activity => {
-      dynamicRoutes.push({
-        loc: `/team-building-activity/${activity.slug}`,
-        lastmod: formatDate(new Date(activity.updated_at || activity.published_at)),
-        changefreq: 'weekly',
-        priority: 0.7
-      });
+  activities?.forEach(activity => {
+    dynamicRoutes.push({
+      loc: `/team-building-activity/${activity.slug}`,
+      lastmod: formatDate(new Date(activity.updated_at || activity.published_at)),
+      changefreq: 'weekly',
+      priority: 0.7
     });
+  });
 
-    // Fetch destinations
-    const { data: destinations } = await supabase
-      .from('destinations')
-      .select('slug, updated_at, published_at')
-      .not('published_at', 'is', null);
+  // Fetch destinations
+  const { data: destinations } = await supabase
+    .from('destinations')
+    .select('slug, updated_at, published_at')
+    .not('published_at', 'is', null);
 
-    destinations?.forEach(destination => {
-      dynamicRoutes.push({
-        loc: `/corporate-team-outing-places/${destination.slug}`,
-        lastmod: formatDate(new Date(destination.updated_at || destination.published_at)),
-        changefreq: 'weekly',
-        priority: 0.8
-      });
+  destinations?.forEach(destination => {
+    dynamicRoutes.push({
+      loc: `/corporate-team-outing-places/${destination.slug}`,
+      lastmod: formatDate(new Date(destination.updated_at || destination.published_at)),
+      changefreq: 'weekly',
+      priority: 0.8
     });
+  });
 
-    // Fetch regions
-    const { data: regions } = await supabase
-      .from('regions')
-      .select('slug, updated_at, published_at')
-      .not('published_at', 'is', null);
+  // Fetch regions
+  const { data: regions } = await supabase
+    .from('regions')
+    .select('slug, updated_at, published_at')
+    .not('published_at', 'is', null);
 
-    regions?.forEach(region => {
-      dynamicRoutes.push({
-        loc: `/team-outing-regions/${region.slug}`,
-        lastmod: formatDate(new Date(region.updated_at || region.published_at)),
-        changefreq: 'weekly',
-        priority: 0.8
-      });
+  regions?.forEach(region => {
+    dynamicRoutes.push({
+      loc: `/team-outing-regions/${region.slug}`,
+      lastmod: formatDate(new Date(region.updated_at || region.published_at)),
+      changefreq: 'weekly',
+      priority: 0.8
     });
+  });
 
-    // Fetch team building pages
-    const { data: teamBuilding } = await supabase
-      .from('corporate_teambuildings')
-      .select('slug, updated_at');
+  // Fetch team building pages
+  const { data: teamBuilding } = await supabase
+    .from('corporate_teambuildings')
+    .select('slug, updated_at');
 
-    teamBuilding?.forEach(page => {
-      dynamicRoutes.push({
-        loc: `/corporate-teambuilding/${page.slug}`,
-        lastmod: page.updated_at ? formatDate(new Date(page.updated_at)) : undefined,
-        changefreq: 'weekly',
-        priority: 0.8
-      });
+  teamBuilding?.forEach(page => {
+    dynamicRoutes.push({
+      loc: `/corporate-teambuilding/${page.slug}`,
+      lastmod: page.updated_at ? formatDate(new Date(page.updated_at)) : undefined,
+      changefreq: 'weekly',
+      priority: 0.8
     });
+  });
 
-    // Fetch customized training pages
-    const { data: trainings } = await supabase
-      .from('customized_trainings')
-      .select('slug, updated_at');
+  // Fetch customized training pages
+  const { data: trainings } = await supabase
+    .from('customized_trainings')
+    .select('slug, updated_at');
 
-    trainings?.forEach(training => {
-      dynamicRoutes.push({
-        loc: `/customized-training/${training.slug}`,
-        lastmod: training.updated_at ? formatDate(new Date(training.updated_at)) : undefined,
-        changefreq: 'weekly',
-        priority: 0.8
-      });
+  trainings?.forEach(training => {
+    dynamicRoutes.push({
+      loc: `/customized-training/${training.slug}`,
+      lastmod: training.updated_at ? formatDate(new Date(training.updated_at)) : undefined,
+      changefreq: 'weekly',
+      priority: 0.8
     });
+  });
 
     console.log(`✅ Fetched ${dynamicRoutes.length} dynamic routes from Supabase`);
   } catch (error) {

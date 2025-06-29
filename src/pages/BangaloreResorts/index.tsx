@@ -8,6 +8,7 @@ import ContactSection from '../../components/ContactSection';
 import { bangaloreResorts } from '../../data/bangaloreResorts';
 import { webhookService } from '../../lib/webhookService';
 import PageWrapper from '../../components/PageWrapper';
+import { FiCheck, FiStar, FiMapPin, FiUsers, FiActivity, FiTrendingUp, FiAward, FiHeart } from 'react-icons/fi';
 
 interface FormData {
   name: string;
@@ -36,6 +37,13 @@ interface Destination {
   title: string;
   description: string;
 }
+
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
 
 const BangaloreResortsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -277,7 +285,7 @@ const BangaloreResortsPage: React.FC = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-[#002B4F] mb-2">{resort.title}</h3>
                   <p className="text-[#FF4C39] font-medium mb-2">{resort.subtitle}</p>
-                  <p className="text-gray-600">{resort.description}</p>
+                  <p className="text-gray-600">{extractTextFromHtml(resort.description) || resort.description}</p>
                 </div>
               </div>
             ))}
@@ -393,7 +401,7 @@ const BangaloreResortsPage: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
                     <h3 className="text-xl font-bold text-white mb-2">{destination.title}</h3>
-                    <p className="text-gray-200 text-sm">{destination.description}</p>
+                    <p className="text-gray-200 text-sm">{extractTextFromHtml(destination.description) || destination.description}</p>
                   </div>
                 </div>
               </div>

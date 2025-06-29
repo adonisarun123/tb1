@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiSend, FiX, FiArrowRight, FiStar, FiUsers, FiMapPin, FiHome, FiActivity, FiBook, FiFileText, FiBriefcase, FiExternalLink, FiFilter, FiTrendingUp } from 'react-icons/fi';
+import { FiSearch, FiSend, FiX, FiArrowRight, FiStar, FiUsers, FiMapPin, FiHome, FiActivity, FiBook, FiFileText, FiBriefcase, FiExternalLink, FiFilter, FiTrendingUp, FiMic, FiMicOff, FiClock } from 'react-icons/fi';
 import { searchAll, SearchResult, SearchResultItem } from '../../api/search';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +13,14 @@ const AISearchWidget: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'activities' | 'venues' | 'destinations'>('all');
   const [sortBy, setSortBy] = useState<'relevance' | 'rating' | 'popularity'>('relevance');
   const [openInNewTab, setOpenInNewTab] = useState(false);
+  
+  // Voice Search States
+  const [isListening, setIsListening] = useState(false);
+  const [isVoiceSupported, setIsVoiceSupported] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
   const navigate = useNavigate();
 
   const popularQueries = [
@@ -26,6 +33,75 @@ const AISearchWidget: React.FC = () => {
     'Sports team building activities',
     'Creative team building workshops'
   ];
+
+  // Initialize speech recognition
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      setIsVoiceSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setVoiceError(null);
+      };
+
+      recognition.onresult = (event: any) => {
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+
+        if (finalTranscript.trim()) {
+          setQuery(finalTranscript.trim());
+          setIsExpanded(true);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        // Auto-search after voice input
+        if (query.trim()) {
+          setTimeout(() => {
+            handleSearch();
+          }, 500);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        setIsListening(false);
+        setVoiceError(`Voice recognition error: ${event.error}`);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, [query]);
+
+  const startVoiceSearch = () => {
+    if (!isVoiceSupported || !recognitionRef.current) {
+      setVoiceError('Voice search is not supported in your browser');
+      return;
+    }
+
+    try {
+      recognitionRef.current.start();
+    } catch (error) {
+      setVoiceError('Could not start voice recognition');
+    }
+  };
+
+  const stopVoiceSearch = () => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+    }
+  };
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -206,24 +282,72 @@ const AISearchWidget: React.FC = () => {
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyPress={handleKeyPress}
                     onFocus={() => setIsExpanded(true)}
-                    placeholder="Ask me about activities, venues..."
+                    placeholder="Ask me about activities, venues... or click the mic to speak"
                     className="w-full text-base sm:text-lg text-gray-800 placeholder-gray-500 bg-transparent border-none outline-none"
                   />
                 </div>
               </div>
               
-              <button
-                onClick={handleSearch}
-                disabled={!query.trim() || isSearching}
-                className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 sm:ml-4 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSearching ? (
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <FiSend className="text-base sm:text-lg" />
+              <div className="flex items-center space-x-2">
+                {/* Voice Search Button */}
+                {isVoiceSupported && (
+                  <button
+                    onClick={isListening ? stopVoiceSearch : startVoiceSearch}
+                    className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-all duration-200 ${
+                      isListening 
+                        ? 'bg-gradient-to-r from-red-500 to-red-600 animate-pulse' 
+                        : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+                    }`}
+                    title={isListening ? 'Stop listening' : 'Start voice search'}
+                  >
+                    {isListening ? (
+                      <FiMicOff className="text-base sm:text-lg" />
+                    ) : (
+                      <FiMic className="text-base sm:text-lg" />
+                    )}
+                  </button>
                 )}
-              </button>
+
+                {/* Search Button */}
+                <button
+                  onClick={handleSearch}
+                  disabled={!query.trim() || isSearching}
+                  className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSearching ? (
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <FiSend className="text-base sm:text-lg" />
+                  )}
+                </button>
+              </div>
             </div>
+            
+            {/* Voice Feedback */}
+            {isListening && (
+              <div className="px-3 sm:px-4 pb-2">
+                <div className="flex items-center justify-center space-x-2 text-blue-600">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">Listening... Speak now</span>
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                </div>
+              </div>
+            )}
+
+            {/* Voice Error */}
+            {voiceError && (
+              <div className="px-3 sm:px-4 pb-2">
+                <div className="flex items-center justify-center space-x-2 text-red-600">
+                  <span className="text-sm">{voiceError}</span>
+                  <button 
+                    onClick={() => setVoiceError(null)}
+                    className="text-red-400 hover:text-red-600"
+                  >
+                    <FiX className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
             
             {/* Mobile-optimized secondary info */}
             <div className="px-3 sm:px-4 pb-3 sm:pb-4">
@@ -233,6 +357,12 @@ const AISearchWidget: React.FC = () => {
                     <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
                     AI-Enhanced
                   </span>
+                  {isVoiceSupported && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-gradient-to-r from-purple-50 to-pink-50 text-purple-600 font-medium text-xs">
+                      <FiMic className="w-3 h-3 mr-1" />
+                      Voice Enabled
+                    </span>
+                  )}
                   <span className="hidden sm:inline">Intelligent search across all content</span>
                 </div>
                 
@@ -348,166 +478,125 @@ const AISearchWidget: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
-                        <p className="text-gray-800 leading-relaxed mb-2">{results.answer}</p>
-                        <div className="flex items-center space-x-4 text-xs text-gray-600">
-                          <span className="flex items-center">
-                            <span className="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                            {Math.round(results.searchConfidence * 100)}% confidence
-                          </span>
-                          {results.vectorSearchUsed && (
-                            <span className="flex items-center">
-                              <span className="w-2 h-2 bg-blue-400 rounded-full mr-1"></span>
-                              Vector search enabled
-                            </span>
-                          )}
-                        </div>
+                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-4">
+                        <p className="text-gray-700 leading-relaxed">{results.answer}</p>
                       </div>
+                      
+                      {results.suggestions.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-gray-600">You might also be interested in:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {results.suggestions.map((suggestion, index) => (
+                              <button
+                                key={index}
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                className="px-3 py-1 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-colors"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Enhanced Results Tabs */}
-                <div className="mb-6">
-                  <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+                {/* Results Tabs */}
+                <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-100">
+                  {(['all', 'activities', 'venues', 'destinations'] as const).map((tab) => (
                     <button
-                      onClick={() => setActiveTab('all')}
-                      className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeTab === 'all'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                        activeTab === tab
+                          ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-500'
+                          : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
                       }`}
                     >
-                      All Results ({getTotalResultsCount()})
+                      {tab === 'all' ? 'All Results' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      {tab !== 'all' && (
+                        <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">
+                          {getTabCount(tab)}
+                        </span>
+                      )}
                     </button>
-                    <button
-                      onClick={() => setActiveTab('activities')}
-                      className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeTab === 'activities'
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      Activities ({getTabCount('activities')})
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('venues')}
-                      className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeTab === 'venues'
-                          ? 'bg-white text-green-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      Venues ({getTabCount('venues')})
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('destinations')}
-                      className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeTab === 'destinations'
-                          ? 'bg-white text-purple-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      Destinations ({getTabCount('destinations')})
-                    </button>
-                  </div>
+                  ))}
                 </div>
 
-                {/* Enhanced Results Grid */}
-                {getDisplayItems().length > 0 && (
-                  <div className="mb-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                      {getDisplayItems().slice(0, 9).map((item, index) => (
-                        <motion.div
-                          key={`${item.type}-${item.id}`}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-200 cursor-pointer group relative"
-                        >
-                          <div 
-                            onClick={() => handleItemClick(item)}
-                            className="flex flex-col h-full"
-                          >
-                            <div className="flex items-start space-x-3 mb-3">
-                              <img
-                                src={item.image || 'https://via.placeholder.com/60x60'}
-                                alt={item.name}
-                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  {getItemIcon(item.type)}
-                                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                    {getItemTypeLabel(item.type)}
-                                  </span>
-                                </div>
-                                <h5 className="font-semibold text-gray-800 text-sm group-hover:text-blue-600 transition-colors mb-1 line-clamp-2">
-                                  {item.name}
-                                </h5>
+                {/* Results Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {getDisplayItems().map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleItemClick(item)}
+                      className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg hover:border-blue-200 transition-all duration-200 cursor-pointer"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 mt-1">
+                          {getItemIcon(item.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                              {getItemTypeLabel(item.type)}
+                            </span>
+                            {item.rating && (
+                              <div className="flex items-center text-xs text-gray-500">
+                                <FiStar className="w-3 h-3 text-yellow-400 mr-1" />
+                                {item.rating}
                               </div>
-                            </div>
-                            
-                            <p className="text-xs text-gray-600 mb-3 line-clamp-2 flex-1">{item.description}</p>
-                            
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <div className="flex items-center space-x-2">
-                                {item.rating && (
-                                  <div className="flex items-center">
-                                    <FiStar className="mr-1 text-yellow-400" />
-                                    {item.rating}
-                                  </div>
-                                )}
-                                {item.capacity && (
-                                  <div className="flex items-center">
-                                    <FiUsers className="mr-1" />
-                                    {item.capacity.split(' ')[0]}
-                                  </div>
-                                )}
-                              </div>
-                              {item.relevanceScore && item.relevanceScore > 5 && (
-                                <span className="px-2 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">
-                                  High Match
+                            )}
+                          </div>
+                          <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1 line-clamp-1">
+                            {item.name}
+                          </h4>
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                            {item.description}
+                          </p>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center space-x-3">
+                              {item.location && (
+                                <span className="flex items-center">
+                                  <FiMapPin className="w-3 h-3 mr-1" />
+                                  {item.location}
+                                </span>
+                              )}
+                              {item.duration && (
+                                <span className="flex items-center">
+                                  <FiClock className="w-3 h-3 mr-1" />
+                                  {item.duration}
+                                </span>
+                              )}
+                              {item.capacity && (
+                                <span className="flex items-center">
+                                  <FiUsers className="w-3 h-3 mr-1" />
+                                  {item.capacity}
                                 </span>
                               )}
                             </div>
+                            {item.price && (
+                              <span className="font-medium text-[#FF4C39]">
+                                {item.price}
+                              </span>
+                            )}
                           </div>
-                          
-                          {/* New Tab Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleItemClick(item, true);
-                            }}
-                            className="absolute top-2 right-2 p-1 bg-white/80 hover:bg-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Open in new tab"
-                          >
-                            <FiExternalLink className="text-gray-600 text-xs" />
-                          </button>
-                        </motion.div>
-                      ))}
+                        </div>
+                        <div className="flex-shrink-0">
+                          <FiExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
 
-                {/* Enhanced Suggestions */}
-                {results.suggestions && results.suggestions.length > 0 && (
-                  <div>
-                    <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center">
-                      <FiTrendingUp className="mr-2 text-blue-500" />
-                      Explore Related Topics
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {results.suggestions.map((suggestion, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100 text-gray-700 hover:text-blue-600 rounded-full text-sm transition-all duration-200 border border-gray-200 hover:border-blue-200"
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
+                {getDisplayItems().length === 0 && (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FiSearch className="w-8 h-8 text-gray-400" />
                     </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
+                    <p className="text-gray-600">Try adjusting your search terms or browse our popular categories above.</p>
                   </div>
                 )}
               </div>

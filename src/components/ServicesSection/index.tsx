@@ -29,7 +29,6 @@ interface BaseCardContent {
 interface StayCardContent extends BaseCardContent {
   type: 'stay';
   location: string;
-  price: string;
 }
 
 interface ActivityCardContent extends BaseCardContent {
@@ -125,8 +124,7 @@ const ServicesSection: React.FC = () => {
             description: extractTextFromHtml(stay.tagline || stay.description || ''),
             image: stay.stay_image || stay.image_url || '/placeholder-image.jpg',
             slug: `stays/${stay.slug}`,
-            location: String(stay.destination) || 'Destination Not Set',
-            price: stay.price_per_night ? `₹${stay.price_per_night}/night` : 'Contact for price'
+            location: String(stay.destination) || 'Destination Not Set'
           }));
 
       case 'activities':

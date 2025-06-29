@@ -224,12 +224,12 @@ const FeaturedBlog: React.FC = () => {
         )}
 
         {/* Other Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           {filteredPosts.slice(1).map((post, index) => (
             <article 
               key={post.id}
               onClick={() => handleBlogClick(post)}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden cursor-pointer"
+              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden cursor-pointer pb-12"
             >
               {/* Article Image */}
               <div className="relative h-48 overflow-hidden">

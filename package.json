@@ -12,6 +12,7 @@
     "generate-sitemap": "tsx scripts/generateSitemap.ts",
     "embed-activities": "tsx scripts/embedActivities.ts",
     "create-pinecone-index": "tsx scripts/createPineconeIndex.ts",
+    "update-activity-content": "tsx scripts/updateActivityContent.ts",
     "preview": "vite preview",
     "clean": "rimraf dist node_modules",
     "start": "npm run build && vite preview",

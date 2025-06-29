@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useActivities } from '../../lib/hooks/useSupabaseData';
 
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 const ActivityCard = ({ activity }: { activity: any }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -29,7 +36,7 @@ const ActivityCard = ({ activity }: { activity: any }) => (
     </div>
     <div className="p-6">
       <h3 className="text-xl font-semibold text-[#313131] mb-2">{activity.name}</h3>
-      <p className="text-[#636363] mb-4 line-clamp-2">{activity.tagline}</p>
+      <p className="text-[#636363] mb-4 line-clamp-2">{extractTextFromHtml(activity.tagline || '') || activity.tagline || 'Engaging team building experience'}</p>
       <div className="flex items-center gap-4 text-sm text-[#636363] mb-4">
         <div className="flex items-center">
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

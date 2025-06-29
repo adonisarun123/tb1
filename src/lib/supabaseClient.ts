@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Use provided Supabase credentials with Next.js environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://yrppmcoycmydrujbesnd.supabase.co";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycHBtY295Y215ZHJ1amJlc25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxMDY5OTEsImV4cCI6MjA1NDY4Mjk5MX0.ZbLPKtUGitTBgor2zzr_7L-FOZ-55IL3RaWJj-7aDW0";
+// Use provided Supabase credentials with Vite environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://yrppmcoycmydrujbesnd.supabase.co";
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycHBtY295Y215ZHJ1amJlc25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxMDY5OTEsImV4cCI6MjA1NDY4Mjk5MX0.ZbLPKtUGitTBgor2zzr_7L-FOZ-55IL3RaWJj-7aDW0";
 
 // Create Supabase client
 const supabase = createClient(supabaseUrl, supabaseAnonKey);

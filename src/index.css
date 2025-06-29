@@ -26,6 +26,15 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  /* Custom overrides for homepage */
+  .h-16 {
+    height: 3rem;
+  }
+
+  .mb-4 {
+    margin-bottom: 0.5rem;
+  }
 }
 
 @layer base {

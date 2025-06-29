@@ -2,6 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Activity } from '../../lib/supabaseClient';
 
+// Helper function to extract plain text from HTML
+const extractTextFromHtml = (html: string) => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+};
+
 interface ActivityWithRating extends Activity {
   rating: string;
 }
@@ -34,7 +41,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => (
       
       {/* Description Section - Fixed Height */}
       <div className="h-12 mb-4 flex-grow">
-        <p className="text-base font-normal font-['DM Sans'] text-[#636363] line-clamp-2">{activity.tagline}</p>
+        <p className="text-base font-normal font-['DM Sans'] text-[#636363] line-clamp-2">{extractTextFromHtml(activity.tagline || '') || activity.tagline || 'Engaging team building experience'}</p>
       </div>
     </div>
     

@@ -10,6 +10,35 @@ import PartnersSection from '../../components/PartnersSection';
 import TestimonialsSection from '../../components/TestimonialsSection';
 import { useDestinationBySlug, useStaysByDestinationId, useDestinations } from '../../lib/hooks/useSupabaseData';
 
+// Helper function to extract text from HTML
+const extractTextFromHtml = (htmlString: string) => {
+  if (!htmlString) return '';
+  const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+  return doc.body.textContent || doc.body.innerText || '';
+};
+
+// Helper function to parse facilities text properly
+const parseFacilities = (facilitiesText: string) => {
+  if (!facilitiesText) return [];
+  
+  const cleanText = extractTextFromHtml(facilitiesText);
+  
+  // Split by various delimiters and also handle camelCase words
+  let facilities = cleanText
+    .split(/[.,;]/)
+    .flatMap(facility => 
+      facility
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before capital letters
+        .split(/\s+/) // Split by whitespace
+        .filter(word => word.length > 2) // Filter short words
+    )
+    .filter(facility => facility.trim().length > 0)
+    .map(facility => facility.trim())
+    .slice(0, 8); // Limit to 8 facilities for detail page
+  
+  return [...new Set(facilities)]; // Remove duplicates
+};
+
 const GalleryModal = ({ 
   isOpen, 
   onClose, 
@@ -298,7 +327,7 @@ const DestinationDetail = () => {
                         {stay.name}
                       </h3>
                       <p className="text-base font-normal font-['DM Sans'] text-[#636363] line-clamp-2">
-                        {stay.tagline || stay.stay_description?.substring(0, 100) || 'A Tranquil Oasis'}
+                        {stay.tagline || extractTextFromHtml(stay.stay_description || '').substring(0, 100) || 'A Tranquil Oasis'}
                       </p>
                     </div>
 
@@ -314,6 +343,16 @@ const DestinationDetail = () => {
                           </span>
                           <FiArrowRight className="w-4 h-4 text-[#b1b1b1] group-hover:text-white transition-colors duration-300" />
                         </Link>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex flex-wrap gap-2">
+                        {parseFacilities(stay.facilities || '').map((facility, idx) => (
+                          <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
+                            {facility}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>

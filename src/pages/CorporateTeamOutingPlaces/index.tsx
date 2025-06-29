@@ -377,7 +377,7 @@ const CorporateTeamOutingPlaces = () => {
                 disabled={currentPage === 1}
                 className="w-10 h-10 rounded-full flex items-center justify-center border border-[#b1b1b1] text-[#757575] disabled:opacity-50"
               >
-                &lt;
+                ←
               </button>
               
               <div className="mx-4 px-4 py-2 rounded-full bg-[#f5f5f5] text-[#313131]">
@@ -389,7 +389,7 @@ const CorporateTeamOutingPlaces = () => {
                 disabled={currentPage === totalPages}
                 className="w-10 h-10 rounded-full flex items-center justify-center border border-[#b1b1b1] text-[#757575] disabled:opacity-50"
               >
-                &gt;
+                →
               </button>
             </div>
           )}

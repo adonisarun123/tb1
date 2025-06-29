@@ -2,11 +2,33 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseStays } from '../../hooks/useSupabaseStays';
 
-// Helper function to extract plain text from HTML
-const extractTextFromHtml = (html: string) => {
-  if (!html) return '';
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+// Helper function to extract text from HTML
+const extractTextFromHtml = (htmlString: string) => {
+  if (!htmlString) return '';
+  const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+  return doc.body.textContent || doc.body.innerText || '';
+};
+
+// Helper function to parse facilities text properly
+const parseFacilities = (facilitiesText: string) => {
+  if (!facilitiesText) return [];
+  
+  const cleanText = extractTextFromHtml(facilitiesText);
+  
+  // Split by various delimiters and also handle camelCase words
+  let facilities = cleanText
+    .split(/[.,;]/)
+    .flatMap(facility => 
+      facility
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before capital letters
+        .split(/\s+/) // Split by whitespace
+        .filter(word => word.length > 2) // Filter short words
+    )
+    .filter(facility => facility.trim().length > 0)
+    .map(facility => facility.trim())
+    .slice(0, 4); // Limit to 4 facilities for featured cards
+  
+  return [...new Set(facilities)]; // Remove duplicates
 };
 
 const FeaturedStays: React.FC = () => {
@@ -153,12 +175,12 @@ const FeaturedStays: React.FC = () => {
         </div>
 
         {/* Stays Grid - Enhanced Visual Design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           {filteredStays.map((stay, index) => (
             <div 
               key={stay.id} 
               onClick={() => handleStayClick(stay)}
-              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden cursor-pointer"
+              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden cursor-pointer pb-12"
             >
               {/* Premium Badge */}
               {index < 2 && (
@@ -191,9 +213,9 @@ const FeaturedStays: React.FC = () => {
                 {/* Capacity & Rating Overlay */}
                 <div className="absolute bottom-4 left-4 right-4">
                   <div className="flex items-center justify-between">
-                                         <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-gray-800">
-                       👥 Up to {Math.floor(Math.random() * 200) + 50} guests
-                     </div>
+                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-gray-800">
+                      👥 Up to {Math.floor(Math.random() * 200) + 50} guests
+                    </div>
                     <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-gray-800 flex items-center">
                       <span className="text-yellow-500 mr-1">★</span>
                       {(4.5 + Math.random() * 0.5).toFixed(1)}
@@ -210,19 +232,13 @@ const FeaturedStays: React.FC = () => {
               {/* Stay Content */}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-[#FF4C39] transition-colors">
                       {stay.name}
                     </h3>
                     <p className="text-gray-500 text-sm flex items-center">
-                      📍 {stay.location || 'Prime Location'}
+                      📍 {extractTextFromHtml(stay.location || '') || 'Prime Location'}
                     </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">
-                      ₹{Math.floor(Math.random() * 15000) + 5000}
-                    </div>
-                    <div className="text-xs text-gray-500">per night</div>
                   </div>
                 </div>
 
@@ -239,14 +255,11 @@ const FeaturedStays: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Pricing & Availability */}
+                {/* Availability */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm">
                     <span className="text-green-600 font-semibold">✓ Available</span>
                     <span className="text-gray-500 ml-2">• Free cancellation</span>
-                  </div>
-                  <div className="text-sm text-orange-600 font-semibold">
-                    Group rates available
                   </div>
                 </div>
 
@@ -274,11 +287,13 @@ const FeaturedStays: React.FC = () => {
                 </div>
 
                 {/* Quick Info */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>🍽️ Restaurant on-site</span>
-                    <span>🚗 Free parking</span>
-                    <span>📶 High-speed WiFi</span>
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex flex-wrap gap-2">
+                    {parseFacilities(stay.facilities || '').map((facility, idx) => (
+                      <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
+                        {facility}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>

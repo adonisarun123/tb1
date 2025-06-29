@@ -123,12 +123,12 @@ const FeaturedActivities: React.FC = () => {
         </div>
 
         {/* Activities Grid - Enhanced Modern Design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {filteredActivities.map((activity, index) => (
             <div 
               key={activity.id} 
               onClick={() => handleActivityClick(activity)}
-              className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] overflow-hidden cursor-pointer border border-gray-100 hover:border-orange-200 h-[580px] flex flex-col"
+              className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] overflow-hidden cursor-pointer border border-gray-100 hover:border-orange-200 h-[580px] flex flex-col pb-12"
             >
               {/* Ranking Badge - Enhanced */}
               <div className="absolute top-3 left-3 z-20">
@@ -190,16 +190,18 @@ const FeaturedActivities: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Popularity Indicator */}
-                <div className="absolute top-16 right-3 z-10">
-                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-700 shadow-lg">
-                    🔥 Popular
+                {/* Popularity Indicator - Only show on select cards */}
+                {(index === 4 || index === 5 || index === 6 || index === 7) && (
+                  <div className="absolute top-3 right-3 z-15">
+                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-700 shadow-lg">
+                      🔥 Popular
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Activity Content - Enhanced with Fixed Heights */}
-              <div className="p-6 flex flex-col flex-grow">
+              <div className="p-6 flex flex-col flex-grow mb-4">
                 {/* Title Section - Fixed Height */}
                 <div className="h-16 mb-3">
                   <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#FF4C39] transition-colors leading-tight line-clamp-2">
@@ -238,19 +240,19 @@ const FeaturedActivities: React.FC = () => {
 
                 {/* Action Button - Fixed Height */}
                 <div className="h-10 mb-4">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleActivityClick(activity);
-                    }}
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleActivityClick(activity);
+                  }}
                     className="w-full h-full bg-gradient-to-r from-[#FF4C39] to-[#FFB573] text-white rounded-xl font-semibold text-sm hover:from-[#FF5722] hover:to-[#FF8A65] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                  >
-                    View Details
-                  </button>
+                >
+                  View Details
+                </button>
                 </div>
 
                 {/* Enhanced Quick Info Tags - Fixed Height */}
-                <div className="h-16 flex flex-wrap gap-2 pt-2 items-start">
+                <div className="h-16 flex flex-wrap gap-2 pt-2 items-start mb-6">
                   <span className="bg-gradient-to-r from-orange-50 to-red-50 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">
                     {activity.activity_type || 'Team Building'}
                   </span>
