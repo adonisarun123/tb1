@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 import SchemaMarkup from '../SchemaMarkup';
 
 interface FAQ {
@@ -177,11 +177,11 @@ const AIOptimizedFAQ: React.FC<AIOptimizedFAQProps> = ({
                       </div>
                     </div>
                   </div>
-                  {openFAQ === index ? (
-                    <ChevronUpIcon className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                  ) : (
-                    <ChevronDownIcon className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                  )}
+                                     {openFAQ === index ? (
+                     <HiChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                   ) : (
+                     <HiChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                   )}
                 </button>
                 
                 <AnimatePresence>
