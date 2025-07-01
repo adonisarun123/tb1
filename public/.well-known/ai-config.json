@@ -1,0 +1,147 @@
+{
+  "ai_optimization": {
+    "version": "1.0",
+    "site_type": "team_building_platform",
+    "ai_features_enabled": true,
+    "last_updated": "2024-12-15T00:00:00Z"
+  },
+  "content_understanding": {
+    "primary_language": "en-US",
+    "content_categories": [
+      "team_building",
+      "corporate_events", 
+      "virtual_activities",
+      "outdoor_adventures",
+      "corporate_training",
+      "employee_engagement"
+    ],
+    "target_audience": [
+      "corporate_teams",
+      "hr_managers", 
+      "team_leaders",
+      "event_planners",
+      "business_executives"
+    ],
+    "content_structure": {
+      "activities": {
+        "total_count": 350,
+        "data_embedded": true,
+        "searchable": true,
+        "ai_categorized": true
+      },
+      "venues": {
+        "total_count": 200,
+        "location_data": true,
+        "facility_details": true,
+        "ai_matched": true
+      },
+      "blog_posts": {
+        "knowledge_base": true,
+        "expert_insights": true,
+        "ai_summarizable": true
+      }
+    }
+  },
+  "ai_interaction_points": {
+    "chatbot": {
+      "endpoint": "/ai-chat",
+      "capabilities": [
+        "activity_recommendations",
+        "venue_suggestions", 
+        "pricing_inquiries",
+        "booking_assistance",
+        "expert_consultation"
+      ],
+      "languages": ["en-US", "hi-IN"],
+      "context_aware": true,
+      "conversation_memory": true
+    },
+    "voice_search": {
+      "enabled": true,
+      "natural_language_processing": true,
+      "intent_recognition": true,
+      "multi_language_support": true
+    },
+    "recommendations": {
+      "personalization_engine": true,
+      "confidence_scoring": true,
+      "real_time_updates": true,
+      "fallback_logic": true
+    },
+    "smart_forms": {
+      "auto_completion": true,
+      "company_data_enrichment": true,
+      "validation_logic": true,
+      "predictive_filling": true
+    }
+  },
+  "data_sources": {
+    "vector_database": {
+      "provider": "pinecone",
+      "embedded_content": [
+        "all_activities",
+        "all_venues", 
+        "all_destinations",
+        "blog_content",
+        "landing_pages",
+        "corporate_solutions"
+      ],
+      "update_frequency": "real-time"
+    },
+    "structured_data": {
+      "schema_org_implemented": true,
+      "json_ld_available": true,
+      "microdata_enabled": false,
+      "ai_specific_markup": true
+    }
+  },
+  "api_endpoints": {
+    "public_apis": [
+      {
+        "endpoint": "/api/search",
+        "description": "AI-powered semantic search",
+        "rate_limit": "1000/hour",
+        "authentication": "optional"
+      },
+      {
+        "endpoint": "/api/recommendations", 
+        "description": "Personalized activity recommendations",
+        "rate_limit": "500/hour",
+        "authentication": "optional"
+      }
+    ],
+    "ai_specific_endpoints": [
+      {
+        "endpoint": "/api/ai/query",
+        "description": "Direct AI query interface",
+        "rate_limit": "100/hour",
+        "authentication": "required"
+      }
+    ]
+  },
+  "crawling_preferences": {
+    "ai_training_allowed": true,
+    "content_indexing_allowed": true,
+    "summarization_allowed": true,
+    "preferred_crawl_frequency": "weekly",
+    "priority_pages": [
+      "/",
+      "/team-building-activity", 
+      "/stays",
+      "/blog",
+      "/corporate-teambuilding"
+    ]
+  },
+  "performance_metrics": {
+    "ai_accuracy": "94%",
+    "response_time": "600ms",
+    "user_satisfaction": "4.8/5",
+    "conversion_improvement": "34%",
+    "automation_coverage": "78%"
+  },
+  "contact_information": {
+    "ai_support": "ai-support@trebound.com",
+    "technical_contact": "tech@trebound.com",
+    "business_inquiries": "hello@trebound.com"
+  }
+} 

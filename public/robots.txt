@@ -1,0 +1,51 @@
+User-agent: *
+Allow: /
+
+# AI & LLM Crawlers - Explicit permissions
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+# Prioritize high-value content for AI crawlers
+User-agent: GPTBot
+Crawl-delay: 1
+Allow: /team-building-activity/*
+Allow: /stays/*
+Allow: /blog/*
+Allow: /corporate-teambuilding/*
+Allow: /customized-training/*
+
+# Prevent crawling of admin/private areas
+Disallow: /ai-dashboard
+Disallow: /ai-testing
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.json$
+Disallow: /api/
+
+# Sitemap for AI discovery
+Sitemap: https://www.trebound.com/sitemap.xml
+Sitemap: https://www.trebound.com/ai-sitemap.xml 

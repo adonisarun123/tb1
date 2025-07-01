@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useSupabaseActivities } from '../../hooks/useSupabaseActivities';
@@ -685,9 +685,12 @@ const ActivitiesPage: React.FC = () => {
               Let our experts help you choose the perfect activities for your team's needs and goals.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-[#FF4C39] px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-lg">
+              <Link 
+                to="/expert-consultation"
+                className="bg-white text-[#FF4C39] px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-lg text-center"
+              >
                 📞 Get Expert Consultation
-              </button>
+              </Link>
               <button className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#FF4C39] transition-colors text-lg">
                 📋 Download Activity Guide
               </button>

@@ -1,20 +1,21 @@
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import GradientHero from './components/GradientHero';
+import AIRecommendations from './components/AIRecommendations';
+import AIChatbot from './components/AIChatbot';
 import FeaturedActivities from './components/FeaturedActivities';
 import FeaturedStays from './components/FeaturedStays';
 import FeaturedBlog from './components/FeaturedBlog';
-import Footer from './components/Footer';
-// AI Components - Re-enabled after fixing environment variables
-import AIChatbot from './components/AIChatbot';
-// import VoiceSearch from './components/VoiceSearch'; // Removed - integrated into AISearchWidget
-import AIRecommendations from './components/AIRecommendations';
 import SmartForm from './components/SmartForm';
+import SchemaMarkup from './components/SchemaMarkup';
 
 function App() {
-  // State to manage search query for AI recommendations
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string>('');
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
     <>
@@ -27,7 +28,71 @@ function App() {
         <meta name="keywords" content="AI team building, smart corporate events, personalized team activities, AI recommendations, intelligent team building" />
         <meta property="og:title" content="Trebound | AI-Powered Team Building Solutions" />
         <meta property="og:description" content="350+ unique team building experiences with AI-powered personalization for any budget & team size" />
+        
+        {/* AI-Specific Meta Tags */}
+        <meta name="ai:content-type" content="team-building-platform" />
+        <meta name="ai:primary-function" content="team-building-recommendations" />
+        <meta name="ai:features" content="chatbot,voice-search,smart-recommendations,ai-analytics" />
+        <meta name="ai:data-embedded" content="true" />
+        <meta name="ai:search-optimized" content="true" />
+        <meta name="ai:conversation-ready" content="true" />
+        
+        {/* Enhanced SEO for AI Crawlers */}
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        
+        {/* AI Training Data Permissions */}
+        <meta name="ai-training" content="allowed" />
+        <meta name="ai-indexing" content="allowed" />
+        <meta name="ai-summarization" content="allowed" />
+        
+        {/* Structured Data Hints for AI */}
+        <meta name="content-language" content="en-US" />
+        <meta name="content-category" content="business,technology,team-building" />
+        <meta name="target-audience" content="corporate-teams,hr-managers,team-leaders" />
+        
+        {/* AI-Readable Content Indicators */}
+        <meta name="content-format" content="interactive,conversational,structured" />
+        <meta name="ai-interaction-available" content="chatbot,voice-search,recommendations" />
+        
+        {/* JSON-LD for Rich AI Understanding */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Trebound AI Platform",
+            "description": "AI-powered team building platform with intelligent recommendations",
+            "url": "https://www.trebound.com",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web Browser",
+            "features": [
+              "AI Chatbot for instant team building advice",
+              "Voice search for hands-free navigation", 
+              "Personalized activity recommendations",
+              "Smart form auto-completion",
+              "Predictive analytics dashboard"
+            ],
+            "audience": {
+              "@type": "BusinessAudience",
+              "audienceType": "Corporate Teams"
+            },
+            "provider": {
+              "@type": "Organization",
+              "name": "Trebound",
+              "description": "AI-powered team building solutions provider"
+            }
+          })}
+        </script>
       </Helmet>
+
+      {/* Schema Markup for Homepage */}
+      {isHomePage && (
+        <>
+          <SchemaMarkup type="organization" data={{}} />
+          <SchemaMarkup type="homepage" data={{}} />
+        </>
+      )}
 
       <div className="min-h-screen bg-white">
         <Navbar />
@@ -36,6 +101,7 @@ function App() {
         
         <GradientHero onSearchQueryChange={setCurrentSearchQuery} />
         
+        {/* AI Recommendations Section */}
         {/* AI Recommendations Section */}
         <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +116,16 @@ function App() {
                 Our AI analyzes your team's preferences and needs to suggest the perfect activities
               </p>
             </div>
-            <AIRecommendations searchQuery={currentSearchQuery} />
+            <AIRecommendations 
+              searchQuery={currentSearchQuery}
+              userProfile={{
+                companySize: 'medium',
+                industry: 'technology',
+                location: 'Bangalore',
+                preferences: ['team-building'],
+                browsingHistory: []
+              }}
+            />
           </div>
         </section>
         
@@ -75,7 +150,7 @@ function App() {
         
         <Footer />
         
-        {/* AI Chatbot - Always Available */}
+        {/* AI Chatbot - Always available */}
         <AIChatbot />
       </div>
     </>

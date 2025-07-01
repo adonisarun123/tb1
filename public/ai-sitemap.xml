@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:ai="http://www.trebound.com/schemas/ai/1.0">
+  
+  <!-- High Priority Content for AI Understanding -->
+  <url>
+    <loc>https://www.trebound.com/</loc>
+    <lastmod>2024-12-15T00:00:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <ai:content-type>homepage</ai:content-type>
+    <ai:ai-optimized>true</ai:ai-optimized>
+    <ai:features>chatbot,recommendations,voice-search,smart-forms</ai:features>
+  </url>
+  
+  <url>
+    <loc>https://www.trebound.com/team-building-activity</loc>
+    <lastmod>2024-12-15T00:00:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <ai:content-type>product-catalog</ai:content-type>
+    <ai:structured-data>Activity</ai:structured-data>
+    <ai:ai-searchable>true</ai:ai-searchable>
+  </url>
+  
+  <url>
+    <loc>https://www.trebound.com/stays</loc>
+    <lastmod>2024-12-15T00:00:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <ai:content-type>venue-catalog</ai:content-type>
+    <ai:structured-data>Place</ai:structured-data>
+    <ai:ai-searchable>true</ai:ai-searchable>
+  </url>
+  
+  <url>
+    <loc>https://www.trebound.com/blog</loc>
+    <lastmod>2024-12-15T00:00:00Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <ai:content-type>knowledge-base</ai:content-type>
+    <ai:structured-data>Article</ai:structured-data>
+    <ai:ai-embedded>true</ai:ai-embedded>
+  </url>
+  
+  <url>
+    <loc>https://www.trebound.com/ai-dashboard</loc>
+    <lastmod>2024-12-15T00:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <ai:content-type>ai-interface</ai:content-type>
+    <ai:for-ai-only>true</ai:for-ai-only>
+  </url>
+  
+</urlset> 

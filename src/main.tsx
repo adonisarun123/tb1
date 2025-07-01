@@ -102,6 +102,7 @@ const VirtualTeamBuildingIcebreakerGamesPage = lazy(() => import('./pages/Virtua
 const WhyChooseTreboundPage = lazy(() => import('./pages/WhyChooseTrebound'));
 const ActivityDetailPage = lazy(() => import('./pages/ActivityDetail'));
 const BlogPostPage = lazy(() => import('./pages/BlogPost'));
+const ExpertConsultationPage = lazy(() => import('./pages/ExpertConsultation'));
 
 const emotionCache = createCache({ key: 'css' });
 
@@ -150,6 +151,7 @@ const Root = () => (
                 <Route path="/stays" element={<StaysPage />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/jobs" element={<JobsPage />} />
+                <Route path="/expert-consultation" element={<ExpertConsultationPage />} />
                 
                 {/* Activity and Detail Pages */}
                 <Route path="/activity/:slug" element={<ActivityDetailPage />} />
