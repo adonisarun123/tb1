@@ -350,7 +350,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
       .sort((a, b) => b.score - a.score)
       .slice(0, Math.min(2, limit - selectedItems.length));
 
-      selectedItems = selectedItems.concat(scoredStays.map(({ stay, score }, index) => ({
+      selectedItems = selectedItems.concat(scoredStays.map(({ stay, score }) => ({
         activityId: `venue-${stay.id}`,
         name: stay.name,
         description: stay.tagline || stay.stay_description?.substring(0, 120) + '...' || 'Premium venue for team outings',
@@ -381,7 +381,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
       .sort((a, b) => b.score - a.score)
       .slice(0, remainingSlots);
 
-      selectedItems = selectedItems.concat(scoredDestinations.map(({ dest, score }, index) => ({
+      selectedItems = selectedItems.concat(scoredDestinations.map(({ dest, score }) => ({
         activityId: `destination-${dest.id}`,
         name: dest.name,
         description: dest.description.substring(0, 120) + '...',
