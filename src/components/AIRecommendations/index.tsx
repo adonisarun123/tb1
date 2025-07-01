@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fi';
 import { generateAIResponse } from '../../lib/openaiClient';
 import { supabase, Activity, Stay, Destination } from '../../lib/supabaseClient';
+import LazyImage from '../LazyImage';
 
 interface AIRecommendation {
   activityId: string;
@@ -354,7 +355,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
         activityId: `venue-${stay.id}`,
         name: stay.name,
         description: stay.tagline || stay.stay_description?.substring(0, 120) + '...' || 'Premium venue for team outings',
-        image: stay.stay_image || '/images/Corporate team 1.jpg',
+        image: stay.stay_image || getActivityImage(stay.name, ['venue', 'accommodation'], 'venue'),
         rating: 4.4 + Math.random() * 0.6,
         duration: 'Full day',
         capacity: '20-100 people',
@@ -385,7 +386,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
         activityId: `destination-${dest.id}`,
         name: dest.name,
         description: dest.description.substring(0, 120) + '...',
-        image: '/images/bangalore.jpg',
+        image: getActivityImage(dest.name, ['destination', 'travel'], 'destination'),
         rating: 4.2 + Math.random() * 0.8,
         duration: 'Multi-day',
         capacity: '15-50 people',
@@ -424,40 +425,69 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
     const tagString = tags?.join(' ').toLowerCase() || '';
     
     if (type === 'venue') {
-      return '/images/Corporate team 1.jpg';
+      const venueImages = [
+        '/images/Corporate team 1.jpg',
+        '/images/Corporate team 2.webp',
+        '/images/Corporate team 3.webp',
+        '/images/Corporate team 4.webp'
+      ];
+      return venueImages[Math.floor(Math.random() * venueImages.length)];
     }
     
     if (type === 'destination') {
-      return '/images/bangalore.jpg';
+      const destinationImages = [
+        '/images/bangalore.jpg',
+        '/images/mumbai.jpg',
+        '/images/Hyderabad.jpg'
+      ];
+      return destinationImages[Math.floor(Math.random() * destinationImages.length)];
     }
     
     // Activity images based on content
     if (name.includes('virtual') || name.includes('online') || tagString.includes('virtual')) {
-      return '/images/virtual activity.jpg';
+      return '/images/online activity.jpg';
     }
-    if (name.includes('escape') || name.includes('mystery')) {
-      return '/images/indoor activity.jpg';
+    if (name.includes('escape') || name.includes('mystery') || name.includes('indoor')) {
+      return '/images/indoor.jpg';
     }
     if (name.includes('outdoor') || name.includes('adventure') || tagString.includes('outdoor')) {
       return '/images/outdoor.jpg';
     }
     if (name.includes('cooking') || name.includes('culinary')) {
-      return '/images/team.jpg';
+      return '/images/activity3.jpg';
     }
     if (name.includes('game') || name.includes('quiz') || name.includes('trivia')) {
       return '/images/games.jpg';
     }
+    if (name.includes('corporate') || name.includes('team building')) {
+      return '/images/corporate.jpg';
+    }
+    if (name.includes('offsite') || name.includes('outbound')) {
+      return '/images/offsite.jpg';
+    }
+    if (name.includes('fun') || name.includes('engaging')) {
+      return '/images/fun and engaging.jpg';
+    }
     
-    // Default images
+    // Default activity images rotation
     const defaultImages = [
-      '/images/team.jpg',
+      '/images/activity1.jpg',
+      '/images/activity2.jpg',
+      '/images/activity3.jpg',
+      '/images/activity4.jpg',
+      '/images/activity5.jpg',
       '/images/Corporate team 1.jpg',
       '/images/Corporate team 2.webp',
-      '/images/activity1.jpg',
-      '/images/activity2.jpg'
+      '/images/team.jpg'
     ];
     
-    return defaultImages[Math.floor(Math.random() * defaultImages.length)];
+    // Use name hash for consistent image selection per activity
+    const nameHash = name.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    return defaultImages[Math.abs(nameHash) % defaultImages.length];
   };
 
   const getFilteredRecommendations = () => {
@@ -607,10 +637,13 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
             >
               {/* Image and Category Badge */}
               <div className="relative h-48 overflow-hidden flex-shrink-0 rounded-t-xl">
-                <img
-                  src={recommendation.image}
+                <LazyImage
+                  src={getActivityImage(recommendation.name, recommendation.tags, recommendation.type)}
                   alt={recommendation.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  width={400}
+                  height={200}
                 />
                 <div className="absolute top-3 left-3">
                   <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(recommendation.category)}`}>
