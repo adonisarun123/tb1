@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { formTrackingService, FormTrackingResponse } from '../../lib/formTrackingService';
+import FormSuccessMessage from '../FormSuccessMessage';
 
 interface FormData {
   name: string;
@@ -30,6 +32,7 @@ const ContactForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formResponse, setFormResponse] = useState<FormTrackingResponse | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -86,62 +89,55 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await formTrackingService.submitForm(
+        'contact-form',
+        formData
+      );
       
-      console.log('Form submitted:', formData);
+      setFormResponse(response);
       setIsSubmitted(true);
       
-      // Reset form after successful submission
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          teamSize: '',
-          eventType: '',
-          budget: '',
-          message: '',
-          phone: ''
-        });
-        setIsSubmitted(false);
-      }, 3000);
+      // Reset form after 5 seconds if successful
+      if (response.success) {
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            email: '',
+            company: '',
+            teamSize: '',
+            eventType: '',
+            budget: '',
+            message: '',
+            phone: ''
+          });
+          setIsSubmitted(false);
+          setFormResponse(null);
+        }, 5000);
+      }
       
     } catch (error) {
       console.error('Error submitting form:', error);
+      setFormResponse({
+        success: false,
+        reference_id: '',
+        message: 'There was an error submitting your form. Please try again or contact us directly.'
+      });
+      setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isSubmitted) {
+  if (isSubmitted && formResponse) {
     return (
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-12 text-center border border-emerald-200">
-        <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-3xl text-white">✅</span>
-        </div>
-        <h3 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h3>
-        <p className="text-xl text-gray-600 mb-6">
-          We've received your request and will get back to you within 24 hours.
-        </p>
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <p className="text-gray-700 font-semibold mb-2">What happens next?</p>
-          <div className="space-y-3 text-left">
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">1</span>
-              <span className="text-gray-600">We'll review your requirements</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">2</span>
-              <span className="text-gray-600">Our expert will call you for consultation</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">3</span>
-              <span className="text-gray-600">Get personalized activity recommendations</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <FormSuccessMessage 
+        response={formResponse}
+        onClose={() => {
+          setIsSubmitted(false);
+          setFormResponse(null);
+        }}
+        showCloseButton={true}
+      />
     );
   }
 

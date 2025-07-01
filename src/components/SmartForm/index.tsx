@@ -10,6 +10,8 @@ import {
   FiSend,
   FiTrendingUp
 } from 'react-icons/fi';
+import { formTrackingService, FormTrackingResponse } from '../../lib/formTrackingService';
+import FormSuccessMessage from '../FormSuccessMessage';
 
 interface FormData {
   companyName: string;
@@ -74,6 +76,8 @@ const SmartForm: React.FC = () => {
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
   const [_isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formResponse, setFormResponse] = useState<FormTrackingResponse | null>(null);
 
   const industries = [
     'Technology', 'Finance', 'Healthcare', 'Education', 'Manufacturing',
@@ -300,31 +304,45 @@ const SmartForm: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await formTrackingService.submitForm(
+        'smart-form',
+        formData
+      );
       
-      // Success feedback
-      alert('🎉 Request submitted successfully! Our team will contact you within 24 hours to discuss your team building requirements.');
+      setFormResponse(response);
+      setIsSubmitted(true);
       
-      // Reset form
-      setFormData({
-        companyName: '',
-        contactPerson: '',
-        email: '',
-        phone: '',
-        industry: '',
-        companySize: '',
-        groupSize: '',
-        preferredDate: '',
-        location: '',
-        activityType: '',
-        budget: '',
-        specialRequirements: ''
-      });
-      setTouchedFields({});
+      // Reset form after 5 seconds if successful
+      if (response.success) {
+        setTimeout(() => {
+          setFormData({
+            companyName: '',
+            contactPerson: '',
+            email: '',
+            phone: '',
+            industry: '',
+            companySize: '',
+            groupSize: '',
+            preferredDate: '',
+            location: '',
+            activityType: '',
+            budget: '',
+            specialRequirements: ''
+          });
+          setTouchedFields({});
+          setIsSubmitted(false);
+          setFormResponse(null);
+        }, 5000);
+      }
       
     } catch (error) {
-      alert('Something went wrong. Please try again or contact us directly.');
+      console.error('Error submitting form:', error);
+      setFormResponse({
+        success: false,
+        reference_id: '',
+        message: 'There was an error submitting your smart form. Please try again or contact us directly.'
+      });
+      setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -341,6 +359,19 @@ const SmartForm: React.FC = () => {
     handleInputChange(field as keyof FormData, value);
     setSmartSuggestions(prev => prev.filter(s => s.field !== field));
   };
+
+  if (isSubmitted && formResponse) {
+    return (
+      <FormSuccessMessage 
+        response={formResponse}
+        onClose={() => {
+          setIsSubmitted(false);
+          setFormResponse(null);
+        }}
+        showCloseButton={true}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-xl">

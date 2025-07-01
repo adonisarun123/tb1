@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { formTrackingService, FormTrackingResponse } from '../../lib/formTrackingService';
+import FormSuccessMessage from '../../components/FormSuccessMessage';
 
 // Icons
 const CalendarIcon = () => (
@@ -99,6 +101,7 @@ const ExpertConsultation: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [formResponse, setFormResponse] = useState<FormTrackingResponse | null>(null);
 
   const steps = [
     { id: 1, title: 'Personal Info', icon: <UserIcon /> },
@@ -280,11 +283,29 @@ const ExpertConsultation: React.FC = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
+    try {
+      const response = await formTrackingService.submitForm(
+        'expert-consultation',
+        formData,
+        {
+          formStepsCompleted: 4,
+          totalFormSteps: 4
+        }
+      );
+      
+      setFormResponse(response);
+      setSubmitSuccess(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setFormResponse({
+        success: false,
+        reference_id: '',
+        message: 'There was an error submitting your consultation request. Please try again or contact us directly.'
+      });
+      setSubmitSuccess(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
@@ -300,33 +321,21 @@ const ExpertConsultation: React.FC = () => {
   const neumorphicInset = "bg-gray-100 shadow-[inset_20px_20px_60px_#bebebe,inset_-20px_-20px_60px_#ffffff] rounded-2xl";
   const neumorphicButton = "bg-gray-100 shadow-[8px_8px_20px_#bebebe,-8px_-8px_20px_#ffffff] hover:shadow-[4px_4px_10px_#bebebe,-4px_-4px_10px_#ffffff] rounded-xl transition-all duration-300";
 
-  if (submitSuccess) {
+  if (submitSuccess && formResponse) {
     return (
       <>
         <Helmet>
           <title>Consultation Booked Successfully | Trebound</title>
         </Helmet>
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-100 py-12">
           <Navbar />
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`max-w-md mx-auto p-8 text-center ${neumorphicCard}`}
-          >
-            <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckIcon />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Consultation Booked!</h2>
-            <p className="text-gray-600 mb-6">
-              Thank you for booking a consultation with our experts. We'll send you a calendar invite shortly.
-            </p>
-            <button 
-              onClick={() => window.location.href = '/'}
-              className={`px-8 py-3 text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl font-medium ${neumorphicButton}`}
-            >
-              Return Home
-            </button>
-          </motion.div>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+            <FormSuccessMessage 
+              response={formResponse}
+              onClose={() => window.location.href = '/'}
+              showCloseButton={true}
+            />
+          </div>
         </div>
       </>
     );

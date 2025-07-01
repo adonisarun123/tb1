@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { webhookService } from '../../lib/webhookService';
+import { formTrackingService } from '../../lib/formTrackingService';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
@@ -62,6 +63,17 @@ const NewsletterSection = () => {
       });
 
       if (response.ok) {
+        // Track the newsletter signup
+        try {
+          const trackingResponse = await formTrackingService.submitForm(
+            'newsletter-signup',
+            { email }
+          );
+          console.log('Newsletter signup tracked:', trackingResponse.reference_id);
+        } catch (trackingError) {
+          console.error('Error tracking newsletter signup:', trackingError);
+        }
+        
         setStatus('success');
         setMessage('Thank you for subscribing to our newsletter!');
         setEmail('');
