@@ -1,177 +1,265 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 interface LazyImageProps {
   src: string;
   alt: string;
   className?: string;
+  sizes?: string;
+  srcSet?: string;
+  fetchPriority?: 'high' | 'low' | 'auto';
+  loading?: 'lazy' | 'eager';
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpg' | 'png';
   placeholder?: string;
-  lowQualitySrc?: string;
   onLoad?: () => void;
   onError?: () => void;
   style?: React.CSSProperties;
-  width?: number | string;
-  height?: number | string;
-  loading?: 'lazy' | 'eager';
-  decoding?: 'async' | 'sync' | 'auto';
+  decoding?: 'sync' | 'async' | 'auto';
 }
 
 const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt,
   className = '',
+  sizes = '100vw',
+  srcSet,
+  fetchPriority = 'auto',
+  loading = 'lazy',
+  width,
+  height,
+  quality = 80,
+  format = 'webp',
   placeholder,
-  lowQualitySrc,
   onLoad,
   onError,
   style,
-  width,
-  height,
-  loading = 'lazy',
-  decoding = 'async'
+  decoding = 'async',
+  ...props
 }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [inView, setInView] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState('');
+  const [isIntersecting, setIsIntersecting] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Intersection Observer callback
-  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
-    const [entry] = entries;
-    if (entry.isIntersecting) {
-      setInView(true);
-      if (observerRef.current && imgRef.current) {
-        observerRef.current.unobserve(imgRef.current);
+  // Use intersection observer for better lazy loading control
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    rootMargin: '50px',
+    triggerOnce: true,
+  });
+
+  // Generate optimized image URLs for different formats
+  const generateOptimizedSrc = (originalSrc: string, targetFormat?: string) => {
+    // If it's an external URL (Unsplash, Webflow, etc.), add optimization parameters
+    try {
+      const url = new URL(originalSrc);
+      
+      // Unsplash optimization
+      if (url.hostname.includes('unsplash.com')) {
+        const params = new URLSearchParams();
+        if (width) params.set('w', width.toString());
+        if (height) params.set('h', height.toString());
+        params.set('q', quality.toString());
+        params.set('auto', 'format');
+        params.set('fit', 'crop');
+        if (targetFormat) params.set('fm', targetFormat);
+        
+        return `${url.origin}${url.pathname}?${params.toString()}`;
       }
+      
+      // Webflow optimization
+      if (url.hostname.includes('webflow.com')) {
+        const params = new URLSearchParams(url.search);
+        if (width) params.set('w', width.toString());
+        if (height) params.set('h', height.toString());
+        params.set('q', quality.toString());
+        if (targetFormat) params.set('format', targetFormat);
+        
+        return `${url.origin}${url.pathname}?${params.toString()}`;
+      }
+    } catch (e) {
+      // If URL parsing fails, return original
     }
-  }, []);
+    
+    return originalSrc;
+  };
 
-  // Set up Intersection Observer
-  useEffect(() => {
-    if (!imgRef.current) return;
-
-    observerRef.current = new IntersectionObserver(handleIntersection, {
-      rootMargin: '50px', // Start loading 50px before the image comes into view
-      threshold: 0.1
+  // Generate responsive srcSet
+  const generateSrcSet = () => {
+    if (srcSet) return srcSet;
+    
+    const widths = [320, 640, 768, 1024, 1280, 1920];
+    const optimizedSources = widths.map(w => {
+      const optimizedSrc = generateOptimizedSrc(src);
+      try {
+        const url = new URL(optimizedSrc);
+        const params = new URLSearchParams(url.search);
+        params.set('w', w.toString());
+        if (quality) params.set('q', quality.toString());
+        return `${url.origin}${url.pathname}?${params.toString()} ${w}w`;
+      } catch (e) {
+        return `${optimizedSrc} ${w}w`;
+      }
     });
+    
+    return optimizedSources.join(', ');
+  };
 
-    observerRef.current.observe(imgRef.current);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [handleIntersection]);
-
-  // Handle image load
-  const handleImageLoad = useCallback(() => {
-    setImageLoaded(true);
-    onLoad?.();
-  }, [onLoad]);
-
-  // Handle image error
-  const handleImageError = useCallback(() => {
-    setImageError(true);
-    onError?.();
-  }, [onError]);
-
-  // Preload image when in view
-  useEffect(() => {
-    if (inView && !imageLoaded && !imageError) {
-      const img = new Image();
-      img.onload = handleImageLoad;
-      img.onerror = handleImageError;
-      img.src = src;
+  // Generate modern format sources for picture element
+  const generateModernSources = () => {
+    const sources = [];
+    
+    // AVIF support (best compression)
+    if ('serviceWorker' in navigator) {
+      sources.push({
+        type: 'image/avif',
+        srcSet: generateOptimizedSrc(src, 'avif'),
+      });
     }
-  }, [inView, imageLoaded, imageError, src, handleImageLoad, handleImageError]);
-
-  // Base styles for image container
-  const containerStyle: React.CSSProperties = {
-    position: 'relative',
-    overflow: 'hidden',
-    backgroundColor: '#f3f4f6',
-    ...style
+    
+    // WebP support (better than JPEG)
+    sources.push({
+      type: 'image/webp',
+      srcSet: generateOptimizedSrc(src, 'webp'),
+    });
+    
+    return sources;
   };
 
-  // Image styles
-  const imageStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    transition: 'opacity 0.3s ease-in-out',
-    opacity: imageLoaded ? 1 : 0
+  // Handle image loading
+  useEffect(() => {
+    if (!inView || loading === 'eager') return;
+    
+    setIsIntersecting(true);
+    setCurrentSrc(generateOptimizedSrc(src, format));
+  }, [inView, src, format, quality, width, height]);
+
+  // Immediate loading for eager images
+  useEffect(() => {
+    if (loading === 'eager') {
+      setIsIntersecting(true);
+      setCurrentSrc(generateOptimizedSrc(src, format));
+    }
+  }, [loading, src, format]);
+
+  const handleLoad = () => {
+    setIsLoaded(true);
+    onLoad?.();
   };
 
-  // Placeholder styles
-  const placeholderStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f3f4f6',
-    color: '#9ca3af',
-    fontSize: '14px',
-    transition: 'opacity 0.3s ease-in-out',
-    opacity: imageLoaded ? 0 : 1,
-    pointerEvents: 'none'
+  const handleError = () => {
+    setHasError(true);
+    // Fallback to original format if modern format fails
+    if (format !== 'jpg' && !hasError) {
+      setCurrentSrc(generateOptimizedSrc(src, 'jpg'));
+      setHasError(false);
+    } else {
+      onError?.();
+    }
   };
 
-  return (
-    <div 
-      ref={imgRef}
-      className={className}
-      style={containerStyle}
+  // Placeholder component
+  const Placeholder = () => (
+    <div
+      className={`bg-gray-200 animate-pulse flex items-center justify-center ${className}`}
+      style={{
+        width: width || '100%',
+        height: height || '200px',
+        aspectRatio: width && height ? `${width}/${height}` : 'auto',
+        ...style,
+      }}
     >
-      {/* Low quality placeholder or loading state */}
-      {lowQualitySrc && !imageLoaded && (
-        <img
-          src={lowQualitySrc}
-          alt={alt}
-          style={{
-            ...imageStyle,
-            filter: 'blur(5px)',
-            opacity: 1
-          }}
-          aria-hidden="true"
-        />
+      {placeholder || (
+        <svg
+          className="w-10 h-10 text-gray-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fillRule="evenodd"
+            d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+            clipRule="evenodd"
+          />
+        </svg>
       )}
+    </div>
+  );
 
-      {/* Main image */}
-      {inView && (
+  // Error fallback
+  if (hasError && format === 'jpg') {
+    return <Placeholder />;
+  }
+
+  // If not in view and lazy loading, show placeholder
+  if (!isIntersecting && loading === 'lazy') {
+    return (
+      <div ref={ref}>
+        <Placeholder />
+      </div>
+    );
+  }
+
+  // Check if we should use picture element for modern formats
+  const modernSources = generateModernSources();
+  const shouldUsePicture = modernSources.length > 0 && !src.includes('.webp') && !src.includes('.avif');
+
+  if (shouldUsePicture) {
+    return (
+      <picture ref={ref} className={className}>
+        {modernSources.map((source, index) => (
+          <source
+            key={index}
+            type={source.type}
+            srcSet={source.srcSet}
+            sizes={sizes}
+          />
+        ))}
         <img
-          src={src}
+          ref={imgRef}
+          src={currentSrc}
           alt={alt}
-          style={imageStyle}
+          className={`transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${className}`}
+          style={style}
           width={width}
           height={height}
           loading={loading}
           decoding={decoding}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
+          fetchPriority={fetchPriority}
+          onLoad={handleLoad}
+          onError={handleError}
+          {...props}
         />
-      )}
+      </picture>
+    );
+  }
 
-      {/* Placeholder content */}
-      {!imageLoaded && !lowQualitySrc && (
-        <div style={placeholderStyle}>
-          {imageError ? (
-            <span>Failed to load image</span>
-          ) : placeholder ? (
-            <span>{placeholder}</span>
-          ) : (
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mb-2"></div>
-              <span>Loading...</span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+  return (
+    <img
+      ref={ref}
+      src={currentSrc}
+      alt={alt}
+      className={`transition-opacity duration-300 ${
+        isLoaded ? 'opacity-100' : 'opacity-0'
+      } ${className}`}
+      style={style}
+      width={width}
+      height={height}
+      sizes={sizes}
+      srcSet={generateSrcSet()}
+      loading={loading}
+      decoding={decoding}
+      fetchPriority={fetchPriority}
+      onLoad={handleLoad}
+      onError={handleError}
+      {...props}
+    />
   );
 };
 

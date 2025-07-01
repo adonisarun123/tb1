@@ -1,23 +1,29 @@
-import { useInView } from 'react-intersection-observer';
-import { memo, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiArrowRight, FiTrendingUp, FiUsers, FiStar } from 'react-icons/fi';
-import AISearchWidget from '../AISearchWidget';
-import {
-  HeroContainer,
-  ContentContainer,
-  StatsContainer,
-  StatNumber,
-  StatLabel,
+import { useInView } from 'react-intersection-observer';
+import { 
+  HeroContainer, 
+  ContentContainer
 } from './styles';
-import { staggerChildren } from './animations';
+import AISearchWidget from '../AISearchWidget';
+import StatsSection from '../StatsSection';
+
+// Animation variants
+const staggerChildren = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 interface GradientHeroProps {
   className?: string;
   onSearchQueryChange?: (query: string) => void;
 }
 
-// Hero image - custom image from public folder
+// Hero image - optimized for LCP
 const heroImageUrl = "/hero.webp";
 
 const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryChange }) => {
@@ -25,7 +31,6 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
   const [ref, inView] = useInView({
     threshold: 0.15,
     triggerOnce: true,
-    rootMargin: '50px' // Start loading earlier
   });
 
   // Preload hero image for better LCP
@@ -35,175 +40,113 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
     img.src = heroImageUrl;
   }, []);
 
-  // Stats with hardcoded values
-  const stats = [
-    {
-      number: '96,753+',
-      label: 'Employees\nengaged'
-    },
-    {
-      number: '4.9/5',
-      label: 'Stellar Feedback\non Google'
-    },
-    {
-      number: '550+',
-      label: 'Global organizations\ntrust us'
-    }
-  ];
-
   return (
-    <div className="relative">
-      <HeroContainer ref={ref} className={className}>
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate="visible"
+      variants={staggerChildren}
+      className={`relative ${className || ''}`}
+      style={{ pointerEvents: 'auto' }}
+    >
+      <HeroContainer>
+        {/* Background Image with Lazy Loading for LCP Optimization */}
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: imageLoaded ? `url('${heroImageUrl}')` : 'none',
-            backgroundColor: imageLoaded ? 'transparent' : '#1a1a1a', // Fallback color
-            backgroundPosition: 'center',
+            backgroundImage: imageLoaded ? `url(${heroImageUrl})` : 'none',
+            backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
             backgroundSize: 'cover',
+            backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            opacity: imageLoaded ? 1 : 0.8,
-            transition: 'opacity 0.3s ease-in-out'
           }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.4)] to-[rgba(0,0,0,0.7)]" />
-        </div>
+        />
         
-        {/* Enhanced Hero Content with Search Focus */}
-        <ContentContainer 
-          variants={staggerChildren} 
-          initial="hidden" 
-          animate="visible"
-        >
-          {/* Main Heading */}
+
+        
+        {/* Content */}
+        <ContentContainer className="relative z-20" style={{ pointerEvents: 'auto' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-8"
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-              Find Your Perfect
-              <span className="block bg-gradient-to-r from-[#FF4C39] to-[#FFB573] bg-clip-text text-transparent">
-                Team Experience
-              </span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-              Discover 350+ team building activities, premium venues, and amazing destinations with our AI-powered search. 
-              Get instant recommendations tailored to your team's needs.
-            </p>
-          </motion.div>
-
-          {/* AI Search Widget */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-12"
+            className="text-center space-y-8"
+            style={{ pointerEvents: 'auto' }}
           >
-            <AISearchWidget onSearchQueryChange={onSearchQueryChange} />
-          </motion.div>
-
-          {/* Quick Action CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4"
-          >
-            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
-              <FiTrendingUp className="mr-2 text-sm" />
-              Popular Activities
-              <FiArrowRight className="ml-2 text-sm" />
-            </button>
-            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
-              <FiUsers className="mr-2 text-sm" />
-              Premium Venues
-              <FiArrowRight className="ml-2 text-sm" />
-            </button>
-            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-md text-white rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 border border-white/20 text-sm sm:text-base">
-              <FiStar className="mr-2 text-sm" />
-              Top Destinations
-              <FiArrowRight className="ml-2 text-sm" />
-            </button>
-          </motion.div>
-
-          {/* Trust Indicators */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center text-white/80 px-4"
-          >
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm">
-              <div className="flex items-center">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                <span>Instant Recommendations</span>
+            {/* Main Heading */}
+            <div className="space-y-6">
+              {/* Background for text readability */}
+              <div className="bg-black/30 backdrop-blur-sm rounded-3xl px-8 py-6 mx-auto inline-block">
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight"
+                  style={{
+                    textShadow: '2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
+                    WebkitTextStroke: '1px rgba(255,255,255,0.1)'
+                  }}
+                >
+                  Team Building
+                  <br />
+                  <span 
+                    className="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent font-black"
+                    style={{
+                      textShadow: '0 0 30px rgba(255,76,57,0.5)',
+                      WebkitTextStroke: '1px rgba(255,165,0,0.3)'
+                    }}
+                  >
+                    Reimagined
+                  </span>
+                </motion.h1>
               </div>
-              <div className="flex items-center">
-                <span className="w-2 h-2 bg-blue-400 rounded-full mr-2 animate-pulse"></span>
-                <span>Expert Curated</span>
-              </div>
-              <div className="flex items-center">
-                <span className="w-2 h-2 bg-purple-400 rounded-full mr-2 animate-pulse"></span>
-                <span>AI-Powered</span>
+              
+              {/* Background for subtitle */}
+              <div className="bg-black/25 backdrop-blur-sm rounded-2xl px-6 py-4 mx-auto inline-block max-w-5xl">
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  className="text-xl sm:text-2xl md:text-3xl text-white max-w-4xl mx-auto leading-relaxed font-semibold"
+                  style={{
+                    textShadow: '1px 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.4)'
+                  }}
+                >
+                  AI-powered experiences that bring teams together through 
+                  <span 
+                    className="text-orange-300 font-bold"
+                    style={{
+                      textShadow: '1px 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(255,165,0,0.3)'
+                    }}
+                  > unforgettable adventures</span>
+                </motion.p>
               </div>
             </div>
+
+            {/* Search Widget */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="max-w-2xl mx-auto relative z-50"
+              style={{ pointerEvents: 'auto' }}
+            >
+              <AISearchWidget 
+                onSearchQueryChange={onSearchQueryChange}
+              />
+            </motion.div>
           </motion.div>
         </ContentContainer>
-
-        {/* Enhanced Stats Section */}
-        <div className="hidden lg:block">
-        <StatsContainer 
-          variants={staggerChildren} 
-          initial="hidden" 
-          animate={inView ? "visible" : "hidden"}
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.9 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300"
-            >
-              <StatNumber className="text-white">{stat.number}</StatNumber>
-              <StatLabel className="text-white/80">{stat.label}</StatLabel>
-            </motion.div>
-          ))}
-        </StatsContainer>
-        </div>
-        
-        {/* Mobile/Tablet Stats Section - Normal Flow */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="block lg:hidden mt-8 sm:mt-12 px-4 space-y-3 sm:space-y-4"
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 + (index * 0.1) }}
-              className="bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 text-center max-w-sm mx-auto"
-            >
-              <div className="text-2xl sm:text-3xl font-bold text-white mb-2 font-outfit">
-                {stat.number}
-              </div>
-              <div className="text-sm sm:text-base text-white/80 font-outfit font-medium leading-tight">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
       </HeroContainer>
-      
-      {/* Smooth transition to next section */}
-      <div className="h-[120px] sm:h-[120px] bg-gradient-to-b from-transparent to-white" />
-    </div>
+
+      {/* Stats Section - Lazy loaded */}
+      {inView && (
+        <div className="py-12 sm:py-16">
+          <StatsSection />
+        </div>
+      )}
+    </motion.div>
   );
 };
 
-export default memo(GradientHero);
+export default GradientHero;

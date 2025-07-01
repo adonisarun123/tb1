@@ -206,8 +206,8 @@ export const initializeGCLIDTracking = (): void => {
 export const trackConversion = (conversionLabel: string, value?: number): void => {
   const gclid = getCurrentGCLID();
   
-  if (window.gtag && gclid) {
-    window.gtag('event', 'conversion', {
+  if ((window as any).gtag && gclid) {
+    (window as any).gtag('event', 'conversion', {
       send_to: `AW-832201286/${conversionLabel}`,
       value: value,
       currency: 'INR',

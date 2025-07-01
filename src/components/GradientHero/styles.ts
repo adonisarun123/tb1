@@ -11,6 +11,7 @@ export const HeroContainer = styled.div`
   align-items: center;
   overflow: visible;
   padding: 80px 20px 120px;
+  pointer-events: auto;
   
   @media (max-width: 1023px) {
     padding: 40px 16px 40px;
@@ -112,6 +113,7 @@ export const ContentContainer = styled(motion.div)`
   z-index: 2;
   max-width: 800px;
   width: 100%;
+  pointer-events: auto;
   
   @media (max-width: 768px) {
     padding: 0 16px;

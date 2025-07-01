@@ -257,7 +257,7 @@ export class FormTrackingService {
           ],
           estimated_response_time: '24 hours',
           contact_info: {
-            email: 'hello@trebound.com',
+            email: 'connect@trebound.com',
             phone: '+91-8447464439'
           }
         };
@@ -337,7 +337,7 @@ export class FormTrackingService {
           ],
           estimated_response_time: '24 hours',
           contact_info: {
-            email: 'hello@trebound.com',
+            email: 'connect@trebound.com',
             phone: '+91-8447464439'
           }
         };

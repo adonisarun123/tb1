@@ -58,8 +58,8 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Call us anytime</p>
-                  <a href="tel:+19173103193" className="text-xl font-bold text-white hover:text-blue-400 transition-colors">
-                    +1 917-310-3193
+                  <a href="tel:08095204666" className="text-xl font-bold text-white hover:text-blue-400 transition-colors">
+                    080952 04666
                   </a>
                 </div>
               </div>
@@ -70,8 +70,8 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Email us</p>
-                  <a href="mailto:hello@trebound.com" className="text-xl font-bold text-white hover:text-emerald-400 transition-colors">
-                    hello@trebound.com
+                  <a href="mailto:connect@trebound.com" className="text-xl font-bold text-white hover:text-emerald-400 transition-colors">
+                    connect@trebound.com
                   </a>
                 </div>
               </div>

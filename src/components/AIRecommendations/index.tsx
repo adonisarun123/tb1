@@ -260,52 +260,108 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
     const queryLower = query?.toLowerCase() || '';
     let selectedItems: AIRecommendation[] = [];
 
-    // Select activities based on search query
-    const relevantActivities = websiteData.activities.filter(activity => {
-      const searchableText = `${activity.name} ${activity.tagline} ${activity.description} ${activity.activity_type}`.toLowerCase();
-      return !query || searchableText.includes(queryLower) || 
-             queryLower.includes('virtual') && activity.activity_type?.toLowerCase().includes('virtual') ||
-             queryLower.includes('outdoor') && activity.activity_type?.toLowerCase().includes('outdoor') ||
-             queryLower.includes('team') && searchableText.includes('team');
-    }).slice(0, 5);
+    // Enhanced search relevance scoring
+    const scoreRelevance = (text: string, query: string): number => {
+      if (!query) return 0.5; // Default score when no query
+      
+      const textLower = text.toLowerCase();
+      const queryTerms = query.toLowerCase().split(' ').filter(term => term.length > 2);
+      let score = 0;
+      
+      // Exact phrase match (highest score)
+      if (textLower.includes(query.toLowerCase())) {
+        score += 1.0;
+      }
+      
+      // Individual term matches
+      queryTerms.forEach(term => {
+        if (textLower.includes(term)) {
+          score += 0.3;
+        }
+        // Partial matches
+        if (textLower.indexOf(term.substring(0, Math.max(3, term.length - 1))) >= 0) {
+          score += 0.1;
+        }
+      });
+      
+      // Boost for specific keywords
+      const boostKeywords = {
+        'virtual': ['virtual', 'online', 'remote', 'digital'],
+        'outdoor': ['outdoor', 'adventure', 'nature', 'trekking', 'camping'],
+        'indoor': ['indoor', 'conference', 'boardroom', 'office'],
+        'cooking': ['cooking', 'culinary', 'chef', 'food', 'kitchen'],
+        'team': ['team', 'collaboration', 'teamwork', 'group'],
+        'leadership': ['leadership', 'leader', 'management', 'executive'],
+        'communication': ['communication', 'speaking', 'presentation'],
+        'creative': ['creative', 'innovation', 'art', 'design'],
+        'sports': ['sports', 'athletics', 'physical', 'fitness'],
+        'problem': ['problem', 'puzzle', 'escape', 'mystery', 'solving']
+      };
+      
+      Object.entries(boostKeywords).forEach(([keyword, synonyms]) => {
+        if (queryLower.includes(keyword)) {
+          synonyms.forEach(synonym => {
+            if (textLower.includes(synonym)) {
+              score += 0.4;
+            }
+          });
+        }
+      });
+      
+      return Math.min(score, 1.0); // Cap at 1.0
+    };
 
-    selectedItems = selectedItems.concat(relevantActivities.map((activity, index) => ({
+    // Score and sort activities by relevance
+    const scoredActivities = websiteData.activities.map(activity => {
+      const searchableText = `${activity.name} ${activity.tagline} ${activity.description} ${activity.activity_type}`;
+      const relevanceScore = scoreRelevance(searchableText, queryLower);
+      return { activity, score: relevanceScore };
+    })
+    .filter(({ score }) => !query || score > 0.1) // Only include relevant items
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6); // Get top 6 activities
+
+    selectedItems = selectedItems.concat(scoredActivities.map(({ activity, score }, index) => ({
       activityId: `activity-${activity.id}`,
       name: activity.name,
-      description: activity.tagline || activity.description.substring(0, 100) + '...',
+      description: activity.tagline || activity.description.substring(0, 120) + '...',
       image: getActivityImage(activity.name, [activity.activity_type || ''], 'activity'),
-      rating: 4.5 + Math.random() * 0.5,
+      rating: 4.3 + Math.random() * 0.7,
       duration: activity.duration || '2-3 hours',
       capacity: activity.group_size || '10-30 people',
       location: activity.location || 'Various',
-      confidence: 0.8 + (index === 0 ? 0.1 : 0),
-      reason: query ? `Relevant to "${query}"` : 'Popular team building activity',
-      personalizationFactors: ['real_data'],
+      confidence: Math.max(0.7, score),
+      reason: query ? `${Math.round(score * 100)}% match for "${query}"` : 'Top team building activity',
+      personalizationFactors: ['search_relevant', 'real_data'],
       category: index < 2 ? 'personalized' : (index < 4 ? 'trending' : 'popular'),
       tags: [activity.activity_type || 'team-building'],
       type: 'activity' as const,
       slug: activity.slug
     })));
 
-    // Add some venues if space permits
-    if (selectedItems.length < limit - 2) {
-      const relevantStays = websiteData.stays.filter(stay => {
-        const searchableText = `${stay.name} ${stay.tagline || ''} ${stay.location || ''}`.toLowerCase();
-        return !query || searchableText.includes(queryLower);
-      }).slice(0, 2);
+    // Add venues if we need more items to reach 8
+    if (selectedItems.length < limit) {
+      const scoredStays = websiteData.stays.map(stay => {
+        const searchableText = `${stay.name} ${stay.tagline || ''} ${stay.location || ''} ${stay.stay_description || ''}`;
+        const relevanceScore = scoreRelevance(searchableText, queryLower);
+        return { stay, score: relevanceScore };
+      })
+      .filter(({ score }) => !query || score > 0.05)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, Math.min(2, limit - selectedItems.length));
 
-      selectedItems = selectedItems.concat(relevantStays.map((stay, index) => ({
+      selectedItems = selectedItems.concat(scoredStays.map(({ stay, score }, index) => ({
         activityId: `venue-${stay.id}`,
         name: stay.name,
-        description: stay.tagline || stay.stay_description?.substring(0, 100) + '...' || 'Premium venue for team outings',
+        description: stay.tagline || stay.stay_description?.substring(0, 120) + '...' || 'Premium venue for team outings',
         image: stay.stay_image || '/images/Corporate team 1.jpg',
-        rating: 4.6 + Math.random() * 0.4,
+        rating: 4.4 + Math.random() * 0.6,
         duration: 'Full day',
         capacity: '20-100 people',
         location: stay.location || 'Premium Location',
-        confidence: 0.75 + (index === 0 ? 0.1 : 0),
-        reason: 'Great venue for team events',
-        personalizationFactors: ['real_data'],
+        confidence: Math.max(0.65, score),
+        reason: query ? `Great venue matching "${query}"` : 'Excellent team venue',
+        personalizationFactors: ['search_relevant', 'real_data'],
         category: 'similar' as const,
         tags: ['venue', 'accommodation'],
         type: 'venue' as const,
@@ -313,7 +369,54 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
       })));
     }
 
-    return selectedItems.slice(0, limit);
+    // If still not enough items, add destinations
+    if (selectedItems.length < limit) {
+      const remainingSlots = limit - selectedItems.length;
+      const scoredDestinations = websiteData.destinations.map(dest => {
+        const searchableText = `${dest.name} ${dest.description} ${dest.region}`;
+        const relevanceScore = scoreRelevance(searchableText, queryLower);
+        return { dest, score: relevanceScore };
+      })
+      .filter(({ score }) => !query || score > 0.05)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, remainingSlots);
+
+      selectedItems = selectedItems.concat(scoredDestinations.map(({ dest, score }, index) => ({
+        activityId: `destination-${dest.id}`,
+        name: dest.name,
+        description: dest.description.substring(0, 120) + '...',
+        image: '/images/bangalore.jpg',
+        rating: 4.2 + Math.random() * 0.8,
+        duration: 'Multi-day',
+        capacity: '15-50 people',
+        location: dest.region,
+        confidence: Math.max(0.6, score),
+        reason: query ? `Perfect destination for "${query}"` : 'Amazing team destination',
+        personalizationFactors: ['search_relevant', 'real_data'],
+        category: 'popular' as const,
+        tags: ['destination', 'travel'],
+        type: 'destination' as const,
+        slug: dest.slug
+      })));
+    }
+
+    // Ensure we always return exactly 8 items (or requested limit)
+    const finalItems = selectedItems.slice(0, limit);
+    
+    // If we still don't have enough items, duplicate top items with slight variations
+    while (finalItems.length < limit && selectedItems.length > 0) {
+      const baseItem = selectedItems[finalItems.length % selectedItems.length];
+      const duplicatedItem = {
+        ...baseItem,
+        activityId: `${baseItem.activityId}-alt-${finalItems.length}`,
+        confidence: Math.max(0.5, baseItem.confidence - 0.1),
+        reason: `Alternative: ${baseItem.reason}`,
+        category: 'similar' as const
+      };
+      finalItems.push(duplicatedItem);
+    }
+
+    return finalItems;
   };
 
   const getActivityImage = (activityName: string, tags: string[], type: string): string => {
@@ -419,13 +522,14 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
         )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse h-[480px]">
+          {[...Array(8)].map((_, index) => (
+            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse h-[520px]">
               <div className="h-48 bg-gray-300"></div>
               <div className="p-4 space-y-3">
                 <div className="h-4 bg-gray-300 rounded"></div>
                 <div className="h-3 bg-gray-300 rounded w-3/4"></div>
                 <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                <div className="h-8 bg-gray-300 rounded w-full mt-4"></div>
               </div>
             </div>
           ))}

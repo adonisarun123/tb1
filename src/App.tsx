@@ -11,6 +11,7 @@ import FeaturedStays from './components/FeaturedStays';
 import FeaturedBlog from './components/FeaturedBlog';
 import SmartForm from './components/SmartForm';
 import SchemaMarkup from './components/SchemaMarkup';
+// import PerformanceMonitor from './components/PerformanceMonitor';
 
 function App() {
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string>('');
@@ -19,6 +20,13 @@ function App() {
 
   return (
     <>
+      {/* Performance Monitoring and Optimization - Temporarily disabled */}
+      {/* <PerformanceMonitor 
+        enableCSSOptimization={true}
+        enableResourcePreloading={true}
+        enableMetrics={true}
+      /> */}
+      
       <Helmet>
         <title>Trebound | AI-Powered Team Building & Corporate Events Solutions</title>
         <meta 

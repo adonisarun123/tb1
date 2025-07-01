@@ -47,28 +47,55 @@ const ContactPage: React.FC = () => {
   const offices = [
     {
       city: 'Bangalore',
-      address: 'Koramangala, Bangalore, Karnataka 560034',
-      phone: '+91 9876543210',
-      email: 'bangalore@trebound.com',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80',
-      timezone: 'IST (UTC+5:30)',
-      hours: '9:00 AM - 6:00 PM'
-    },
-    {
-      city: 'Mumbai',
-      address: 'Bandra West, Mumbai, Maharashtra 400050',
-      phone: '+91 9876543211',
-      email: 'mumbai@trebound.com',
-      image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=600&q=80',
+      address: 'No 10, 5th B Cross, Sharadamba Nagar, Jalahalli, Bangalore 560013',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: '/images/bangalore city.jpg',
       timezone: 'IST (UTC+5:30)',
       hours: '9:00 AM - 6:00 PM'
     },
     {
       city: 'Hyderabad',
-      address: 'Hitec City, Hyderabad, Telangana 500081',
-      phone: '+91 9876543212',
-      email: 'hyderabad@trebound.com',
-      image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=600&q=80',
+      address: '3rd Floor, Door No- 1-60/8/A & B, KNR Square, Kondapur, Opp. The Platina, Gachibowli, Hyderabad, Rangareddy, Telangana, 500032',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: '/images/Hyderabad.jpg',
+      timezone: 'IST (UTC+5:30)',
+      hours: '9:00 AM - 6:00 PM'
+    },
+    {
+      city: 'Pune',
+      address: 'Ground Floor, Office No- A5, Suite No- 149, Survey Number- 16/2, Shree, Swapnamandir Society Pune, NEAR- Spearhead Academy, Erandwane, Pune, Pune, Maharashtra, 411004',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: '/images/mumbai.jpg',
+      timezone: 'IST (UTC+5:30)',
+      hours: '9:00 AM - 6:00 PM'
+    },
+    {
+      city: 'Goa',
+      address: 'N- 66, Wisdomlab Desk No- 94, Wisdomlab, Phase- IV, Verna Industrial Estate, Chicalim, South Goa, Goa, 403722',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=600&q=80',
+      timezone: 'IST (UTC+5:30)',
+      hours: '9:00 AM - 6:00 PM'
+    },
+    {
+      city: 'Gurugram',
+      address: '2nd, Plot No 4, Minarch Overseas Pvt Ltd, Minarch Tower, Infrapro Spaces Coworking Space, Sector 44, Gurugram, Gurugram, Haryana, 122003',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: '/images/corporate.jpg',
+      timezone: 'IST (UTC+5:30)',
+      hours: '9:00 AM - 6:00 PM'
+    },
+    {
+      city: 'Jodhpur',
+      address: 'Desk-E-137, J1-371, Phase-II, RIICO Sangaria Industrial Area, Jodhpur, Jodhpur, Rajasthan, 342013',
+      phone: '080952 04666',
+      email: 'connect@trebound.com',
+      image: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=600&q=80',
       timezone: 'IST (UTC+5:30)',
       hours: '9:00 AM - 6:00 PM'
     }
@@ -117,7 +144,7 @@ const ContactPage: React.FC = () => {
         <title>Contact Trebound | Get Free Team Building Consultation</title>
         <meta 
           name="description" 
-          content="Contact Trebound for your team building needs. Get a free consultation and custom quote. Available in Bangalore, Mumbai, Hyderabad. Call +91 9876543210 or email us."
+          content="Contact Trebound for your team building needs. Get a free consultation and custom quote. Available in Bangalore, Hyderabad, Pune, Goa, Gurugram, Jodhpur. Call 080952 04666 or email us."
         />
         <meta name="keywords" content="contact trebound, team building consultation, corporate events, team outing booking" />
       </Helmet>
@@ -183,14 +210,14 @@ const ContactPage: React.FC = () => {
                 {/* Quick Contact */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a 
-                    href="tel:+919876543210"
+                    href="tel:08095204666"
                     className="flex items-center justify-center space-x-2 bg-white text-[#FF4C39] px-6 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg"
                   >
                     <FiPhone className="text-lg" />
                     <span>Call Now</span>
                   </a>
                   <a 
-                    href="mailto:hello@trebound.com"
+                    href="mailto:connect@trebound.com"
                     className="flex items-center justify-center space-x-2 border-2 border-white text-white px-6 py-4 rounded-full font-semibold hover:bg-white hover:text-[#FF4C39] transition-colors"
                   >
                     <FiMail className="text-lg" />
@@ -257,7 +284,7 @@ const ContactPage: React.FC = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                            placeholder="+91 9876543210"
+                            placeholder="080952 04666"
                           />
                         </div>
                       </div>
@@ -287,10 +314,12 @@ const ContactPage: React.FC = () => {
                             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                           >
                             <option value="">Select event type</option>
-                            <option value="virtual">Virtual Team Building</option>
-                            <option value="indoor">Indoor Activities</option>
-                            <option value="outdoor">Outdoor Adventures</option>
-                            <option value="offsite">Team Offsite</option>
+                            <option value="corporate-event-management">Corporate Event Management</option>
+                            <option value="venue-booking">Venue Booking</option>
+                            <option value="corporate-gifting">Corporate Gifting</option>
+                            <option value="management-offsite">Management Offsite</option>
+                            <option value="campus-to-corporate">Campus to Corporate</option>
+                            <option value="others">Others</option>
                           </select>
                         </div>
                       </div>
@@ -366,7 +395,7 @@ const ContactPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {offices.map((office, index) => (
                 <motion.div
                   key={index}
@@ -494,18 +523,18 @@ const ContactPage: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a 
-                  href="tel:+919876543210"
+                  href="tel:08095204666"
                   className="bg-white text-[#FF4C39] px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg inline-flex items-center justify-center space-x-2"
                 >
                   <FiPhone className="text-lg" />
-                  <span>Call +91 9876543210</span>
+                  <span>Call 080952 04666</span>
                 </a>
                 <a 
-                  href="mailto:hello@trebound.com"
+                  href="mailto:connect@trebound.com"
                   className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-[#FF4C39] transition-colors inline-flex items-center justify-center space-x-2"
                 >
                   <FiMail className="text-lg" />
-                  <span>Email hello@trebound.com</span>
+                  <span>Email connect@trebound.com</span>
                 </a>
               </div>
             </motion.div>
