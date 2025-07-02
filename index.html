@@ -7,8 +7,9 @@
     <!-- Critical Resource Hints - High Priority -->
     <link rel="preconnect" href="https://yrppmcoycmydrujbesnd.supabase.co" crossorigin>
     
-    <!-- Preload Critical Hero Image with fetchpriority=high for LCP optimization -->
+    <!-- CRITICAL LCP OPTIMIZATION: Preload hero image with highest priority -->
     <link rel="preload" href="/hero.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/hero.webp" as="fetch" crossorigin="anonymous" />
     
     <!-- CSS will be loaded asynchronously via JavaScript to prevent render blocking -->
     
@@ -320,16 +321,25 @@
           document.head.appendChild(link);
         };
         
-        // AGGRESSIVELY remove ALL render blocking CSS links immediately
+        // IMMEDIATELY remove ALL render blocking CSS for fastest FCP
         const allCSSLinks = document.querySelectorAll('link[rel="stylesheet"]');
         const removedCSS = [];
         allCSSLinks.forEach(link => {
-          if (link.href && (link.href.includes('/assets/css/') || link.href.includes('googleapis'))) {
+          if (link.href && (link.href.includes('/assets/css/') || link.href.includes('googleapis') || link.href.includes('fonts'))) {
             removedCSS.push(link.href);
             link.remove();
           }
         });
-        console.log('Removed render blocking CSS:', removedCSS);
+        
+        // Also remove any style imports from head
+        document.querySelectorAll('style').forEach(style => {
+          if (style.textContent && style.textContent.includes('@import')) {
+            style.remove();
+            console.log('Removed CSS import');
+          }
+        });
+        
+        console.log('Aggressively removed blocking CSS:', removedCSS);
         
         // Delay ALL CSS loading until after critical content is painted
         setTimeout(() => {
