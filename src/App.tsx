@@ -9,6 +9,7 @@ import FeaturedStays from './components/FeaturedStays';
 import FeaturedBlog from './components/FeaturedBlog';
 import SchemaMarkup from './components/SchemaMarkup';
 import DataOptimizer from './lib/dataOptimizer';
+import PerformanceMonitor from './components/PerformanceMonitor';
 import { useConditionalPreload, LazyAIRecommendations, LazyAIChatbot, LazySmartForm } from './components/LazyComponents';
 
 function App() {
@@ -91,12 +92,12 @@ function App() {
 
   return (
     <>
-      {/* Performance Monitoring and Optimization - Temporarily disabled */}
-      {/* <PerformanceMonitor 
+      {/* Performance Monitoring and Optimization */}
+      <PerformanceMonitor 
         enableCSSOptimization={true}
         enableResourcePreloading={true}
         enableMetrics={true}
-      /> */}
+      />
       
       <Helmet>
         <title>Trebound | AI-Powered Team Building & Corporate Events Solutions</title>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { 
@@ -27,18 +27,11 @@ interface GradientHeroProps {
 const heroImageUrl = "/hero.webp";
 
 const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryChange }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  // Remove redundant image loading since hero.webp is already preloaded in HTML with fetchpriority="high"
   const [ref, inView] = useInView({
     threshold: 0.15,
     triggerOnce: true,
   });
-
-  // Preload hero image for better LCP
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => setImageLoaded(true);
-    img.src = heroImageUrl;
-  }, []);
 
   return (
     <motion.div
@@ -50,15 +43,15 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
       style={{ pointerEvents: 'auto' }}
     >
       <HeroContainer>
-        {/* Background Image with Lazy Loading for LCP Optimization */}
+        {/* Background Image - Optimized for LCP (preloaded in HTML) */}
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: imageLoaded ? `url(${heroImageUrl})` : 'none',
-            backgroundColor: imageLoaded ? 'transparent' : '#f3f4f6',
+            backgroundImage: `url(${heroImageUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+            backgroundColor: '#667eea', // Fallback color matching gradient
           }}
         />
         

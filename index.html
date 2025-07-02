@@ -12,21 +12,48 @@
     <!-- Preload Critical Hero Image with fetchpriority=high for LCP optimization -->
     <link rel="preload" href="/hero.webp" as="image" type="image/webp" fetchpriority="high" />
     
-    <!-- Preload Critical CSS -->
+    <!-- Preload Critical CSS with immediate application -->
     <link rel="preload" href="/assets/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/assets/main.css"></noscript>
     
-    <!-- Optimized font loading with critical font preload -->
+    <!-- Preload critical JavaScript chunks -->
+    <link rel="modulepreload" href="/src/main.tsx" fetchpriority="high">
+    <link rel="modulepreload" href="/src/App.tsx" fetchpriority="high">
+    
+    <!-- Optimized font loading with critical font preload and font-display -->
     <link rel="preload" href="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/outfit/v9/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC0K5brjQ.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Font CSS with optimized display strategy -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" as="style" media="print" onload="this.media='all';this.onload=null;">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"></noscript>
     
-    <!-- DNS prefetch for third-party domains (lower priority) -->
+    <!-- Alternative font loading for better performance -->
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2') format('woff2');
+      }
+    </style>
+    
+    <!-- Enhanced DNS prefetch for third-party domains -->
     <link rel="dns-prefetch" href="//cdn.signalzen.com">
     <link rel="dns-prefetch" href="//connect.facebook.net">
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <link rel="dns-prefetch" href="//images.unsplash.com">
     <link rel="dns-prefetch" href="//uploads-ssl.webflow.com">
+    
+    <!-- Additional performance hints for CDNs and APIs -->
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="dns-prefetch" href="//api.unsplash.com">
+    
+    <!-- Preconnect to critical third-party domains -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
     <!-- Optimized favicon -->
     <link rel="icon" type="image/x-icon" href="/images/trebound-favicon-32px.jpg" />
@@ -46,19 +73,59 @@
     
     <!-- Inline Critical CSS for above-the-fold content -->
     <style>
-      /* Critical CSS - Optimized for performance */
+      /* Critical CSS - Optimized for performance and layout stability */
       *,*::before,*::after{box-sizing:border-box}
       *{margin:0}
-      body{line-height:1.5;-webkit-font-smoothing:antialiased;font-family:Inter,system-ui,-apple-system,sans-serif;background:#fff}
-      img,picture,video,canvas,svg{display:block;max-width:100%}
+      body{
+        line-height:1.5;
+        -webkit-font-smoothing:antialiased;
+        font-family:Inter,system-ui,-apple-system,sans-serif;
+        background:#fff;
+        font-display:swap;
+      }
+      img,picture,video,canvas,svg{display:block;max-width:100%;height:auto}
       input,button,textarea,select{font:inherit}
       p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}
       #root{isolation:isolate;min-height:100vh}
       
-      /* Hero section critical styles */
-      .hero-section{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;text-align:center;overflow:hidden}
-      .hero-title{font-size:clamp(2rem,5vw,4rem);font-weight:700;line-height:1.2;margin-bottom:1rem;animation:fadeInUp 0.8s ease-out}
-      .hero-subtitle{font-size:clamp(1rem,2.5vw,1.5rem);font-weight:400;opacity:0.9;margin-bottom:2rem;animation:fadeInUp 0.8s ease-out 0.2s both}
+      /* Font loading optimizations */
+      @font-face {
+        font-family: 'Inter-fallback';
+        size-adjust: 106.5%;
+        src: local('Arial');
+      }
+      
+      /* Hero section critical styles with layout stability */
+      .hero-section{
+        position:relative;
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+        color:#fff;
+        text-align:center;
+        overflow:hidden;
+        contain:layout style paint;
+      }
+      .hero-title{
+        font-size:clamp(2rem,5vw,4rem);
+        font-weight:700;
+        line-height:1.2;
+        margin-bottom:1rem;
+        animation:fadeInUp 0.8s ease-out;
+        font-display:swap;
+        will-change:transform,opacity;
+      }
+      .hero-subtitle{
+        font-size:clamp(1rem,2.5vw,1.5rem);
+        font-weight:400;
+        opacity:0.9;
+        margin-bottom:2rem;
+        animation:fadeInUp 0.8s ease-out 0.2s both;
+        font-display:swap;
+        will-change:transform,opacity;
+      }
       
       /* Navigation critical styles */
       .navbar{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.1);z-index:1000;padding:1rem 0;animation:slideDown 0.5s ease-out}
@@ -69,9 +136,35 @@
       .loading-spinner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border:4px solid #f3f3f3;border-top:4px solid #3498db;border-radius:50%;animation:spin 1s linear infinite}
       .app-loaded .loading-spinner{display:none}
       
-      /* Lazy loading styles */
+      /* Lazy loading styles with layout stability */
       .lazy{opacity:0;transition:opacity 0.3s}
       .lazy.loaded{opacity:1}
+      
+      /* Layout shift prevention */
+      .aspect-ratio-16-9{aspect-ratio:16/9}
+      .aspect-ratio-4-3{aspect-ratio:4/3}
+      .aspect-ratio-1-1{aspect-ratio:1/1}
+      .aspect-ratio-3-2{aspect-ratio:3/2}
+      
+      /* Skeleton loading styles */
+      .skeleton {
+        background: linear-gradient(-90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+        background-size: 400% 400%;
+        animation: skeleton-loading 1.5s ease-in-out infinite;
+      }
+      
+      @keyframes skeleton-loading {
+        0% { background-position: 0% 0%; }
+        100% { background-position: -135% 0%; }
+      }
+      
+      /* Reserve space for dynamic content */
+      .content-placeholder {
+        min-height: 200px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
       
       /* Button focus for accessibility */
       button:focus,a:focus,input:focus,textarea:focus,select:focus{outline:2px solid #667eea;outline-offset:2px}
@@ -98,7 +191,7 @@
       window.addEventListener('load', function() {
         document.body.classList.add('app-loaded');
         
-        // Defer third-party scripts until user interaction or after delay
+        // Enhanced third-party script loading with performance optimization
         const loadThirdPartyScripts = () => {
           if (window.scriptsLoaded) return;
           window.scriptsLoaded = true;
@@ -109,9 +202,15 @@
             return;
           }
           
-          // Load scripts with proper prioritization
+          // Check connection quality before loading heavy scripts
+          const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          const isSlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g');
+          
+          // Delay scripts more on slow connections
+          const scriptDelay = isSlowConnection ? 5000 : 1500;
+          
           setTimeout(() => {
-            // Google Analytics (async)
+            // Load critical analytics first
             const gtagScript = document.createElement('script');
             gtagScript.async = true;
             gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID';
@@ -123,19 +222,32 @@
             };
             document.head.appendChild(gtagScript);
             
-            // Other tracking scripts (lower priority)
-            loadScript('https://cdn.signalzen.com/signalzen.js', { defer: true });
-            loadScript('https://connect.facebook.net/en_US/fbevents.js', { defer: true });
-          }, 2000);
+            // Load other tracking scripts with even more delay to avoid blocking
+            setTimeout(() => {
+              if (!isSlowConnection) {
+                loadScript('https://cdn.signalzen.com/signalzen.js', { defer: true });
+                loadScript('https://connect.facebook.net/en_US/fbevents.js', { defer: true });
+              }
+            }, 3000);
+          }, scriptDelay);
         };
         
-        // Load on user interaction
-        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+        // Load on user interaction with better event handling
+        const interactionEvents = ['mousedown', 'keypress', 'touchstart', 'click'];
+        const passiveEvents = ['scroll', 'mousemove'];
+        
+        // Critical interaction events
+        interactionEvents.forEach(event => {
+          window.addEventListener(event, loadThirdPartyScripts, { once: true });
+        });
+        
+        // Passive events (lower priority)
+        passiveEvents.forEach(event => {
           window.addEventListener(event, loadThirdPartyScripts, { once: true, passive: true });
         });
         
-        // Fallback: load after 5 seconds
-        setTimeout(loadThirdPartyScripts, 5000);
+        // Fallback: load after longer delay to ensure critical path completion
+        setTimeout(loadThirdPartyScripts, 8000);
       });
       
       function loadScript(src, options = {}) {
