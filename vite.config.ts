@@ -158,7 +158,40 @@ export default defineConfig({
     devSourcemap: false,
     postcss: {
       plugins: [
-        // PurgeCSS will be handled separately
+        // Add PurgeCSS-like functionality
+        {
+          postcssPlugin: 'unused-css-remover',
+          Once(root, { result }) {
+            // Remove unused utility classes that might be generated
+            const unusedPatterns = [
+              /\.text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)-\d+/,
+              /\.text-\w+-\d{3,4}$/,
+              /\.bg-\w+-\d{3,4}$/,
+              /\.border-\w+-\d{3,4}$/,
+              /\.ring-\w+-\d{3,4}$/,
+              /\.from-\w+-\d{3,4}$/,
+              /\.to-\w+-\d{3,4}$/,
+              /\.via-\w+-\d{3,4}$/
+            ];
+            
+            root.walkRules(rule => {
+              const selector = rule.selector;
+              if (unusedPatterns.some(pattern => pattern.test(selector))) {
+                // Only remove if it looks like an unused Tailwind utility
+                if (selector.includes('hover:') || selector.includes('focus:') || 
+                    selector.includes('active:') || selector.includes('group-hover:')) {
+                  // Keep interactive states
+                  return;
+                }
+                
+                // Check if it's actually unused (simplified heuristic)
+                if (rule.nodes.length === 0) {
+                  rule.remove();
+                }
+              }
+            });
+          }
+        }
       ],
     },
     // Enable CSS modules optimization
@@ -171,5 +204,10 @@ export default defineConfig({
         charset: false
       }
     }
+  },
+  // Define for better tree shaking
+  define: {
+    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+    __PROD__: JSON.stringify(process.env.NODE_ENV === 'production')
   }
 })

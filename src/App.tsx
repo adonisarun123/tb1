@@ -4,43 +4,43 @@ import { useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import GradientHero from './components/GradientHero';
-import AIRecommendations from './components/AIRecommendations';
-import AIChatbot from './components/AIChatbot';
 import FeaturedActivities from './components/FeaturedActivities';
 import FeaturedStays from './components/FeaturedStays';
 import FeaturedBlog from './components/FeaturedBlog';
-import SmartForm from './components/SmartForm';
 import SchemaMarkup from './components/SchemaMarkup';
-import { useOptimizedData } from './lib/performanceOptimizer';
-import { mainThreadOptimizer } from './lib/mainThreadOptimizer';
-// import PerformanceMonitor from './components/PerformanceMonitor';
+import DataOptimizer from './lib/dataOptimizer';
+import { useConditionalPreload, LazyAIRecommendations, LazyAIChatbot, LazySmartForm } from './components/LazyComponents';
 
 function App() {
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string>('');
-  const [_isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [_homepageData, setHomepageData] = useState<any>(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  const { loadSupabaseData, preloadRoute } = useOptimizedData();
+  
+  // Use conditional preloading for better performance
+  useConditionalPreload();
 
-  // Load critical data with main thread optimization
+  // Load critical data with optimized batching
   useEffect(() => {
     const loadCriticalData = async () => {
       try {
         const startTime = performance.now();
         
-        // Use main thread optimizer for heavy data loading
-        mainThreadOptimizer.scheduleTask(
-          async () => {
-            // Load critical data in parallel with priority-based batching
-            await loadSupabaseData();
-            
-            const endTime = performance.now();
-            console.log(`✅ Critical data loaded in ${Math.round(endTime - startTime)}ms`);
-            
-            setIsDataLoaded(true);
-          },
-          { priority: 'high' }
-        );
+        // Use data optimizer for efficient loading
+        const data = await DataOptimizer.preloadHomepageData();
+        
+        if (data) {
+          setHomepageData(data);
+        }
+        
+        const endTime = performance.now();
+        console.log(`✅ Critical data loaded in ${Math.round(endTime - startTime)}ms`);
+        
+        setIsDataLoaded(true);
+        
+        // Mark page as loaded for CSS optimizations
+        document.body.classList.add('data-loaded');
         
       } catch (error) {
         console.warn('Data loading failed, using fallback:', error);
@@ -48,10 +48,13 @@ function App() {
       }
     };
 
-    loadCriticalData();
-  }, [loadSupabaseData]);
+    // Only load data once
+    if (!isDataLoaded) {
+      loadCriticalData();
+    }
+  }, [isDataLoaded]);
 
-  // Preload next page data on route hover/focus with main thread optimization
+  // Preload next page data on route hover/focus
   useEffect(() => {
     const handleLinkHover = (e: Event) => {
       const target = e.target as HTMLElement;
@@ -60,11 +63,19 @@ function App() {
       if (link && link.href && link.href.startsWith(window.location.origin)) {
         const path = new URL(link.href).pathname;
         
-        // Defer preloading to avoid blocking main thread
-        mainThreadOptimizer.scheduleTask(
-          () => preloadRoute(path),
-          { priority: 'low' }
-        );
+        // Use requestIdleCallback for non-blocking preloading
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            // Preload specific data based on path
+            if (path.includes('/activities')) {
+              DataOptimizer.getFeaturedActivities(12);
+            } else if (path.includes('/stays')) {
+              DataOptimizer.getFeaturedStays(9);
+            } else if (path.includes('/blog')) {
+              DataOptimizer.getBlogPosts(10);
+            }
+          });
+        }
       }
     };
 
@@ -76,7 +87,7 @@ function App() {
       document.removeEventListener('mouseover', handleLinkHover);
       document.removeEventListener('focusin', handleLinkHover);
     };
-  }, [preloadRoute]);
+  }, []);
 
   return (
     <>
@@ -184,7 +195,7 @@ function App() {
                 Our AI analyzes your team's preferences and needs to suggest the perfect activities
               </p>
             </div>
-            <AIRecommendations 
+            <LazyAIRecommendations 
               searchQuery={currentSearchQuery}
               userProfile={{
                 companySize: 'medium',
@@ -212,14 +223,14 @@ function App() {
                 AI-powered form that adapts to your needs and provides instant recommendations
               </p>
             </div>
-            <SmartForm />
+            <LazySmartForm />
           </div>
         </section>
         
         <Footer />
         
         {/* AI Chatbot - Always available */}
-        <AIChatbot />
+        <LazyAIChatbot />
       </div>
     </>
   );

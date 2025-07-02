@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// Removed framer-motion imports to reduce bundle size
 import { Link } from 'react-router-dom';
 import { 
   FiZap, 
@@ -546,20 +546,42 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FF4C39]"></div>
         </div>
         {searchQuery && (
-          <p className="text-gray-600">
+          <p className="text-gray-600 h-6">
             Finding real activities and venues for: <span className="font-semibold">"{searchQuery}"</span>
           </p>
         )}
         
+        {/* Skeleton Grid with Fixed Heights to Prevent Layout Shift */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse h-[520px]">
-              <div className="h-48 bg-gray-300"></div>
-              <div className="p-4 space-y-3">
-                <div className="h-4 bg-gray-300 rounded"></div>
-                <div className="h-3 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                <div className="h-8 bg-gray-300 rounded w-full mt-4"></div>
+            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden h-[520px] flex flex-col">
+              {/* Image Skeleton */}
+              <div className="h-48 bg-gray-200 animate-pulse flex-shrink-0"></div>
+              
+              {/* Content Skeleton */}
+              <div className="p-5 flex-1 flex flex-col space-y-4">
+                {/* Title Skeleton */}
+                <div className="h-14 flex items-start">
+                  <div className="h-6 bg-gray-200 rounded animate-pulse w-full"></div>
+                </div>
+                
+                {/* Description Skeleton */}
+                <div className="h-16 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                </div>
+                
+                {/* Rating Skeleton */}
+                <div className="h-10 flex items-center justify-between">
+                  <div className="h-6 bg-gray-200 rounded animate-pulse w-24"></div>
+                  <div className="h-6 bg-gray-200 rounded animate-pulse w-20"></div>
+                </div>
+                
+                {/* Button Skeleton */}
+                <div className="mt-auto mb-6">
+                  <div className="h-12 bg-gray-200 rounded-lg animate-pulse w-full"></div>
+                </div>
               </div>
             </div>
           ))}
@@ -617,128 +639,116 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
         ))}
       </div>
 
-      {/* Recommendations Grid - Fixed Heights */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeCategory}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        >
-          {getFilteredRecommendations().map((recommendation, index) => (
-            <motion.div
-              key={recommendation.activityId}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group h-[520px] flex flex-col pb-12"
-            >
-              {/* Image and Category Badge */}
-              <div className="relative h-48 overflow-hidden flex-shrink-0 rounded-t-xl">
-                <LazyImage
-                  src={getActivityImage(recommendation.name, recommendation.tags, recommendation.type)}
-                  alt={recommendation.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                  width={400}
-                  height={200}
-                />
-                <div className="absolute top-3 left-3">
-                  <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(recommendation.category)}`}>
-                    {getCategoryIcon(recommendation.category)}
-                    <span className="capitalize">{recommendation.category}</span>
+      {/* Recommendations Grid - Fixed Heights to Prevent Layout Shift */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {getFilteredRecommendations().map((recommendation, _index) => (
+          <div
+            key={`${recommendation.activityId}-${activeCategory}`}
+            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group h-[520px] flex flex-col"
+          >
+            {/* Image and Category Badge */}
+            <div className="relative h-48 overflow-hidden flex-shrink-0 rounded-t-xl">
+              <LazyImage
+                src={getActivityImage(recommendation.name, recommendation.tags, recommendation.type)}
+                alt={recommendation.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+                width={400}
+                height={200}
+              />
+              <div className="absolute top-3 left-3">
+                <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(recommendation.category)}`}>
+                  {getCategoryIcon(recommendation.category)}
+                  <span className="capitalize">{recommendation.category}</span>
+                </span>
+              </div>
+              
+              {/* Type Badge */}
+              <div className="absolute top-3 right-3">
+                <span className="bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-gray-700 capitalize">
+                  {recommendation.type}
+                </span>
+              </div>
+
+              {/* Confidence Score */}
+              <div className="absolute bottom-3 right-3">
+                <div 
+                  className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold cursor-help shadow-sm"
+                  onMouseEnter={() => setShowTooltip(recommendation.activityId)}
+                  onMouseLeave={() => setShowTooltip(null)}
+                >
+                  <span className={getConfidenceColor(recommendation.confidence)}>
+                    {Math.round(recommendation.confidence * 100)}% match
                   </span>
                 </div>
                 
-                {/* Type Badge */}
-                <div className="absolute top-3 right-3">
-                  <span className="bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-gray-700 capitalize">
-                    {recommendation.type}
+                {/* Tooltip */}
+                {showTooltip === recommendation.activityId && (
+                  <div className="absolute bottom-8 right-0 bg-black text-white text-xs rounded-lg p-3 w-48 z-10 shadow-xl">
+                    <p className="font-medium mb-1">AI Confidence Score</p>
+                    <p>{recommendation.reason}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Heart Icon */}
+              <button 
+                className="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                aria-label="Add to favorites"
+              >
+                <FiHeart size={16} className="text-gray-600 hover:text-red-500" />
+              </button>
+            </div>
+
+            {/* Content - Flexible Height */}
+            <div className="p-5 space-y-4 flex-1 flex flex-col mb-4">
+              {/* Title and Description - Fixed Heights */}
+              <div className="space-y-3">
+                {/* Title with fixed height */}
+                <div className="h-14 flex items-start">
+                  <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#FF4C39] transition-colors leading-tight line-clamp-2">
+                    {recommendation.name}
+                  </h3>
+                </div>
+                
+                {/* Description with fixed height */}
+                <div className="h-16">
+                  <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                    {recommendation.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Rating & Confidence - Fixed Height */}
+              <div className="h-10 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="flex text-yellow-400 text-base">
+                    {'★'.repeat(5)}
+                  </div>
+                  <span className="text-base font-semibold text-gray-900">
+                    {recommendation.rating.toFixed(1)}
                   </span>
                 </div>
-
-                {/* Confidence Score */}
-                <div className="absolute bottom-3 right-3">
-                  <div 
-                    className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold cursor-help shadow-sm"
-                    onMouseEnter={() => setShowTooltip(recommendation.activityId)}
-                    onMouseLeave={() => setShowTooltip(null)}
-                  >
-                    <span className={getConfidenceColor(recommendation.confidence)}>
-                      {Math.round(recommendation.confidence * 100)}% match
-                    </span>
+                <div className="flex items-center space-x-2">
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                    {Math.round(recommendation.confidence * 100)}% Match
                   </div>
-                  
-                  {/* Tooltip */}
-                  {showTooltip === recommendation.activityId && (
-                    <div className="absolute bottom-8 right-0 bg-black text-white text-xs rounded-lg p-3 w-48 z-10 shadow-xl">
-                      <p className="font-medium mb-1">AI Confidence Score</p>
-                      <p>{recommendation.reason}</p>
-                    </div>
-                  )}
                 </div>
+              </div>
 
-                {/* Heart Icon */}
-                <button 
-                  className="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
-                  aria-label="Add to favorites"
+              {/* CTA Button - Always at bottom */}
+              <div className="mt-auto mb-6">
+                <Link
+                  to={getItemUrl(recommendation)}
+                  className="block w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center rounded-lg font-semibold text-sm py-3 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                 >
-                  <FiHeart size={16} className="text-gray-600 hover:text-red-500" />
-                </button>
+                  Explore Details
+                </Link>
               </div>
-
-              {/* Content - Flexible Height */}
-              <div className="p-5 space-y-4 flex-1 flex flex-col mb-4">
-                {/* Title and Description - Fixed Heights */}
-                <div className="space-y-3">
-                  {/* Title with fixed height */}
-                  <div className="h-14 flex items-start">
-                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#FF4C39] transition-colors leading-tight line-clamp-2">
-                      {recommendation.name}
-                    </h3>
-                  </div>
-                  
-                  {/* Description with fixed height */}
-                  <div className="h-16">
-                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-                      {recommendation.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Rating & Confidence - Fixed Height */}
-                <div className="h-10 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex text-yellow-400 text-base">
-                      {'★'.repeat(5)}
-                    </div>
-                    <span className="text-base font-semibold text-gray-900">
-                      {recommendation.rating.toFixed(1)}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                      {Math.round(recommendation.confidence * 100)}% Match
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA Button - Always at bottom */}
-                <div className="mt-auto mb-6">
-                  <Link
-                    to={getItemUrl(recommendation)}
-                    className="block w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center rounded-lg font-semibold text-sm py-3 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-                  >
-                    Explore Details
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Empty State */}
       {getFilteredRecommendations().length === 0 && (
