@@ -4,21 +4,7 @@ const CriticalCSS = () => {
   useEffect(() => {
     // Preload non-critical CSS after the critical render path
     const loadNonCriticalCSS = () => {
-      // Load non-critical fonts asynchronously
-      const fontLinks = [
-        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
-      ];
-
-      fontLinks.forEach(href => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        link.media = 'print';
-        link.onload = () => {
-          link.media = 'all';
-        };
-        document.head.appendChild(link);
-      });
+      // All font links removed for performance - using system fonts only
 
       // Preload next page resources on hover
       const setupPreloadOnHover = () => {

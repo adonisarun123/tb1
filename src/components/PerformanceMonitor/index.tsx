@@ -54,22 +54,8 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
     // Defer non-critical CSS using requestIdleCallback to avoid blocking
     if ('requestIdleCallback' in window) {
       requestIdleCallback(() => {
-        const nonCriticalCSS = [
-          'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap',
-        ];
-
-        // Batch all CSS loading operations
+        // All non-critical CSS removed for performance - system fonts only
         const cssFragment = document.createDocumentFragment();
-        nonCriticalCSS.forEach(href => {
-          if (!document.querySelector(`link[href="${href}"]`)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            link.media = 'print';
-            link.onload = () => { link.media = 'all'; };
-            cssFragment.appendChild(link);
-          }
-        });
         
         // Single DOM insertion
         if (cssFragment.children.length > 0) {
