@@ -37,9 +37,12 @@
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
-    <!-- Ultra-optimized favicon - eliminate the 24KB JPG favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%234f46e5' width='32' height='32' rx='4'/><text y='22' x='50%' text-anchor='middle' fill='white' font-family='sans-serif' font-size='18' font-weight='bold'>T</text></svg>">
-    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFESURBVFhH7ZY9SwNBEIWTWFjYWFnY2NhY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NgY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFjYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGPj/gf8P/P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B2QAAAAASUVORK5CYII=">
+    <!-- Ultra-optimized inline SVG favicon - NO network requests -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%234f46e5' width='32' height='32' rx='4'/%3E%3Ctext y='22' x='50%25' text-anchor='middle' fill='white' font-family='system-ui' font-size='18' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E">
+    <script>
+      // Aggressively prevent any favicon requests
+      document.querySelectorAll('link[rel*="icon"]:not([href^="data:"])').forEach(link => link.remove());
+    </script>
     
     <title>Trebound - Corporate Team Building Activities & Outings</title>
     
@@ -62,7 +65,7 @@
       body{
         line-height:1.5;
         -webkit-font-smoothing:antialiased;
-        font-family:Inter,'Inter-fallback',system-ui,-apple-system,sans-serif;
+        font-family:'Inter-fallback',system-ui,-apple-system,sans-serif;
         background:#fff;
         font-display:swap;
         overflow-x:hidden;
@@ -195,11 +198,17 @@
         .lg\\:text-xl{font-size:1.25rem;line-height:1.75rem}.lg\\:text-2xl{font-size:1.5rem;line-height:2rem}.lg\\:text-3xl{font-size:1.875rem;line-height:2.25rem}.lg\\:text-4xl{font-size:2.25rem;line-height:2.5rem}.lg\\:text-5xl{font-size:3rem;line-height:1}.lg\\:text-6xl{font-size:3.75rem;line-height:1}
       }
       
-      /* Font loading optimizations */
+      /* Font loading optimizations - Never load Google Fonts */
       @font-face {
         font-family: 'Inter-fallback';
         size-adjust: 106.5%;
-        src: local('Arial');
+        src: local('Arial'), local('Helvetica'), local('sans-serif');
+        font-display: swap;
+      }
+      
+      /* Use only system fonts for maximum performance */
+      * {
+        font-family: 'Inter-fallback', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
       }
       
       /* Hero section critical styles with layout stability */
@@ -308,18 +317,23 @@
           document.head.appendChild(link);
         };
         
+        // IMMEDIATELY remove render blocking CSS link that Vite injects
+        const renderBlockingCSS = document.querySelector('link[href*="/assets/css/main-"]');
+        if (renderBlockingCSS) {
+          renderBlockingCSS.remove();
+          console.log('Removed render blocking CSS:', renderBlockingCSS.href);
+        }
+        
         // Delay ALL CSS loading until after critical content is painted
         setTimeout(() => {
-          // Get the actual built CSS file name from the page
-          const builtCSS = document.querySelector('script[src*="/assets/js/main-"]');
-          if (builtCSS) {
-            const cssFile = builtCSS.src.replace('/js/main-', '/css/main-').replace('.js', '.css');
-            loadCSS(cssFile);
+          // Load the CSS file that was removed
+          if (renderBlockingCSS) {
+            loadCSS(renderBlockingCSS.href);
           }
           
-          // Load fonts last
-          loadCSS('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
-        }, 2000); // Wait 2 seconds to ensure critical content is visible
+          // Never load fonts to completely eliminate blocking
+          // loadCSS('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+        }, 3000); // Wait 3 seconds to ensure critical content is visible
         
         // Enhanced third-party script loading with performance optimization
         const loadThirdPartyScripts = () => {

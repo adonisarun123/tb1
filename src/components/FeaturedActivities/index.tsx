@@ -338,23 +338,12 @@ const FeaturedActivities: React.FC = () => {
             </div>
           </div>
 
-          {/* Testimonial Quotes */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8 text-center">
-            {[
-              "We had a great time!",
-              "This was so much fun!",
-              "Best team building ever!",
-              "Unforgettable experience!",
-              "Brought our team together!",
-              "Highly recommend!",
-              "Your team fits in here.",
-              "Can't wait to do it again!",
-              "Exceeded our expectations!",
-              "Perfect for team bonding!"
-            ].map((quote, index) => (
-              <div key={index} className="bg-white/70 backdrop-blur-sm rounded-lg p-3 text-sm font-medium text-gray-700">
+          {/* Testimonial Quotes - Simplified */}
+          <div className="flex flex-wrap justify-center gap-2 mt-8">
+            {["Great time!", "So much fun!", "Best team building!"].map((quote, index) => (
+              <span key={index} className="bg-white/70 px-3 py-1 rounded-full text-sm font-medium text-gray-700">
                 {quote}
-              </div>
+              </span>
             ))}
           </div>
         </div>

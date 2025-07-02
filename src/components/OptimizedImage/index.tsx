@@ -41,13 +41,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       const baseUrl = originalSrc.split('?')[0];
       const params = new URLSearchParams();
       
-      // Use much smaller dimensions to save bandwidth
-      const optimalWidth = targetWidth || (width && width < 400 ? width : 400);
-      const optimalHeight = targetHeight || (height && height < 300 ? height : 300);
+      // Use extremely small dimensions to save massive bandwidth
+      const optimalWidth = targetWidth || (width && width < 200 ? width : 200);
+      const optimalHeight = targetHeight || (height && height < 150 ? height : 150);
       
       params.set('w', optimalWidth.toString());
       if (optimalHeight) params.set('h', optimalHeight.toString());
-      params.set('q', '60'); // Reduce quality to 60 for major bandwidth savings
+      params.set('q', '50'); // Reduce quality to 50 for massive bandwidth savings
       params.set('f', 'webp'); // Force WebP format
       params.set('fit', 'crop');
       params.set('auto', 'format,compress');
@@ -85,13 +85,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     return originalSrc;
   };
 
-  // Generate srcSet for responsive images with conservative sizes
+  // Generate srcSet for responsive images with ultra-conservative sizes
   const generateSrcSet = (originalSrc: string): string => {
     if (!width) return '';
     
-    // Use smaller breakpoints to reduce bandwidth
-    const breakpoints = [320, 480, 640, 768, 1024];
-    const maxWidth = Math.min(width, 1024); // Cap at 1024px for most images
+    // Use much smaller breakpoints to reduce bandwidth dramatically
+    const breakpoints = [150, 200, 300, 400];
+    const maxWidth = Math.min(width, 400); // Cap at 400px for most images
     
     const srcSetEntries = breakpoints
       .filter(bp => bp <= maxWidth * 1.5) // Don't generate excessive sizes
