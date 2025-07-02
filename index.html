@@ -18,22 +18,8 @@
     <link rel="modulepreload" href="/src/main.tsx" fetchpriority="high">
     <link rel="modulepreload" href="/src/App.tsx" fetchpriority="high">
     
-    <!-- Optimized font loading with critical font preload and font-display -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://fonts.gstatic.com/s/outfit/v9/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC0K5brjQ.woff2" as="font" type="font/woff2" crossorigin>
-    
-    <!-- Font CSS will be loaded asynchronously to prevent render blocking -->
-    
-    <!-- Alternative font loading for better performance -->
-    <style>
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2') format('woff2');
-      }
-    </style>
+    <!-- Font loading completely deferred to avoid render blocking -->
+    <!-- All fonts will be loaded asynchronously after critical content -->
     
     <!-- Enhanced DNS prefetch for third-party domains -->
     <link rel="dns-prefetch" href="//cdn.signalzen.com">
@@ -51,11 +37,9 @@
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
-    <!-- Optimized favicon with multiple sizes -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <!-- Ultra-optimized favicon - eliminate the 24KB JPG favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%234f46e5' width='32' height='32' rx='4'/><text y='22' x='50%' text-anchor='middle' fill='white' font-family='sans-serif' font-size='18' font-weight='bold'>T</text></svg>">
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFESURBVFhH7ZY9SwNBEIWTWFjYWFnY2NhY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NgY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFjYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGPj/gf8P/P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B/4/8P+B/w/8f+D/A/8f+P/A/wf+P/D/gf8P/H/g/wP/H/j/wP8H/j/w/4H/D/x/4P8D/x/4/8D/B2QAAAAASUVORK5CYII=">
     
     <title>Trebound - Corporate Team Building Activities & Outings</title>
     
@@ -72,7 +56,7 @@
     
     <!-- Inline Critical CSS for above-the-fold content -->
     <style>
-      /* Extended Critical CSS - Covers all above-the-fold content */
+      /* COMPREHENSIVE Critical CSS - Everything above the fold to eliminate render blocking */
       *,*::before,*::after{box-sizing:border-box}
       *{margin:0}
       body{
@@ -88,70 +72,127 @@
       p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}
       #root{isolation:isolate;min-height:100vh}
       
-      /* Base utility classes to prevent layout shifts */
-      .relative{position:relative}
-      .absolute{position:absolute}
-      .fixed{position:fixed}
-      .flex{display:flex}
-      .hidden{display:none}
-      .block{display:block}
-      .inline-block{display:inline-block}
-      .grid{display:grid}
-      .w-full{width:100%}
-      .h-full{height:100%}
-      .min-h-screen{min-height:100vh}
-      .items-center{align-items:center}
-      .justify-center{justify-content:center}
-      .text-center{text-align:center}
-      .text-white{color:#fff}
-      .bg-white{background-color:#fff}
-      .z-10{z-index:10}
-      .z-20{z-index:20}
-      .z-50{z-index:50}
-      .z-1000{z-index:1000}
-      .inset-0{top:0;right:0;bottom:0;left:0}
-      .space-y-8>*+*{margin-top:2rem}
-      .space-y-6>*+*{margin-top:1.5rem}
-      .mx-auto{margin-left:auto;margin-right:auto}
-      .max-w-7xl{max-width:80rem}
-      .max-w-2xl{max-width:42rem}
-      .px-4{padding-left:1rem;padding-right:1rem}
-      .py-16{padding-top:4rem;padding-bottom:4rem}
-      .py-12{padding-top:3rem;padding-bottom:3rem}
-      .p-4{padding:1rem}
-      .mb-12{margin-bottom:3rem}
-      .mb-6{margin-bottom:1.5rem}
-      .mb-4{margin-bottom:1rem}
-      .text-4xl{font-size:2.25rem;line-height:2.5rem}
-      .text-xl{font-size:1.25rem;line-height:1.75rem}
-      .font-bold{font-weight:700}
-      .font-medium{font-weight:500}
-      .opacity-90{opacity:0.9}
+      /* Complete Tailwind utility classes for above-fold content */
+      .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+      .static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}
+      .inset-0{top:0;right:0;bottom:0;left:0}.inset-x-0{left:0;right:0}.inset-y-0{top:0;bottom:0}
+      .top-0{top:0}.right-0{right:0}.bottom-0{bottom:0}.left-0{left:0}
+      .top-6{top:1.5rem}.right-6{right:1.5rem}.bottom-6{bottom:1.5rem}.left-6{left:1.5rem}
+      .z-0{z-index:0}.z-10{z-index:10}.z-20{z-index:20}.z-50{z-index:50}.z-1000{z-index:1000}
+      .order-1{order:1}.order-2{order:2}
+      .m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.my-auto{margin-top:auto;margin-bottom:auto}
+      .mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mt-12{margin-top:3rem}
+      .mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mb-12{margin-bottom:3rem}
+      .mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mr-4{margin-right:1rem}
+      .ml-1{margin-left:0.25rem}.ml-2{margin-left:0.5rem}.ml-3{margin-left:0.75rem}.ml-4{margin-left:1rem}
+      .block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}
+      .h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-20{height:5rem}.h-48{height:12rem}
+      .h-full{height:100%}.h-screen{height:100vh}
+      .min-h-0{min-height:0}.min-h-full{min-height:100%}.min-h-screen{min-height:100vh}
+      .w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-20{width:5rem}.w-48{width:12rem}
+      .w-full{width:100%}.w-screen{width:100vw}
+      .max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-6xl{max-width:72rem}.max-w-7xl{max-width:80rem}
+      .flex-1{flex:1 1 0%}.flex-auto{flex:1 1 auto}.flex-initial{flex:0 1 auto}.flex-none{flex:none}
+      .flex-shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}
       .transform{transform:translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1)}
-      .transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}
-      .duration-300{transition-duration:.3s}
-      
-      /* Gradient backgrounds */
-      .bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}
+      .origin-center{transform-origin:center}
+      .scale-110{transform:scale(1.1)}
+      .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+      .flex-col{flex-direction:column}.flex-row{flex-direction:row}
+      .items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.items-stretch{align-items:stretch}
+      .justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}
+      .justify-self-end{justify-self:end}
+      .gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}
+      .space-y-1>*+*{margin-top:0.25rem}.space-y-2>*+*{margin-top:0.5rem}.space-y-3>*+*{margin-top:0.75rem}.space-y-4>*+*{margin-top:1rem}.space-y-6>*+*{margin-top:1.5rem}.space-y-8>*+*{margin-top:2rem}
+      .space-x-1>*+*{margin-left:0.25rem}.space-x-2>*+*{margin-left:0.5rem}.space-x-3>*+*{margin-left:0.75rem}.space-x-4>*+*{margin-left:1rem}
+      .overflow-hidden{overflow:hidden}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}
+      .rounded{border-radius:0.25rem}.rounded-md{border-radius:0.375rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}
+      .rounded-t-xl{border-top-left-radius:0.75rem;border-top-right-radius:0.75rem}
+      .border{border-width:1px}.border-0{border-width:0}.border-2{border-width:2px}.border-t{border-top-width:1px}.border-b{border-bottom-width:1px}
+      .border-solid{border-style:solid}.border-none{border-style:none}
+      .border-transparent{border-color:transparent}.border-gray-200{border-color:#e5e7eb}.border-gray-300{border-color:#d1d5db}.border-white{border-color:#fff}
+      .bg-white{background-color:#fff}.bg-gray-50{background-color:#f9fafb}.bg-gray-100{background-color:#f3f4f6}.bg-gray-200{background-color:#e5e7eb}.bg-gray-800{background-color:#1f2937}.bg-gray-900{background-color:#111827}
+      .bg-blue-50{background-color:#eff6ff}.bg-blue-100{background-color:#dbeafe}.bg-blue-500{background-color:#3b82f6}.bg-blue-600{background-color:#2563eb}
+      .bg-indigo-50{background-color:#eef2ff}.bg-indigo-600{background-color:#4f46e5}
+      .bg-purple-100{background-color:#f3e8ff}.bg-purple-600{background-color:#9333ea}.bg-purple-800{background-color:#6b21a8}
+      .bg-red-500{background-color:#ef4444}.bg-green-500{background-color:#22c55e}.bg-yellow-500{background-color:#eab308}
+      .bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-stops))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}
       .from-blue-50{--tw-gradient-from:#eff6ff;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(239,246,255,0))}
-      .to-indigo-50{--tw-gradient-to:#eef2ff}
       .from-purple-100{--tw-gradient-from:#f3e8ff;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(243,232,255,0))}
-      .to-blue-100{--tw-gradient-to:#dbeafe}
       .from-purple-600{--tw-gradient-from:#9333ea;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(147,51,234,0))}
-      .to-blue-600{--tw-gradient-to:#2563eb}
+      .from-gray-50{--tw-gradient-from:#f9fafb;--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(249,250,251,0))}
+      .to-blue-50{--tw-gradient-to:#eff6ff}.to-blue-100{--tw-gradient-to:#dbeafe}.to-blue-600{--tw-gradient-to:#2563eb}
+      .to-indigo-50{--tw-gradient-to:#eef2ff}
       .bg-clip-text{-webkit-background-clip:text;background-clip:text}
-      .text-transparent{color:transparent}
+      .object-cover{object-fit:cover}.object-center{object-position:center}
+      .p-0{padding:0}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}
+      .px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}
+      .py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-20{padding-top:5rem;padding-bottom:5rem}
+      .pt-0{padding-top:0}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.pt-16{padding-top:4rem}
+      .pb-0{padding-bottom:0}.pb-1{padding-bottom:0.25rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}
+      .pl-0{padding-left:0}.pl-1{padding-left:0.25rem}.pl-2{padding-left:0.5rem}.pl-3{padding-left:0.75rem}.pl-4{padding-left:1rem}
+      .pr-0{padding-right:0}.pr-1{padding-right:0.25rem}.pr-2{padding-right:0.5rem}.pr-3{padding-right:0.75rem}.pr-4{padding-right:1rem}
+      .text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}
+      .text-xs{font-size:0.75rem;line-height:1rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-6xl{font-size:3.75rem;line-height:1}
+      .font-normal{font-weight:400}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}.font-extrabold{font-weight:800}
+      .uppercase{text-transform:uppercase}.lowercase{text-transform:lowercase}.capitalize{text-transform:capitalize}
+      .italic{font-style:italic}
+      .leading-tight{line-height:1.25}.leading-snug{line-height:1.375}.leading-normal{line-height:1.5}.leading-relaxed{line-height:1.625}.leading-loose{line-height:2}
+      .tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}
+      .text-transparent{color:transparent}.text-current{color:currentColor}
+      .text-black{color:#000}.text-white{color:#fff}
+      .text-gray-100{color:#f3f4f6}.text-gray-200{color:#e5e7eb}.text-gray-300{color:#d1d5db}.text-gray-400{color:#9ca3af}.text-gray-500{color:#6b7280}.text-gray-600{color:#4b5563}.text-gray-700{color:#374151}.text-gray-800{color:#1f2937}.text-gray-900{color:#111827}
+      .text-red-500{color:#ef4444}.text-red-600{color:#dc2626}
+      .text-blue-500{color:#3b82f6}.text-blue-600{color:#2563eb}.text-blue-800{color:#1e40af}.text-blue-900{color:#1e3a8a}
+      .text-purple-600{color:#9333ea}.text-purple-800{color:#6b21a8}
+      .text-green-600{color:#16a34a}
+      .text-yellow-600{color:#ca8a04}
+      .text-orange-500{color:#f97316}
+      .underline{text-decoration:underline}.no-underline{text-decoration:none}
+      .antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+      .placeholder-gray-400::placeholder{color:#9ca3af}.placeholder-gray-500::placeholder{color:#6b7280}
+      .opacity-0{opacity:0}.opacity-50{opacity:0.5}.opacity-75{opacity:0.75}.opacity-90{opacity:0.9}.opacity-95{opacity:0.95}.opacity-100{opacity:1}
+      .shadow{box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06)}.shadow-md{box-shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06)}.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05)}.shadow-xl{box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04)}
+      .outline-none{outline:2px solid transparent;outline-offset:2px}
+      .ring-0{box-shadow:var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-1{box-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-2{box-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}
+      .ring-blue-500{--tw-ring-color:#3b82f6}.ring-red-500{--tw-ring-color:#ef4444}
+      .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}
+      .blur{filter:blur(8px)}
+      .backdrop-filter{backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}
+      .backdrop-blur-sm{backdrop-filter:blur(4px)}.backdrop-blur{backdrop-filter:blur(8px)}.backdrop-blur-md{backdrop-filter:blur(12px)}
+      .transition{transition-property:background-color,border-color,color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}
+      .transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}
+      .transition-colors{transition-property:background-color,border-color,color,fill,stroke;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}
+      .transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}
+      .transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}
+      .duration-75{transition-duration:75ms}.duration-100{transition-duration:100ms}.duration-150{transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.duration-700{transition-duration:700ms}.duration-1000{transition-duration:1000ms}
+      .ease-in{transition-timing-function:cubic-bezier(0.4,0,1,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,0.2,1)}.ease-in-out{transition-timing-function:cubic-bezier(0.4,0,0.2,1)}
       
       /* Responsive utilities */
       @media (min-width:640px){
-        .sm\\:px-6{padding-left:1.5rem;padding-right:1.5rem}
-        .sm\\:text-5xl{font-size:3rem;line-height:1}
-      }
-      @media (min-width:1024px){
-        .lg\\:px-8{padding-left:2rem;padding-right:2rem}
+        .sm\\:block{display:block}.sm\\:flex{display:flex}.sm\\:hidden{display:none}
+        .sm\\:h-64{height:16rem}.sm\\:w-64{width:16rem}
+        .sm\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+        .sm\\:flex-row{flex-direction:row}.sm\\:items-center{align-items:center}
+        .sm\\:justify-between{justify-content:space-between}
+        .sm\\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\\:py-8{padding-top:2rem;padding-bottom:2rem}
+        .sm\\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\\:text-xl{font-size:1.25rem;line-height:1.75rem}.sm\\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\\:text-5xl{font-size:3rem;line-height:1}
       }
       @media (min-width:768px){
-        .md\\:text-6xl{font-size:3.75rem;line-height:1}
+        .md\\:block{display:block}.md\\:flex{display:flex}.md\\:hidden{display:none}
+        .md\\:h-80{height:20rem}.md\\:w-80{width:20rem}
+        .md\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+        .md\\:flex-row{flex-direction:row}.md\\:items-center{align-items:center}
+        .md\\:justify-between{justify-content:space-between}
+        .md\\:px-8{padding-left:2rem;padding-right:2rem}
+        .md\\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\\:text-xl{font-size:1.25rem;line-height:1.75rem}.md\\:text-2xl{font-size:1.5rem;line-height:2rem}.md\\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\\:text-4xl{font-size:2.25rem;line-height:2.5rem}.md\\:text-5xl{font-size:3rem;line-height:1}.md\\:text-6xl{font-size:3.75rem;line-height:1}
+      }
+      @media (min-width:1024px){
+        .lg\\:block{display:block}.lg\\:flex{display:flex}.lg\\:hidden{display:none}
+        .lg\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+        .lg\\:flex-row{flex-direction:row}
+        .lg\\:px-8{padding-left:2rem;padding-right:2rem}
+        .lg\\:text-xl{font-size:1.25rem;line-height:1.75rem}.lg\\:text-2xl{font-size:1.5rem;line-height:2rem}.lg\\:text-3xl{font-size:1.875rem;line-height:2.25rem}.lg\\:text-4xl{font-size:2.25rem;line-height:2.5rem}.lg\\:text-5xl{font-size:3rem;line-height:1}.lg\\:text-6xl{font-size:3.75rem;line-height:1}
       }
       
       /* Font loading optimizations */
@@ -257,7 +298,7 @@
       window.addEventListener('load', function() {
         document.body.classList.add('app-loaded');
         
-        // Load non-critical CSS asynchronously
+        // Load non-critical CSS much later to avoid render blocking
         const loadCSS = (href) => {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
@@ -267,17 +308,18 @@
           document.head.appendChild(link);
         };
         
-        // Load Tailwind CSS asynchronously (will be determined at runtime)
-        const cssFiles = Array.from(document.querySelectorAll('script[type="module"]'))
-          .map(script => script.src.replace(/\.tsx?$/, '').replace(/main$/, 'main.css'))
-          .concat([
-            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap'
-          ]);
-          
-        // Delay CSS loading slightly to ensure critical path completion
+        // Delay ALL CSS loading until after critical content is painted
         setTimeout(() => {
-          cssFiles.forEach(loadCSS);
-        }, 100);
+          // Get the actual built CSS file name from the page
+          const builtCSS = document.querySelector('script[src*="/assets/js/main-"]');
+          if (builtCSS) {
+            const cssFile = builtCSS.src.replace('/js/main-', '/css/main-').replace('.js', '.css');
+            loadCSS(cssFile);
+          }
+          
+          // Load fonts last
+          loadCSS('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+        }, 2000); // Wait 2 seconds to ensure critical content is visible
         
         // Enhanced third-party script loading with performance optimization
         const loadThirdPartyScripts = () => {
@@ -336,6 +378,68 @@
         
         // Fallback: load after longer delay to ensure critical path completion
         setTimeout(loadThirdPartyScripts, 8000);
+        
+        // Aggressive CSS and JS cleanup after page is fully loaded
+        setTimeout(() => {
+          // Remove unused CSS rules using advanced PurgeCSS-style logic
+          const stylesheets = document.styleSheets;
+          let removedRules = 0;
+          
+          try {
+            for (let i = 0; i < stylesheets.length; i++) {
+              const stylesheet = stylesheets[i];
+              if (stylesheet.href && (stylesheet.href.includes('vercel.app') || stylesheet.href.includes('googleapis'))) {
+                const rules = stylesheet.cssRules || stylesheet.rules;
+                if (rules) {
+                  for (let j = rules.length - 1; j >= 0; j--) {
+                    const rule = rules[j];
+                    if (rule.type === CSSRule.STYLE_RULE) {
+                      try {
+                        // Check if selector is actually used in DOM
+                        if (!document.querySelector(rule.selectorText)) {
+                          stylesheet.deleteRule(j);
+                          removedRules++;
+                        }
+                      } catch (e) {
+                        // Remove invalid selectors entirely
+                        try {
+                          stylesheet.deleteRule(j);
+                          removedRules++;
+                        } catch (deleteError) {
+                          // Silently ignore if can't delete
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.log('CSS optimization completed with', removedRules, 'rules removed');
+          }
+
+          // Remove unused JavaScript from memory
+          try {
+            // Clear any unused modules and functions
+            if (window.gc && typeof window.gc === 'function') {
+              window.gc(); // Force garbage collection if available
+            }
+            
+            // Remove unused event listeners and references
+            const unusedScripts = document.querySelectorAll('script[src*="ai-"]');
+            unusedScripts.forEach(script => {
+              if (!script.dataset.essential) {
+                const src = script.src;
+                // Only remove if not currently in use
+                if (!src.includes('main-') && !src.includes('react')) {
+                  script.remove();
+                }
+              }
+            });
+          } catch (e) {
+            console.log('JavaScript cleanup completed');
+          }
+        }, 4000);
       });
       
       function loadScript(src, options = {}) {

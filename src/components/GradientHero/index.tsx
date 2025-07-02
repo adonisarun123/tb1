@@ -58,14 +58,14 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
         
 
         
-        {/* Content - Layout shift prevention */}
-        <ContentContainer className="relative z-20" style={{ pointerEvents: 'auto', minHeight: '60vh' }}>
+        {/* Content - Fixed dimensions to completely prevent layout shift */}
+        <ContentContainer className="relative z-20" style={{ pointerEvents: 'auto', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-center space-y-8"
-            style={{ pointerEvents: 'auto' }}
+            style={{ pointerEvents: 'auto', width: '100%', maxWidth: '1200px' }}
           >
             {/* Main Heading */}
             <div className="space-y-6">

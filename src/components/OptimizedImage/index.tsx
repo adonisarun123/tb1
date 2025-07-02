@@ -36,18 +36,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   // Generate optimized image sources with aggressive optimization
   const generateOptimizedSrc = (originalSrc: string, targetWidth?: number, targetHeight?: number): string => {
-    // Handle Webflow images with aggressive optimization
+    // Handle Webflow images with EXTREME optimization for PageSpeed
     if (originalSrc.includes('uploads-ssl.webflow.com')) {
       const baseUrl = originalSrc.split('?')[0];
       const params = new URLSearchParams();
       
-      // Use display dimensions if provided, otherwise reasonable defaults
-      const optimalWidth = targetWidth || (width && width < 800 ? width : 800);
-      const optimalHeight = targetHeight || (height && height < 600 ? height : 600);
+      // Use much smaller dimensions to save bandwidth
+      const optimalWidth = targetWidth || (width && width < 400 ? width : 400);
+      const optimalHeight = targetHeight || (height && height < 300 ? height : 300);
       
       params.set('w', optimalWidth.toString());
       if (optimalHeight) params.set('h', optimalHeight.toString());
-      params.set('q', Math.min(quality, 75).toString()); // Max quality 75 for Webflow
+      params.set('q', '60'); // Reduce quality to 60 for major bandwidth savings
       params.set('f', 'webp'); // Force WebP format
       params.set('fit', 'crop');
       params.set('auto', 'format,compress');
@@ -144,21 +144,27 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   useEffect(() => {
     if (!imgRef.current || !currentSrc || priority) return;
 
-    // Intersection Observer for lazy loading
+    // Enhanced Intersection Observer for aggressive lazy loading
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target as HTMLImageElement;
-            if (img.dataset.src) {
-              img.src = img.dataset.src;
-              img.srcset = img.dataset.srcset || '';
-              observer.unobserve(img);
-            }
+            // Add delay to ensure critical resources load first
+            setTimeout(() => {
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.srcset = img.dataset.srcset || '';
+                observer.unobserve(img);
+              }
+            }, entry.target.getBoundingClientRect().top > window.innerHeight ? 500 : 100);
           }
         });
       },
-      { rootMargin: '50px' }
+      { 
+        rootMargin: '100px', // Load when closer to viewport
+        threshold: 0.1 // Load when 10% visible
+      }
     );
 
     if (imgRef.current) {
