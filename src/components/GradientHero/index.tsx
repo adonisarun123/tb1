@@ -43,7 +43,7 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
       style={{ pointerEvents: 'auto' }}
     >
       <HeroContainer>
-        {/* Background Image - Optimized for LCP (preloaded in HTML) */}
+        {/* Background Image - Optimized for LCP with layout stability */}
         <div 
           className="absolute inset-0 z-0"
           style={{
@@ -52,13 +52,14 @@ const GradientHero: React.FC<GradientHeroProps> = ({ className, onSearchQueryCha
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             backgroundColor: '#667eea', // Fallback color matching gradient
+            contain: 'layout', // Prevent layout shifts
           }}
         />
         
 
         
-        {/* Content */}
-        <ContentContainer className="relative z-20" style={{ pointerEvents: 'auto' }}>
+        {/* Content - Layout shift prevention */}
+        <ContentContainer className="relative z-20" style={{ pointerEvents: 'auto', minHeight: '60vh' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

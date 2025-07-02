@@ -181,8 +181,7 @@ function App() {
         
         <GradientHero onSearchQueryChange={setCurrentSearchQuery} />
         
-        {/* AI Recommendations Section */}
-        {/* AI Recommendations Section */}
+        {/* AI Recommendations Section - Layout shift prevention */}
         <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
@@ -196,16 +195,19 @@ function App() {
                 Our AI analyzes your team's preferences and needs to suggest the perfect activities
               </p>
             </div>
-            <LazyAIRecommendations 
-              searchQuery={currentSearchQuery}
-              userProfile={{
-                companySize: 'medium',
-                industry: 'technology',
-                location: 'Bangalore',
-                preferences: ['team-building'],
-                browsingHistory: []
-              }}
-            />
+            {/* Reserve space to prevent layout shift */}
+            <div style={{ minHeight: '600px' }}>
+              <LazyAIRecommendations 
+                searchQuery={currentSearchQuery}
+                userProfile={{
+                  companySize: 'medium',
+                  industry: 'technology',
+                  location: 'Bangalore',
+                  preferences: ['team-building'],
+                  browsingHistory: []
+                }}
+              />
+            </div>
           </div>
         </section>
         

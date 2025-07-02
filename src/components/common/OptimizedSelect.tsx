@@ -14,10 +14,8 @@ interface OptimizedSelectProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
-  required?: boolean;
   id?: string;
   name?: string;
-  'aria-label'?: string;
   'aria-describedby'?: string;
   error?: string;
 }
@@ -29,10 +27,8 @@ const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
   placeholder = 'Select an option',
   className = '',
   disabled = false,
-  required = false,
   id,
   name,
-  'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   error
 }) => {
@@ -137,26 +133,14 @@ const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
 
   return (
     <div className="relative" ref={selectRef}>
-      {/* Hidden native select for form submission and accessibility */}
-      <select
+      {/* Minimal hidden input for form submission (1 element instead of 12+) */}
+      <input
         id={selectId}
         name={name}
+        type="hidden"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        aria-describedby={ariaDescribedBy || errorId}
-        className="sr-only"
-        tabIndex={-1}
-      >
-        <option value="">{placeholder}</option>
-        {normalizedOptions.map((option) => (
-          <option key={option.value} value={option.value} disabled={option.disabled}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        aria-hidden="true"
+      />
 
       {/* Custom select trigger */}
       <div

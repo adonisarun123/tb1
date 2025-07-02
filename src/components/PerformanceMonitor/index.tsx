@@ -33,129 +33,150 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
     loadComplete: null
   });
 
-  // Critical CSS optimization
+  // Critical CSS optimization - optimized to reduce forced reflows
   const optimizeCSSDelivery = useCallback(() => {
     if (!enableCSSOptimization) return;
 
-    // Identify and inline critical CSS
-    const inlineCriticalCSS = () => {
-      const criticalCSS = `
-        /* Critical above-the-fold styles */
-        *,*::before,*::after{box-sizing:border-box}
-        body{margin:0;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#fff}
-        #root{min-height:100vh}
-        .navbar{position:fixed;top:0;width:100%;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);z-index:1000}
-        .hero-section{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative}
-        .loading-spinner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #FF4C39;border-radius:50%;animation:spin 1s linear infinite}
-        @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-        .lazy{opacity:0;transition:opacity 0.3s}
-        .lazy.loaded{opacity:1}
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-      `;
-
-      // Check if critical CSS is already inlined
-      if (!document.querySelector('#critical-css')) {
-        const style = document.createElement('style');
-        style.id = 'critical-css';
-        style.textContent = criticalCSS;
-        document.head.insertBefore(style, document.head.firstChild);
-      }
-    };
-
-    // Defer non-critical CSS
-    const deferNonCriticalCSS = () => {
-      const deferCSS = (href: string) => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        link.media = 'print';
-        link.onload = () => {
-          link.media = 'all';
-        };
-        document.head.appendChild(link);
-      };
-
-      // List of non-critical CSS files to defer
-      const nonCriticalCSS = [
-        'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap',
-      ];
-
-      nonCriticalCSS.forEach(deferCSS);
-    };
-
-    inlineCriticalCSS();
+    // Skip if already done (prevent multiple executions)
+    if (document.body.hasAttribute('data-css-optimized')) return;
     
-    // Defer non-critical CSS after initial render
-    requestIdleCallback(() => {
-      deferNonCriticalCSS();
-    });
+    // Batch DOM operations to minimize forced reflows
+    const fragment = document.createDocumentFragment();
+    
+    // Check if critical CSS is already inlined
+    if (!document.querySelector('#critical-css')) {
+      const style = document.createElement('style');
+      style.id = 'critical-css';
+      style.textContent = `/* Critical CSS is now in index.html */`;
+      fragment.appendChild(style);
+    }
+
+    // Defer non-critical CSS using requestIdleCallback to avoid blocking
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        const nonCriticalCSS = [
+          'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap',
+        ];
+
+        // Batch all CSS loading operations
+        const cssFragment = document.createDocumentFragment();
+        nonCriticalCSS.forEach(href => {
+          if (!document.querySelector(`link[href="${href}"]`)) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.media = 'print';
+            link.onload = () => { link.media = 'all'; };
+            cssFragment.appendChild(link);
+          }
+        });
+        
+        // Single DOM insertion
+        if (cssFragment.children.length > 0) {
+          document.head.appendChild(cssFragment);
+        }
+      }, { timeout: 2000 });
+    }
+
+    // Single DOM operation to add fragment
+    if (fragment.children.length > 0) {
+      document.head.appendChild(fragment);
+    }
+    
+    // Mark as completed to prevent re-execution
+    document.body.setAttribute('data-css-optimized', 'true');
   }, [enableCSSOptimization]);
 
-  // Resource preloading optimization
+  // Resource preloading optimization - batched to reduce forced reflows
   const optimizeResourcePreloading = useCallback(() => {
     if (!enableResourcePreloading) return;
 
-    // Preload critical resources
-    const preloadResource = (href: string, as: string, type?: string, fetchpriority?: string) => {
-      if (document.querySelector(`link[href="${href}"]`)) return;
-      
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.href = href;
-      link.as = as;
-      if (type) link.type = type;
-      if (fetchpriority) link.setAttribute('fetchpriority', fetchpriority);
-      link.crossOrigin = 'anonymous';
-      document.head.appendChild(link);
-    };
+    // Skip if already done
+    if (document.body.hasAttribute('data-preload-optimized')) return;
 
-    // Preload critical images with high priority
-    preloadResource('/hero.webp', 'image', 'image/webp', 'high');
+    // Batch all preload operations
+    const fragment = document.createDocumentFragment();
     
-    // Preload critical fonts
-    preloadResource('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2', 'font', 'font/woff2');
+    const criticalResources = [
+      { href: '/hero.webp', as: 'image', type: 'image/webp', fetchpriority: 'high' },
+      { href: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2', as: 'font', type: 'font/woff2' }
+    ];
 
-    // Prefetch next-page resources on fast connections
-    if ('connection' in navigator && (navigator as any).connection.effectiveType !== 'slow-2g') {
-      setTimeout(() => {
-        const prefetchResource = (href: string) => {
-          if (document.querySelector(`link[href="${href}"]`)) return;
-          const link = document.createElement('link');
-          link.rel = 'prefetch';
-          link.href = href;
-          document.head.appendChild(link);
-        };
+    criticalResources.forEach(({ href, as, type, fetchpriority }) => {
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = href;
+        link.as = as;
+        if (type) link.type = type;
+        if (fetchpriority) link.setAttribute('fetchpriority', fetchpriority);
+        if (as === 'font') link.crossOrigin = 'anonymous';
+        fragment.appendChild(link);
+      }
+    });
 
-        // Prefetch likely next pages
-        prefetchResource('/activities');
-        prefetchResource('/stays');
-        prefetchResource('/destinations');
-      }, 3000);
+    // Single DOM insertion
+    if (fragment.children.length > 0) {
+      document.head.appendChild(fragment);
     }
+
+    // Prefetch next-page resources using requestIdleCallback
+    if ('connection' in navigator && (navigator as any).connection.effectiveType !== 'slow-2g') {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+          const prefetchResources = ['/activities', '/stays', '/destinations'];
+          const prefetchFragment = document.createDocumentFragment();
+          
+          prefetchResources.forEach(href => {
+            if (!document.querySelector(`link[href="${href}"][rel="prefetch"]`)) {
+              const link = document.createElement('link');
+              link.rel = 'prefetch';
+              link.href = href;
+              prefetchFragment.appendChild(link);
+            }
+          });
+          
+          if (prefetchFragment.children.length > 0) {
+            document.head.appendChild(prefetchFragment);
+          }
+        }, { timeout: 5000 });
+      }
+    }
+    
+    // Mark as completed
+    document.body.setAttribute('data-preload-optimized', 'true');
   }, [enableResourcePreloading]);
 
-  // Performance metrics collection
+  // Performance metrics collection - optimized to reduce forced reflows
   const collectMetrics = useCallback(() => {
     if (!enableMetrics) return;
 
     const updateMetrics = (newMetrics: Partial<PerformanceMetrics>) => {
-      setMetrics(prev => {
-        const updated = { ...prev, ...newMetrics };
-        onMetricsUpdate?.(updated);
-        return updated;
+      // Use requestAnimationFrame to batch state updates and avoid forced reflows
+      requestAnimationFrame(() => {
+        setMetrics(prev => {
+          const updated = { ...prev, ...newMetrics };
+          onMetricsUpdate?.(updated);
+          return updated;
+        });
       });
     };
 
-    // Navigation timing metrics
+    // Navigation timing metrics - cached to avoid repeated calculations
     const collectNavigationMetrics = () => {
       if ('performance' in window && 'getEntriesByType' in performance) {
-        const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-        if (navigationEntries.length > 0) {
-          const nav = navigationEntries[0];
-          updateMetrics({
-            ttfb: nav.responseStart - nav.requestStart,
-            domContentLoaded: nav.domContentLoadedEventEnd - nav.startTime,
-            loadComplete: nav.loadEventEnd - nav.startTime
+        // Use requestIdleCallback to avoid blocking main thread
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+            if (navigationEntries.length > 0) {
+              const nav = navigationEntries[0];
+              updateMetrics({
+                ttfb: Math.round(nav.responseStart - nav.requestStart),
+                domContentLoaded: Math.round(nav.domContentLoadedEventEnd - nav.startTime),
+                loadComplete: Math.round(nav.loadEventEnd - nav.startTime)
+              });
+            }
           });
         }
       }

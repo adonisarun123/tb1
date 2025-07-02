@@ -32,7 +32,7 @@ const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const selectRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const hiddenSelectRef = useRef<HTMLSelectElement>(null);
+  const hiddenInputRef = useRef<HTMLInputElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -101,12 +101,12 @@ const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
     setIsOpen(false);
     setFocusedIndex(-1);
     
-    // Update hidden select for form compatibility
-    if (hiddenSelectRef.current) {
-      hiddenSelectRef.current.value = optionValue;
+    // Update hidden input for form compatibility
+    if (hiddenInputRef.current) {
+      hiddenInputRef.current.value = optionValue;
       // Trigger change event for form validation
       const event = new Event('change', { bubbles: true });
-      hiddenSelectRef.current.dispatchEvent(event);
+      hiddenInputRef.current.dispatchEvent(event);
     }
   };
 
@@ -115,23 +115,14 @@ const OptimizedSelect: React.FC<OptimizedSelectProps> = ({
 
   return (
     <div className="relative" ref={selectRef}>
-      {/* Hidden native select for form compatibility */}
-      <select
-        ref={hiddenSelectRef}
+      {/* Minimal hidden input for form compatibility (1 element instead of 12+) */}
+      <input
+        ref={hiddenInputRef}
+        type="hidden"
         name={name}
         value={value}
-        onChange={() => {}} // Controlled by our custom component
-        className="sr-only"
-        tabIndex={-1}
         aria-hidden="true"
-      >
-        <option value="">{placeholder}</option>
-        {options.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      />
 
       {/* Custom select trigger (1 element instead of 12+) */}
       <button

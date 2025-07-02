@@ -34,30 +34,38 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const [currentSrc, setCurrentSrc] = useState('');
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Generate optimized image sources
+  // Generate optimized image sources with aggressive optimization
   const generateOptimizedSrc = (originalSrc: string, targetWidth?: number, targetHeight?: number): string => {
-    // Handle Webflow images
+    // Handle Webflow images with aggressive optimization
     if (originalSrc.includes('uploads-ssl.webflow.com')) {
       const baseUrl = originalSrc.split('?')[0];
       const params = new URLSearchParams();
       
-      if (targetWidth) params.set('w', targetWidth.toString());
-      if (targetHeight) params.set('h', targetHeight.toString());
-      params.set('q', quality.toString());
+      // Use display dimensions if provided, otherwise reasonable defaults
+      const optimalWidth = targetWidth || (width && width < 800 ? width : 800);
+      const optimalHeight = targetHeight || (height && height < 600 ? height : 600);
+      
+      params.set('w', optimalWidth.toString());
+      if (optimalHeight) params.set('h', optimalHeight.toString());
+      params.set('q', Math.min(quality, 75).toString()); // Max quality 75 for Webflow
       params.set('f', 'webp'); // Force WebP format
       params.set('fit', 'crop');
       params.set('auto', 'format,compress');
+      params.set('dpr', '1'); // Prevent high DPI issues
       
       return `${baseUrl}?${params.toString()}`;
     }
     
-    // Handle Unsplash images
+    // Handle Unsplash images with optimization
     if (originalSrc.includes('images.unsplash.com')) {
       const url = new URL(originalSrc);
       
-      if (targetWidth) url.searchParams.set('w', targetWidth.toString());
-      if (targetHeight) url.searchParams.set('h', targetHeight.toString());
-      url.searchParams.set('q', quality.toString());
+      const optimalWidth = targetWidth || (width && width < 1200 ? width : 1200);
+      const optimalHeight = targetHeight || (height && height < 800 ? height : 800);
+      
+      url.searchParams.set('w', optimalWidth.toString());
+      if (optimalHeight) url.searchParams.set('h', optimalHeight.toString());
+      url.searchParams.set('q', Math.min(quality, 80).toString());
       url.searchParams.set('auto', 'format,compress');
       url.searchParams.set('fit', 'crop');
       url.searchParams.set('fm', 'webp'); // Force WebP format
@@ -65,37 +73,51 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       return url.toString();
     }
     
-    // For other images, return as-is or apply simple optimizations
+    // Handle local images - convert to WebP if possible
+    if (originalSrc.startsWith('/') && !originalSrc.includes('.webp')) {
+      // For local images, try to use WebP version
+      const extension = originalSrc.split('.').pop();
+      if (extension && ['jpg', 'jpeg', 'png'].includes(extension.toLowerCase())) {
+        return originalSrc.replace(new RegExp(`\\.${extension}$`, 'i'), '.webp');
+      }
+    }
+    
     return originalSrc;
   };
 
-  // Generate srcSet for responsive images
+  // Generate srcSet for responsive images with conservative sizes
   const generateSrcSet = (originalSrc: string): string => {
     if (!width) return '';
     
-    const breakpoints = [480, 768, 1024, 1280, 1536, 1920];
+    // Use smaller breakpoints to reduce bandwidth
+    const breakpoints = [320, 480, 640, 768, 1024];
+    const maxWidth = Math.min(width, 1024); // Cap at 1024px for most images
+    
     const srcSetEntries = breakpoints
-      .filter(bp => bp <= (width * 2)) // Don't generate sizes larger than 2x the display width
+      .filter(bp => bp <= maxWidth * 1.5) // Don't generate excessive sizes
       .map(bp => {
-        const optimizedSrc = generateOptimizedSrc(originalSrc, bp, height ? Math.round((height * bp) / width) : undefined);
+        const scaledHeight = height ? Math.round((height * bp) / width) : undefined;
+        const optimizedSrc = generateOptimizedSrc(originalSrc, bp, scaledHeight);
         return `${optimizedSrc} ${bp}w`;
       });
     
-    // Add the original size
-    if (width && !breakpoints.includes(width)) {
-      const optimizedSrc = generateOptimizedSrc(originalSrc, width, height);
-      srcSetEntries.push(`${optimizedSrc} ${width}w`);
+    // Add the target size if not already included
+    if (maxWidth && !breakpoints.includes(maxWidth)) {
+      const optimizedSrc = generateOptimizedSrc(originalSrc, maxWidth, height);
+      srcSetEntries.push(`${optimizedSrc} ${maxWidth}w`);
     }
     
     return srcSetEntries.join(', ');
   };
 
-  // Generate sizes attribute
+  // Generate sizes attribute with bandwidth-conscious defaults
   const generateSizes = (): string => {
     if (sizes) return sizes;
-    if (!width) return '100vw';
+    if (!width) return '(max-width: 768px) 100vw, 50vw';
     
-    return `(max-width: 768px) 100vw, (max-width: 1024px) 50vw, ${width}px`;
+    // More conservative sizing to reduce bandwidth
+    const maxDisplayWidth = Math.min(width, 800);
+    return `(max-width: 480px) 100vw, (max-width: 768px) 75vw, (max-width: 1024px) 50vw, ${maxDisplayWidth}px`;
   };
 
   // Generate blur placeholder
