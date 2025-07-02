@@ -124,6 +124,7 @@ const Navbar = () => {
             {/* Mobile Menu Button - Professional */}
             <button
               onClick={toggleMenu}
+              aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               className={`lg:hidden p-2.5 rounded-lg transition-all duration-300 ${
                 scrolled 
                   ? 'text-slate-600 hover:bg-slate-100' 

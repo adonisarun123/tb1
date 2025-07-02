@@ -507,11 +507,11 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'trending': return 'text-green-600 bg-green-100';
-      case 'personalized': return 'text-blue-600 bg-blue-100';
-      case 'similar': return 'text-purple-600 bg-purple-100';
-      case 'popular': return 'text-orange-600 bg-orange-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'trending': return 'text-green-800 bg-green-100';
+      case 'personalized': return 'text-blue-800 bg-blue-100';
+      case 'similar': return 'text-purple-800 bg-purple-100';
+      case 'popular': return 'text-orange-800 bg-orange-100';
+      default: return 'text-gray-800 bg-gray-100';
     }
   };
 
@@ -588,7 +588,7 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
         <div className="flex items-center space-x-2">
           <button
             onClick={generateRecommendations}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#FF4C39] text-white rounded-lg hover:bg-[#FF6B5A] transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-[#FF4C39] text-white rounded-lg hover:bg-[#E6412B] transition-colors"
           >
             <FiRefreshCw size={16} />
             <span>Refresh</span>
@@ -681,7 +681,10 @@ Focus on items that best match "${searchQuery || 'team building'}" and provide h
                 </div>
 
                 {/* Heart Icon */}
-                <button className="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm">
+                <button 
+                  className="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                  aria-label="Add to favorites"
+                >
                   <FiHeart size={16} className="text-gray-600 hover:text-red-500" />
                 </button>
               </div>

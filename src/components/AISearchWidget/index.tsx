@@ -489,7 +489,9 @@ const AISearchWidget: React.FC<AISearchWidgetProps> = ({ onSearchQueryChange }) 
                   {/* Sort Options */}
                   <div className="flex items-center space-x-2">
                     <FiFilter className="text-gray-400" />
+                    <label htmlFor="sort-select" className="sr-only">Sort results by</label>
                     <select
+                      id="sort-select"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as 'relevance' | 'rating' | 'popularity')}
                       className="text-xs border border-gray-200 rounded px-2 py-1 bg-white"

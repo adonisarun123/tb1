@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -11,12 +11,72 @@ import FeaturedStays from './components/FeaturedStays';
 import FeaturedBlog from './components/FeaturedBlog';
 import SmartForm from './components/SmartForm';
 import SchemaMarkup from './components/SchemaMarkup';
+import { useOptimizedData } from './lib/performanceOptimizer';
+import { mainThreadOptimizer } from './lib/mainThreadOptimizer';
 // import PerformanceMonitor from './components/PerformanceMonitor';
 
 function App() {
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string>('');
+  const [_isDataLoaded, setIsDataLoaded] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const { loadSupabaseData, preloadRoute } = useOptimizedData();
+
+  // Load critical data with main thread optimization
+  useEffect(() => {
+    const loadCriticalData = async () => {
+      try {
+        const startTime = performance.now();
+        
+        // Use main thread optimizer for heavy data loading
+        mainThreadOptimizer.scheduleTask(
+          async () => {
+            // Load critical data in parallel with priority-based batching
+            await loadSupabaseData();
+            
+            const endTime = performance.now();
+            console.log(`✅ Critical data loaded in ${Math.round(endTime - startTime)}ms`);
+            
+            setIsDataLoaded(true);
+          },
+          { priority: 'high' }
+        );
+        
+      } catch (error) {
+        console.warn('Data loading failed, using fallback:', error);
+        setIsDataLoaded(true); // Still render with fallback data
+      }
+    };
+
+    loadCriticalData();
+  }, [loadSupabaseData]);
+
+  // Preload next page data on route hover/focus with main thread optimization
+  useEffect(() => {
+    const handleLinkHover = (e: Event) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest('a[href]') as HTMLAnchorElement;
+      
+      if (link && link.href && link.href.startsWith(window.location.origin)) {
+        const path = new URL(link.href).pathname;
+        
+        // Defer preloading to avoid blocking main thread
+        mainThreadOptimizer.scheduleTask(
+          () => preloadRoute(path),
+          { priority: 'low' }
+        );
+      }
+    };
+
+    // Add event listeners for preloading
+    document.addEventListener('mouseover', handleLinkHover, { passive: true });
+    document.addEventListener('focusin', handleLinkHover, { passive: true });
+
+    return () => {
+      document.removeEventListener('mouseover', handleLinkHover);
+      document.removeEventListener('focusin', handleLinkHover);
+    };
+  }, [preloadRoute]);
 
   return (
     <>

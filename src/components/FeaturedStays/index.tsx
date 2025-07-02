@@ -258,7 +258,7 @@ const FeaturedStays: React.FC = () => {
                 {/* Availability */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm">
-                    <span className="text-green-600 font-semibold">✓ Available</span>
+                    <span className="text-green-800 font-semibold">✓ Available</span>
                     <span className="text-gray-500 ml-2">• Free cancellation</span>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ const FeaturedStays: React.FC = () => {
                       // Contact or booking functionality
                       navigate('/contact');
                     }}
-                    className="px-4 py-3 border-2 border-orange-200 text-[#FF4C39] rounded-xl font-semibold hover:bg-orange-50 transition-all duration-300"
+                    className="px-4 py-3 border-2 border-orange-400 text-orange-700 rounded-xl font-semibold hover:bg-orange-50 transition-all duration-300"
                   >
                     Book Now
                   </button>

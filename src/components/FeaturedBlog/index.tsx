@@ -72,7 +72,7 @@ const FeaturedBlog: React.FC = () => {
   const getAuthorImage = (index: number) => {
     const authorImages = [
       'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?q=80&w=150&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop'
     ];

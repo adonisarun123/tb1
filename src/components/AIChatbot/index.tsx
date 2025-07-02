@@ -159,6 +159,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ userProfile: _userProfile, onEsca
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
+            aria-label="Open AI chat assistant"
             className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-[#FF4C39] to-[#FFB573] text-white rounded-full shadow-2xl flex items-center justify-center hover:shadow-3xl transition-all duration-300"
           >
             <FiMessageCircle size={24} />

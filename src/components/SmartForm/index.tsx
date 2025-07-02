@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fi';
 import { formTrackingService, FormTrackingResponse } from '../../lib/formTrackingService';
 import FormSuccessMessage from '../FormSuccessMessage';
+import OptimizedSelect from '../OptimizedSelect';
 
 interface FormData {
   companyName: string;
@@ -349,10 +350,10 @@ const SmartForm: React.FC = () => {
   };
 
   const getCompletionColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-100';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
-    if (score >= 40) return 'text-orange-600 bg-orange-100';
-    return 'text-red-600 bg-red-100';
+    if (score >= 80) return 'text-green-800 bg-green-100';
+    if (score >= 60) return 'text-yellow-800 bg-yellow-100';
+    if (score >= 40) return 'text-orange-800 bg-orange-100';
+    return 'text-red-800 bg-red-100';
   };
 
   const applySuggestionValue = (field: string, value: string) => {
@@ -406,7 +407,7 @@ const SmartForm: React.FC = () => {
           {validation.suggestions.length > 0 && (
             <div className="mt-2">
               {validation.suggestions.map((suggestion, index) => (
-                <p key={index} className="text-xs text-gray-500 flex items-center">
+                <p key={index} className="text-xs text-gray-700 flex items-center">
                   <FiAlertCircle className="mr-1" />
                   {suggestion}
                 </p>
@@ -488,16 +489,16 @@ const SmartForm: React.FC = () => {
             {/* Industry */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Industry</label>
-              <select
+              <OptimizedSelect
+                options={industries.map(industry => ({ value: industry, label: industry }))}
                 value={formData.industry}
-                onChange={(e) => handleInputChange('industry', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"
-              >
-                <option value="">Select industry</option>
-                {industries.map(industry => (
-                  <option key={industry} value={industry}>{industry}</option>
-                ))}
-              </select>
+                placeholder="Select industry"
+                onChange={(value) => handleInputChange('industry', value)}
+                className="focus:ring-[#FF4C39] focus:border-[#FF4C39]"
+                name="industry"
+                id="industry"
+                aria-label="Select your company's industry"
+              />
             </div>
 
             {/* Contact Person */}
@@ -578,16 +579,16 @@ const SmartForm: React.FC = () => {
             {/* Company Size */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Company Size</label>
-              <select
+              <OptimizedSelect
+                options={companySizes.map(size => ({ value: size, label: size }))}
                 value={formData.companySize}
-                onChange={(e) => handleInputChange('companySize', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"
-              >
-                <option value="">Select company size</option>
-                {companySizes.map(size => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
+                placeholder="Select company size"
+                onChange={(value) => handleInputChange('companySize', value)}
+                className="focus:ring-[#FF4C39] focus:border-[#FF4C39]"
+                name="companySize"
+                id="companySize"
+                aria-label="Select your company size"
+              />
             </div>
           </div>
         </div>
@@ -615,53 +616,59 @@ const SmartForm: React.FC = () => {
             {/* Activity Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Activity Type</label>
-              <select
+              <OptimizedSelect
+                options={activityTypes.map(type => ({ value: type, label: type }))}
                 value={formData.activityType}
-                onChange={(e) => handleInputChange('activityType', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"
-              >
-                <option value="">Select activity type</option>
-                {activityTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
+                placeholder="Select activity type"
+                onChange={(value) => handleInputChange('activityType', value)}
+                className="focus:ring-[#FF4C39] focus:border-[#FF4C39]"
+                name="activityType"
+                id="activityType"
+                aria-label="Select preferred activity type"
+              />
             </div>
 
             {/* Location */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Location</label>
-              <select
+              <OptimizedSelect
+                options={locations.map(location => ({ value: location, label: location }))}
                 value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"
-              >
-                <option value="">Select location</option>
-                {locations.map(location => (
-                  <option key={location} value={location}>{location}</option>
-                ))}
-              </select>
+                placeholder="Select location"
+                onChange={(value) => handleInputChange('location', value)}
+                className="focus:ring-[#FF4C39] focus:border-[#FF4C39]"
+                name="location"
+                id="location"
+                aria-label="Select preferred location"
+              />
             </div>
 
             {/* Budget */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
-              <select
+              <OptimizedSelect
+                options={budgetRanges.map(range => ({ value: range, label: range }))}
                 value={formData.budget}
-                onChange={(e) => handleInputChange('budget', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"
-              >
-                <option value="">Select budget range</option>
-                {budgetRanges.map(range => (
-                  <option key={range} value={range}>{range}</option>
-                ))}
-              </select>
+                placeholder="Select budget range"
+                onChange={(value) => handleInputChange('budget', value)}
+                className="focus:ring-[#FF4C39] focus:border-[#FF4C39]"
+                name="budget"
+                id="budget"
+                aria-label="Select budget range"
+              />
             </div>
 
             {/* Preferred Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Date</label>
+              <label 
+                htmlFor="preferredDate" 
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Preferred Date
+              </label>
               <input
                 type="date"
+                id="preferredDate"
                 value={formData.preferredDate}
                 onChange={(e) => handleInputChange('preferredDate', e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF4C39] focus:border-transparent"

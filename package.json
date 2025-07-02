@@ -61,6 +61,7 @@
   "devDependencies": {
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
+    "@fullhuman/postcss-purgecss": "^7.0.2",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^6.1.1",
@@ -71,6 +72,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "bundlesize": "^0.18.2",
     "cross-env": "^7.0.3",
+    "cssnano": "^7.0.7",
     "dotenv": "^17.0.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",

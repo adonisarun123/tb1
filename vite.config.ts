@@ -6,6 +6,7 @@ import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminPngquant from 'imagemin-pngquant'
 import imageminSvgo from 'imagemin-svgo'
 import imageminGifsicle from 'imagemin-gifsicle'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -42,113 +43,83 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
   server: {
     port: 5173,
     host: true,
     strictPort: false,
     watch: {
       usePolling: true
+    },
+    hmr: {
+      overlay: false,
     }
   },
   build: {
     // Target modern browsers to reduce legacy code
     target: 'es2022',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-        passes: 2
-      },
-      mangle: {
-        safari10: true
-      }
-    },
+    minify: 'esbuild',
     rollupOptions: {
       treeshake: {
         preset: 'recommended',
         moduleSideEffects: false
       },
       output: {
-        manualChunks: (id) => {
-          // More aggressive code splitting
-          if (id.includes('node_modules')) {
-            // React core
-            if (id.includes('react/') || id.includes('react-dom/')) {
-              return 'react-core';
-            }
-            // Animation libraries
-            if (id.includes('framer-motion')) {
-              return 'framer-motion';
-            }
-            // Router
-            if (id.includes('react-router')) {
-              return 'router';
-            }
-            // Supabase
-            if (id.includes('@supabase')) {
-              return 'supabase';
-            }
-            // UI libraries
-            if (id.includes('@headlessui') || id.includes('react-icons')) {
-              return 'ui-libs';
-            }
-            // Emotion styling
-            if (id.includes('@emotion')) {
-              return 'emotion';
-            }
-            // Helmet for SEO
-            if (id.includes('react-helmet')) {
-              return 'helmet';
-            }
-            // Other utilities
-            if (id.includes('react-intersection-observer')) {
-              return 'utils';
-            }
-            // Other vendor dependencies
-            return 'vendor';
-          }
+        manualChunks: {
+          // Split vendor libraries
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['framer-motion', 'react-intersection-observer'],
+          'icons-vendor': ['react-icons/fi', 'react-icons/fa', 'react-icons/md'],
           
-          // App-specific chunking
-          if (id.includes('src/pages/')) {
-            // Group pages by category for better caching
-            if (id.includes('TeamBuilding') || id.includes('Corporate')) {
-              return 'team-building-pages';
-            }
-            if (id.includes('Virtual') || id.includes('Online')) {
-              return 'virtual-pages';
-            }
-            if (id.includes('Bangalore') || id.includes('Mumbai') || id.includes('Hyderabad')) {
-              return 'location-pages';
-            }
-            return 'other-pages';
-          }
-          
-          if (id.includes('src/components/')) {
-            return 'components';
-          }
+          // Split heavy components
+          'ai-components': [
+            './src/components/AIChatbot',
+            './src/components/AIRecommendations', 
+            './src/components/AISearchWidget'
+          ],
+          'form-components': [
+            './src/components/SmartForm',
+            './src/components/ContactForm'
+          ],
+          'page-components': [
+            './src/pages/Activities',
+            './src/pages/Stays',
+            './src/pages/Blog'
+          ],
         },
-        // Optimize asset naming for better caching
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+        
+        // Optimize chunk naming for better caching
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId
+            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
+            : 'chunk';
+          return `assets/${facadeModuleId}-[hash].js`;
+        },
+        
+        // Optimize asset naming
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.');
-          const ext = info[info.length - 1];
-          if (/\.(png|jpe?g|gif|svg|webp|avif|ico)$/i.test(assetInfo.name)) {
-            return `assets/images/[name]-[hash].${ext}`;
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name]-[hash].css';
           }
-          if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
-            return `assets/fonts/[name]-[hash].${ext}`;
-          }
-          return `assets/[ext]/[name]-[hash].${ext}`;
+          return 'assets/[name]-[hash].[ext]';
         }
-      }
+      },
+      external: (id) => {
+        // Externalize large libraries that can be loaded from CDN
+        if (id.includes('framer-motion') && process.env.NODE_ENV === 'production') {
+          return true;
+        }
+        return false;
+      },
     },
-    // Disable source maps for production
-    sourcemap: false,
+    // Enable source maps for production debugging (separate files)
+    sourcemap: 'hidden',
     // Optimize chunk size - reduce warning limit
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 300,
     // Enable CSS code splitting
     cssCodeSplit: true,
     // Optimize assets
@@ -166,6 +137,10 @@ export default defineConfig({
       '@supabase/supabase-js',
       '@headlessui/react'
     ],
+    exclude: [
+      // Exclude large libraries from pre-bundling
+      'framer-motion',
+    ],
     // Force optimize dependencies
     force: true
   },
@@ -180,6 +155,12 @@ export default defineConfig({
   },
   // CSS optimization
   css: {
+    devSourcemap: false,
+    postcss: {
+      plugins: [
+        // PurgeCSS will be handled separately
+      ],
+    },
     // Enable CSS modules optimization
     modules: {
       localsConvention: 'camelCase'

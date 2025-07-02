@@ -233,7 +233,7 @@ const FeaturedActivities: React.FC = () => {
 
                 {/* Location Info - Fixed Height */}
                 <div className="h-8 flex items-center justify-center mb-4">
-                  <div className="text-sm text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full">
+                  <div className="text-sm text-green-800 font-bold bg-green-50 px-3 py-1 rounded-full">
                     Multiple Locations
                   </div>
                 </div>
